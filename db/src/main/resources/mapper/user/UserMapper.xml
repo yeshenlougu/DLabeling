@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dlabeling.db.mapper.user.UserMapper">
+
+
+    <!--  根据邮箱、手机号创建用户  -->
+    <insert id="addUser">
+        INSERT INTO user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">username,</if>
+            <if test="true">create_time,</if>
+            <if test="email != null">email,</if>
+            <if test="phone != null">phone,</if>
+            <if test="true">`password`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">#{username},</if>
+            <if test="true">CURRENT_TIMESTAMP,</if>
+            <if test="email != null">#{email},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="true">#{password},</if>
+        </trim>
+    </insert>
+    
+    <!-- 根据id  更新用户手机号、邮箱、密码  -->
+    <update id="updateUser">
+        UPDATE user
+        <set>
+            <trim suffixOverrides=",">
+                <if test="email != null"> email = #{email}</if>
+                <if test="phone != null"> phone = #{phone}</if>
+                <if test="password != null"> `password` = #{password}</if>
+            </trim>
+        </set>
+        <where>
+            uuid = #{uuid}
+        </where>
+    </update>
+    
+    <!--  删除用户  -->
+    <update id="deleteUser">
+        UPDATE user
+        SET destroy_time = CURRENT_TIMESTAMP
+        <where>
+            uuid = #{uuid}
+        </where>
+    </update>
+    
+    <!--  查询用户 （账号、密码）  -->
+    <select id="selectUser" resultType="com.dlabeling.domain.po.user.User">
+        SELECT *
+        FROM user
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="email != null or email != ''">email = #{email}</if>
+                <if test="phone != null or phone != ''">phone = #{phone}</if>
+                <if test="password != null or password != ''">`password` = #{password}</if>
+            </trim>
+        </where>
+    </select>
+    
+    <!--  根据id查询用户  -->
+    <select id="selectUserById" resultType="com.dlabeling.domain.po.user.User">
+        SELECT *
+        FROM user
+        <where>
+            uuid = #{uuid}
+        </where>
+    </select>
+
+
+</mapper>
