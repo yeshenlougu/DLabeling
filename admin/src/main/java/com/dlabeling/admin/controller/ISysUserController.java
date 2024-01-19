@@ -2,8 +2,8 @@ package com.dlabeling.admin.controller;
 
 import com.dlabeling.common.core.domain.R;
 import com.dlabeling.common.exception.BusinessException;
-import com.dlabeling.db.domain.po.user.User;
-import com.dlabeling.db.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.po.user.User;
+import com.dlabeling.system.domain.po.user.UserInfo;
 import com.dlabeling.system.service.user.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

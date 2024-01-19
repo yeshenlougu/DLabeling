@@ -3,13 +3,12 @@ package com.dlabeling.system.service.user.impl;
 import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.system.service.user.ISysUserService;
-import com.dlabeling.db.domain.po.user.User;
-import com.dlabeling.db.domain.po.user.UserInfo;
-import com.dlabeling.db.mapper.user.UserInfoMapper;
-import com.dlabeling.db.mapper.user.UserMapper;
+import com.dlabeling.system.domain.po.user.User;
+import com.dlabeling.system.domain.po.user.UserInfo;
+import com.dlabeling.system.mapper.user.UserInfoMapper;
+import com.dlabeling.system.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +30,6 @@ public class ISysUserServiceImpl implements ISysUserService {
     
     @Autowired
     private UserInfoMapper userInfoMapper;
-    
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
     
     
     @Override

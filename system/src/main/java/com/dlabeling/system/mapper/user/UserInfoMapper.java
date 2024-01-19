@@ -1,7 +1,7 @@
-package com.dlabeling.db.mapper.user;
+package com.dlabeling.system.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.dlabeling.db.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.po.user.UserInfo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

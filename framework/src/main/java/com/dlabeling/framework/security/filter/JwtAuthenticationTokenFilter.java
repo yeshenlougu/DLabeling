@@ -3,7 +3,7 @@ package com.dlabeling.framework.security.filter;
 import com.dlabeling.common.utils.SecurityUtils;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.framework.web.TokenService;
-import com.dlabeling.db.domain.vo.LoginUser;
+import com.dlabeling.system.domain.vo.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

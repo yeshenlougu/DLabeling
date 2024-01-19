@@ -1,7 +1,7 @@
 package com.dlabeling.system.service.user;
 
-import com.dlabeling.db.domain.po.user.User;
-import com.dlabeling.db.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.po.user.User;
+import com.dlabeling.system.domain.po.user.UserInfo;
 
 import java.util.List;
 

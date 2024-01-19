@@ -1,7 +1,7 @@
-package com.dlabeling.db.mapper.user;
+package com.dlabeling.system.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.dlabeling.db.domain.po.user.User;
+import com.dlabeling.system.domain.po.user.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

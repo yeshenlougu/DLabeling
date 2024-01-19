@@ -66,8 +66,7 @@
         </dependency>
         <dependency>
             <groupId>com.dlabeling</groupId>
-            <artifactId>db</artifactId>
-            <version>1.0</version>
+            <artifactId>system</artifactId>
         </dependency>
     </dependencies>
 

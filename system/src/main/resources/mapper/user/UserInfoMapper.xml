@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.dlabeling.db.mapper.user.UserInfoMapper">
+<mapper namespace="com.dlabeling.system.mapper.user.UserInfoMapper">
 
     <!--  增加用户信息  -->
     <insert id="addUserInfo">
@@ -48,7 +48,7 @@
     </update>
     
     <!--  根据id批量查询用户信息  -->
-    <select id="fetchBatchUserInfoById" resultType="com.dlabeling.domain.po.user.UserInfo" parameterType="java.util.List">
+    <select id="fetchBatchUserInfoById" resultType="com.dlabeling.system.domain.po.user.UserInfo" parameterType="java.util.List">
         SELECT
             username,
             email,
@@ -70,7 +70,7 @@
     </select>
     
     <!--  根据id查询用户信息  -->
-    <select id="getUserInfoById" resultType="com.dlabeling.domain.po.user.UserInfo">
+    <select id="getUserInfoById" resultType="com.dlabeling.system.domain.po.user.UserInfo">
         SELECT
             username,
             email,
@@ -86,7 +86,7 @@
     </select>
     
     <!--  根据字段查询用户信息  -->
-    <select id="getUserInfoByDetail" resultType="com.dlabeling.domain.po.user.UserInfo">
+    <select id="getUserInfoByDetail" resultType="com.dlabeling.system.domain.po.user.UserInfo">
         SELECT
         username,
         email,
@@ -108,7 +108,7 @@
     </select>
     
     <!--  获取使用用户信息  -->
-    <select id="getAllUserInfo" resultType="com.dlabeling.domain.po.user.UserInfo">
+    <select id="getAllUserInfo" resultType="com.dlabeling.system.domain.po.user.UserInfo">
         SELECT
         username,
         email,

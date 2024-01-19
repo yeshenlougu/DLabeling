@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.dlabeling.db.mapper.user.UserMapper">
+<mapper namespace="com.dlabeling.system.mapper.user.UserMapper">
 
 
     <!--  根据邮箱、手机号创建用户  -->
@@ -48,7 +48,7 @@
     </update>
     
     <!--  查询用户 （账号、密码）  -->
-    <select id="selectUser" resultType="com.dlabeling.domain.po.user.User">
+    <select id="selectUser" resultType="com.dlabeling.system.domain.po.user.User">
         SELECT *
         FROM user
         <where>
@@ -61,7 +61,7 @@
     </select>
     
     <!--  根据id查询用户  -->
-    <select id="selectUserById" resultType="com.dlabeling.domain.po.user.User">
+    <select id="selectUserById" resultType="com.dlabeling.system.domain.po.user.User">
         SELECT *
         FROM user
         <where>

@@ -1,4 +1,4 @@
-package com.dlabeling.db.domain.po.user;
+package com.dlabeling.system.domain.po.user;
 
 import lombok.Data;
 

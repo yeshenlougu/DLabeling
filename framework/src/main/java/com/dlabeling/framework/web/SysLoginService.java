@@ -8,7 +8,7 @@ import com.dlabeling.common.exception.user.CaptchaExpireException;
 import com.dlabeling.common.exception.user.UserPasswordNotMatchException;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.framework.security.context.AuthenticationContextHolder;
-import com.dlabeling.db.domain.vo.LoginUser;
+import com.dlabeling.system.domain.vo.LoginUser;
 import com.dlabeling.system.service.user.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +17,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @Description:
@@ -30,7 +32,7 @@ public class SysLoginService {
     @Autowired
     private TokenService tokenService;
     
-    @Autowired
+    @Resource
     private AuthenticationManager authenticationManager;
     
     @Autowired
@@ -39,7 +41,7 @@ public class SysLoginService {
     @Autowired
     private ISysUserService iSysUserService;
     
-    @Value("captcha")
+    @Value("${captcha.enable}")
     private boolean captchaEnabled;
 
     /**

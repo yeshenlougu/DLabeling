@@ -15,7 +15,6 @@
         <module>admin</module>
         <module>labeling</module>
         <module>plugin</module>
-        <module>db</module>
     </modules>
     
     <properties>

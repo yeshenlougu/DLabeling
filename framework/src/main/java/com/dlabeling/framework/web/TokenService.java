@@ -5,7 +5,7 @@ import com.dlabeling.common.constant.Constants;
 import com.dlabeling.common.core.redis.RedisCache;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.common.utils.uuid.IDUtils;
-import com.dlabeling.db.domain.vo.LoginUser;
+import com.dlabeling.system.domain.vo.LoginUser;
 import com.dlabeling.system.service.user.ISysUserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

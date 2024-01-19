@@ -1,4 +1,4 @@
-package com.dlabeling.db.domain.vo;
+package com.dlabeling.system.domain.vo;
 
 import com.dlabeling.common.enums.UserRole;
 import lombok.Data;
