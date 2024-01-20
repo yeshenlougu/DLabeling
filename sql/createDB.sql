@@ -40,6 +40,7 @@ CREATE TABLE `datasets`(
     `description` VARCHAR(40) DEFAULT NULL COMMENT '数据集描述',
     `type` INT NOT NULL COMMENT '数据集类型   图片、文本、音频等   0图片, 1文本, 2音频...',
     `data_root_dir` VARCHAR(40) DEFAULT NULL COMMENT '数据存储的根目录  数据目录结构   -根目录 --子目录 ---data',
+    `label_root_dir` VARCHAR(40) DEFAULT NULL COMMENT '标注存储的根目录  数据目录结构   -根目录 --子目录 ---data',
     `visible` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '数据集可见性， 标注师在不可见时不可见',
     `create_time` DATETIME NOT NULL COMMENT '用户信息创建时间',
     `update_time` DATETIME DEFAULT NULL COMMENT '用户信息修改时间',
