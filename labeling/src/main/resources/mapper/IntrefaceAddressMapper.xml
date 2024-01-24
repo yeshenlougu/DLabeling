@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.labeling.mapper.InterfaceAddressMapper">
+
+
+    <insert id="addInterfaceAddress">
+        INSERT INTO `interface_address`
+        <set>
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="true">`dataset_id`,</if>
+                <if test="true">`dataset_name`,</if>
+                <if test="true">`interface_type`,</if>
+                <if test="true">`interface_name`</if>
+                <if test="true">`interface_address`</if>
+                <if test="true">`create_time`</if>
+            </trim>
+        </set>
+        VALUES
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="true">#{datasetId},</if>
+                <if test="true">#{datasetName},</if>
+                <if test="true">#{interfaceType},</if>
+                <if test="true">#{interfaceName},</if>
+                <if test="true">#{interfaceAddress},</if>
+                <if test="true">#{createTime}</if>
+            </trim>
+    </insert>
+
+    <update id="updateInterfaceAddress">
+        UPDATE `interface_address`
+        <set>
+            <trim suffixOverrides=",">
+                <if test="interfaceType != null"> `interface_type` = #{interfaceType}</if>
+                <if test="interfaceName != null and interfaceName != ''"> `interface_name` = #{interfaceName}</if>
+                <if test="interfaceAddress != null and interfaceAddress != ''"> `interface_address` = #{interfaceAddress}</if>
+                <if test="updateTime != null">`update_time` = #{updateTime}</if>
+            </trim>
+        </set>
+        <where>
+            `id` = #{id}
+        </where>
+    </update>
+
+    <delete id="deleteInterfaceAddressByID">
+        DELETE FROM `interface_address`
+        WHERE `id` = #{id}
+    </delete>
+
+    <select id="selectInterfaceAddressesByDataset" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
+        SELECT
+            `id`,
+            `dataset_id`,
+            `dataset_name`,
+            `interface_type`,
+            `interface_name`,
+            `interface_address`,
+            `create_time`,
+            `update_time`,
+            `destroy_time`
+        FROM
+            `interface_address`
+        <where>
+            `dataset_id` = #{datasetId}
+        </where>
+    </select>
+    
+</mapper>

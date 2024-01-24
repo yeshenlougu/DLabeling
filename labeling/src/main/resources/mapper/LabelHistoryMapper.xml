@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.labeling.mapper.LabelHistoryMapper">
+
+
+    <insert id="addLabelHistory">
+        INSERT INTO `label_history`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">`user_id`,</if>
+            <if test="true">`dataset_id`,</if>
+            <if test="true">`data_id`,</if>
+            <if test="true">`action`,</if>
+            <if test="true">`create_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">#{userId},</if>
+            <if test="true">#{datasetId},</if>
+            <if test="true">#{dataId},</if>
+            <if test="true">#{action},</if>
+            <if test="true">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateLabelHistory">
+        UPDATE `label_history`
+        <set>
+            <trim suffixOverrides=",">
+                <if test="actoin != null"> `action` = #{action}</if>
+                <if test="destroy != null"> `destroy` = #{destroy}</if>
+            </trim>
+        </set>
+        <where>
+            `id` = #{id}
+        </where>
+    </update>
+
+    <delete id="deleteLabelHistoryByID">
+        DELETE FROM `interface_address`
+        where `id` = #{id}
+    </delete>
+
+    <select id="getLabelHistoryByLabelHistory" resultType="com.dlabeling.labeling.domain.po.LabelHistory">
+        SELECT
+            `id`,
+            `user_id`,
+            `dataset_id`,
+            `data_id`,
+            `action`,
+            `create_time`,
+            `destroy`
+        FROM `label_history`
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="true">`user_id` = #{userId}</if>
+                <if test="true">`dataset_id` = #{datasetId}</if>
+                <if test="true">`data_id` = #{dataId}</if>
+            </trim>
+        </where>
+    </select>
+
+</mapper>

@@ -28,9 +28,9 @@
         UPDATE user
         <set>
             <trim suffixOverrides=",">
-                <if test="email != null"> email = #{email}</if>
-                <if test="phone != null"> phone = #{phone}</if>
-                <if test="password != null"> `password` = #{password}</if>
+                <if test="email != null"> email = #{email},</if>
+                <if test="phone != null"> phone = #{phone},</if>
+                <if test="password != null"> `password` = #{password},</if>
             </trim>
         </set>
         <where>

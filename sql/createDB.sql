@@ -40,7 +40,6 @@ CREATE TABLE `datasets`(
     `description` VARCHAR(40) DEFAULT NULL COMMENT '数据集描述',
     `type` INT NOT NULL COMMENT '数据集类型   图片、文本、音频等   0图片, 1文本, 2音频...',
     `data_root_dir` VARCHAR(40) DEFAULT NULL COMMENT '数据存储的根目录  数据目录结构   -根目录 --子目录 ---data',
-    `label_root_dir` VARCHAR(40) DEFAULT NULL COMMENT '标注存储的根目录  数据目录结构   -根目录 --子目录 ---data',
     `visible` TINYINT(1) DEFAULT 1 NOT NULL COMMENT '数据集可见性， 标注师在不可见时不可见',
     `create_time` DATETIME NOT NULL COMMENT '用户信息创建时间',
     `update_time` DATETIME DEFAULT NULL COMMENT '用户信息修改时间',
@@ -51,7 +50,7 @@ CREATE TABLE `datasets`(
 DROP TABLE IF EXISTS interface_address;
 CREATE TABLE `interface_address`(
 	`id` INT AUTO_INCREMENT  PRIMARY KEY COMMENT 'id标识',
-    `dataset_id` VARCHAR(40) NOT NULL COMMENT '数据集标识符',
+    `dataset_id` INT NOT NULL COMMENT '数据集标识符',
     `dataset_name` VARCHAR(20) NOT NULL COMMENT 'DATASET名称',
     `interface_type` INT NOT NULL COMMENT '接口所属类型，(0:自动标注,1:识别,2:查验)',
     `interface_name` VARCHAR(20) NOT NULL COMMENT '接口别名',
@@ -78,11 +77,19 @@ CREATE TABLE `level_apply`(
 DROP TABLE IF EXISTS label_history;
 CREATE TABLE `label_history`(
 	`id` INT AUTO_INCREMENT  PRIMARY KEY COMMENT 'id标识',
-    `user_id` VARCHAR(40) NOT NULL COMMENT '操作者id',
-    `dataset_id` VARCHAR(40) NOT NULL COMMENT '数据集id',
-    `data_id` VARCHAR(40) NOT NULL COMMENT '被标注数据id',
+    `user_id` INT NOT NULL COMMENT '操作者id',
+    `dataset_id` INT NOT NULL COMMENT '数据集id',
+    `data_id` INT NOT NULL COMMENT '被标注数据id',
     `action` VARCHAR(500) NOT NULL COMMENT '数据操作',
     `create_time` DATETIME NOT NULL COMMENT '标注时间',
     `destroy` TINYINT DEFAULT 0,
     UNIQUE INDEX idx_label_history (`user_id`,`dataset_id`,`data_id`, `create_time`) USING BTREE
 );
+
+DROP TABLE IF EXISTS `labels`;
+CREATE TABLE `labels`(
+    `id` INT AUTO_INCREMENT  PRIMARY KEY COMMENT 'id标识',
+    `dataset_id` INT NOT NULL COMMENT '',
+    `label_name` VARCHAR(40) NOT NULL COMMENT '',
+    `label_type` INT NOT NULL COMMENT ''
+)

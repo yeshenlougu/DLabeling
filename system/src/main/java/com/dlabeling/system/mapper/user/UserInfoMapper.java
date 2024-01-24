@@ -13,7 +13,7 @@ import java.util.List;
  * @Since 2024/1/2
  */
 @Mapper
-public interface UserInfoMapper extends BaseMapper<UserInfo> {
+public interface  UserInfoMapper extends BaseMapper<UserInfo> {
 
     /**
      * 创建用户信息
