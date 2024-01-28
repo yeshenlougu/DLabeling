@@ -2,6 +2,9 @@ package com.dlabeling.labeling.core.enums;
 
 
 import lombok.Getter;
+
+import java.util.Arrays;
+
 /**
  * @Description:
  * @Auther YYS
@@ -24,4 +27,9 @@ public enum LabelType {
     public String toString() {
         return super.toString();
     }
+
+    public static LabelType getByCode(int code){
+        return Arrays.stream(LabelType.values()).filter(labelType -> labelType.getCode() == code).findFirst().orElse(null);
+    }
+
 }

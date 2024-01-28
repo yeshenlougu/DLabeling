@@ -21,4 +21,15 @@ public class LabelConstant {
     public static final String LABEL_TXT_FILE = "labels.txt";
 
     public static final String TABLE_GEN_PREF = "data_info";
+
+    public static final String DATA_FILED_PREF = "label";
+
+    public static final String DATA_FILED_VALUE = "value";
+
+    public static final String DATA_FILED_POSITION = "pos";
+
+    public static final String DATA_FILED_AUTO = "auto";
+
+    public static final String DATA_FILED_TEST = "test";
+
 }

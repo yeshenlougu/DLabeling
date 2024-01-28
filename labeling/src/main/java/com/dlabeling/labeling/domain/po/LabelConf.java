@@ -1,7 +1,8 @@
-package com.dlabeling.labeling.domain.vo;
+package com.dlabeling.labeling.domain.po;
 
-import com.dlabeling.labeling.core.enums.LabelType;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * @Description:
@@ -10,12 +11,13 @@ import lombok.Data;
  * @Since 2024/1/23
  */
 @Data
-public class LabelsVO {
+public class LabelConf implements Serializable {
+
     private Integer id;
 
     private Integer datasetId;
 
     private String labelName;
 
-    private LabelType labelType;
+    private Integer labelType;
 }

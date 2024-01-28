@@ -50,7 +50,7 @@ public class DatasetsVO {
 
     private DataBaseType dataBaseType;
 
-    private List<LabelsVO> labelsVOList;
+    private List<LabelConfVO> labelConfVOList;
 
 
     public static Datasets convertToDatasets(DatasetsVO datasetsVO){

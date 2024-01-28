@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.labeling.mapper.LabelConfMapper">
+
+    <insert id="addLabelConf">
+        INSERT INTO `label_conf`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">`dataset_id`,</if>
+            <if test="true">`label_name`,</if>
+            <if test="true">`label_type`</if>
+        </trim>
+        VALUE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">#{datasetId},</if>
+            <if test="true">#{labelName},</if>
+            <if test="true">#{labelType},</if>
+        </trim>
+    </insert>
+
+    <insert id="batchAddLabelConf">
+        INSERT INTO `label_conf`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">`dataset_id`,</if>
+            <if test="true">`label_name`,</if>
+            <if test="true">`label_type`</if>
+        </trim>
+        VALUE
+        <foreach collection="list" item="item" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="true">#{item.datasetId},</if>
+                <if test="true">#{item.labelName},</if>
+                <if test="true">#{item.labelType},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <select id="getLabelConfByDB" resultType="com.dlabeling.labeling.domain.po.LabelConf">
+        SELECT
+            `id`,
+            `dataset_id`,
+            `label_name`,
+            `label_type`
+        FROM `label_conf`
+        <where>
+            `dataset_id` = #{datasetId}
+        </where>
+    </select>
+
+    <update id="updateLabelConfByID">
+        UPDATE `label_conf`
+        <set>
+            <trim suffixOverrides=",">
+                <if test="labelType != null">`label_type`=#{labelType},</if>
+                <if test="labelName != null">`label_name` = #{labelName},</if>
+            </trim>
+        </set>
+        <where>
+            `id` = #{id}
+        </where>
+    </update>
+
+    <update id="batchUpdateLabelConfByID">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE `label_conf`
+            <set>
+                <trim suffixOverrides=",">
+                    <if test="labelType != null">`label_type`=#{item.labelType},</if>
+                    <if test="labelName != null">`label_name` = #{item.labelName},</if>
+                </trim>
+            </set>
+            <where>
+                `id` = #{item.id}
+            </where>
+        </foreach>
+    </update>
+
+    <delete id="deleteLabelConfByID">
+        DELETE FROM `label_conf`
+        WHERE `id` = #{id}
+    </delete>
+
+    <delete id="deleteLabelConfByDatasetId">
+        DELETE FROM `label_conf`
+        WHERE `dataset_id` = #{id}
+    </delete>
+
+</mapper>
