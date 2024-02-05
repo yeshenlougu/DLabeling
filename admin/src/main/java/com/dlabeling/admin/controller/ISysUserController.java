@@ -4,6 +4,7 @@ import com.dlabeling.common.core.domain.R;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
+import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.service.user.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,18 +29,21 @@ public class ISysUserController {
     
     @Autowired
     ISysUserService ISysUserService;
+
+    @Autowired
+    UserInfoMapper userInfoMapper;
     
     @PostMapping("/register")
     public R<String> registerUser(User user){
         try{
             ISysUserService.addUser(user);
-            return R.ok();
+            return R.ok(null, "用户注册成功");
         }catch (BusinessException e){
             
             return R.fail(e.getCode().getCode(), e.getMsg());
         }
-    } 
-    
+    }
+
     @PostMapping("/login")
     public R<String> login(User user){
         try{

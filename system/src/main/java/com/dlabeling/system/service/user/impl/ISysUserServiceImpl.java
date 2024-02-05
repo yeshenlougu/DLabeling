@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,9 +42,13 @@ public class ISysUserServiceImpl implements ISysUserService {
         User selectUser = userMapper.selectUser(user);
         if (selectUser == null){
             try{
+                user.setCreateTime(new Date());
+                log.info(user.toString());
                 userMapper.addUser(user);
                 User insertedUser = userMapper.selectUser(user);
+                log.info(insertedUser.toString());
                 UserInfo userInfo = new UserInfo(insertedUser);
+                log.info(userInfo.toString());
                 userInfoMapper.addUserInfo(userInfo);
             }catch (Exception e){
                 log.error(e.getMessage(), e);

@@ -1,9 +1,10 @@
 package com.dlabeling.system.domain.po.user;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * @Description:
@@ -44,15 +45,18 @@ public class User implements Serializable {
     /**
      * 创建时间
      */
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 更新时间
      */
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     /**
      * 删除时间
      */
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date destroyTime;
 }

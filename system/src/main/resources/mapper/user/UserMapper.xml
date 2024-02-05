@@ -8,18 +8,18 @@
         INSERT INTO user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="true">username,</if>
-            <if test="true">create_time,</if>
             <if test="email != null">email,</if>
             <if test="phone != null">phone,</if>
             <if test="true">`password`,</if>
+            <if test="true">create_time,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="true">#{username},</if>
-            <if test="true">CURRENT_TIMESTAMP,</if>
             <if test="email != null">#{email},</if>
             <if test="phone != null">#{phone},</if>
             <if test="true">#{password},</if>
+            <if test="true">#{createTime},</if>
         </trim>
     </insert>
     
@@ -53,9 +53,9 @@
         FROM user
         <where>
             <trim suffixOverrides="AND">
-                <if test="email != null or email != ''">email = #{email}</if>
-                <if test="phone != null or phone != ''">phone = #{phone}</if>
-                <if test="password != null or password != ''">`password` = #{password}</if>
+                <if test="email != null and email != ''">email = #{email} AND</if>
+                <if test="phone != null and phone != ''">`phone` = #{phone} AND</if>
+                <if test="password != null and password != ''">`password` = #{password}</if>
             </trim>
         </where>
     </select>

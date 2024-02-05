@@ -10,8 +10,8 @@ DROP TABLE IF EXISTS user;
 CREATE TABLE `user`(
     `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '用户唯一编号',
     `username` VARCHAR(20) NOT NULL COMMENT '用户名',
-    `email` VARCHAR(20) NOT NULL COMMENT '用户邮箱',
-    `phone` VARCHAR(20) NOT NULL COMMENT '用户手机号',
+    `email` VARCHAR(20) COMMENT '用户邮箱',
+    `phone` VARCHAR(20) COMMENT '用户手机号',
     `password` VARCHAR(40) NOT NULL COMMENT '用户密码',
     `create_time` DATETIME NOT NULL COMMENT '账号创建时间',
     `update_time` DATETIME DEFAULT NULL COMMENT '密码修改时间',
@@ -20,7 +20,8 @@ CREATE TABLE `user`(
 
 DROP TABLE IF EXISTS user_info;
 CREATE TABLE `user_info`(
-    `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT '用户唯一编号',
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `user_id` INT PRIMARY KEY COMMENT '用户唯一编号',
     `username` VARCHAR(20) NOT NULL COMMENT '用户名',
     `email` VARCHAR(20) NOT NULL COMMENT '用户邮箱',
     `phone` VARCHAR(20) DEFAULT NULL COMMENT '用户手机号',

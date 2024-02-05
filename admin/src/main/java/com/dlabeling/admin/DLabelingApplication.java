@@ -3,6 +3,7 @@ package com.dlabeling.admin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 /**
  * @Description:
@@ -10,7 +11,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  * @Email 3223905473@qq.com
  * @Since 2024/1/14
  */
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class }, scanBasePackages = {"com.dlabeling.*"})
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class , SecurityAutoConfiguration.class}, scanBasePackages = {"com.dlabeling.*"})
 public class DLabelingApplication {
     public static void main(String[] args) {
         SpringApplication.run(DLabelingApplication.class, args);

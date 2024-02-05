@@ -5,7 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
+import com.alibaba.fastjson2.annotation.JSONField;
 
 /**
  * @Description:
@@ -20,17 +21,21 @@ public class UserInfo implements Serializable {
     private static final long serialVersionUID = -4361859233202249298L;
 
     public UserInfo(User user) {
-        this.id = user.getId();
+        this.userId = user.getId();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.createTime = user.getCreateTime();
+
     }
+
+
+    private Integer id;
 
     /**
      * 用户编号
      */
-    private Integer id;
+    private Integer userId;
 
     /**
      * 用户名
@@ -68,16 +73,19 @@ public class UserInfo implements Serializable {
     /**
      * 创建时间
      */
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 更新时间
      */
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     /**
      * 删除时间
      */
+//    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date destroyTime;
 
 }

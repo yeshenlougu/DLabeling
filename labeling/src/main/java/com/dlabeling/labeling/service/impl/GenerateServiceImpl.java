@@ -5,6 +5,7 @@ import com.dlabeling.common.utils.FileUtils;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.labeling.common.DBCreateConstant;
 import com.dlabeling.labeling.common.LabelConstant;
+import com.dlabeling.labeling.config.LabelConfig;
 import com.dlabeling.labeling.core.enums.DataBaseType;
 import com.dlabeling.labeling.domain.po.Datasets;
 import com.dlabeling.labeling.domain.po.LabelConf;
@@ -41,6 +42,9 @@ public class GenerateServiceImpl implements GenerateService {
     DatasetsMapper datasetsMapper;
 
     @Autowired
+    LabelConfig labelConfig;
+
+    @Autowired
     LabelConfMapper labelConfMapper;
 
     @Autowired
@@ -56,6 +60,9 @@ public class GenerateServiceImpl implements GenerateService {
     @Transactional
     public void makeDataBase(DatasetsVO datasetsVO) throws FileException{
         Datasets datasets = DatasetsVO.convertToDatasets(datasetsVO);
+        if (datasetsVO.getDataRootDir() == null && datasetsVO.getDataRootDir().isEmpty()){
+            datasetsVO.setDataRootDir(labelConfig.getDefaultDataRootDir());
+        }
         datasetsMapper.addDatasets(datasets);
         Datasets selectDatasets = datasetsMapper.selectByObj(datasets);
         String dbRootDir = datasetsVO.getDataRootDir();
@@ -76,8 +83,6 @@ public class GenerateServiceImpl implements GenerateService {
         List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(selectDatasets.getId());
 
         createDBDataTable(selectDatasets, labelConfByDB);
-
-
 
 
     }

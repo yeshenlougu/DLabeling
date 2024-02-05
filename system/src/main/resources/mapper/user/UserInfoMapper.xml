@@ -6,16 +6,19 @@
     <insert id="addUserInfo">
         INSERT INTO user_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="true">id,</if>
-            <if test="email != null or email != ''">email,</if>
-            <if test="phone != null or phone != ''">phone,</if>
+            <if test="true">user_id,</if>
+            <if test="email != null and email != ''">email,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="username != null and username != ''">username,</if>
+            <if test="true">create_time,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="true">`id` = #{id},</if>
-            <if test="email != null or email != ''">email = #{email},</if>
-            <if test="phone != null or phone != ''">phone = #{email},</if>
-            <if test="true">create_time = #{createTime},</if>
+            <if test="true">#{userId},</if>
+            <if test="email != null and email != ''">#{email},</if>
+            <if test="phone != null and phone != ''"> #{email},</if>
+            <if test="username != null and username != ''">#{username},</if>
+            <if test="true">#{createTime},</if>
         </trim>
         
     </insert>
@@ -30,11 +33,11 @@
                 <if test="privilege != null">privilege = #{privilege},</if>
                 <if test="gender != null">gender = #{gender},</if>
                 <if test="address != null">address = #{address}</if>
-                <if test="true">update_time = CURRENT_TIMESTAMP</if>
+                <if test="true">update_time = #{updateTime}</if>
             </trim>
         </set>
         <where>
-            id = #{id}
+            `user_id` = #{userId}
         </where>
     </update>
     
@@ -43,7 +46,7 @@
         UPDATE user_info
         SET destroy_time = CURRENT_TIMESTAMP
         <where>
-            `id` = #{id}
+            `user_id` = #{userId}
         </where>
     </update>
     
@@ -60,7 +63,7 @@
             user_info
         <where>
             <if test="userInfoList != null and userInfoList.size() &gt; 0">
-                id IN
+                `user_id` IN
                 <foreach collection="userInfoList" item="item" open="(" close=")" index="index" separator=",">
                     #{item}
                 </foreach>
@@ -81,7 +84,7 @@
         FROM
             user_info
         <where>
-            id = #{id}
+            user_id = #{userId}
         </where>
     </select>
     
