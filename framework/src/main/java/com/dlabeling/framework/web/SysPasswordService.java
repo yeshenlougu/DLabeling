@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @Email 3223905473@qq.com
  * @Since 2024/1/15
  */
-@Component
+@Service
 public class SysPasswordService {
 
     @Value(value = "${user.password.maxRetryCount}")

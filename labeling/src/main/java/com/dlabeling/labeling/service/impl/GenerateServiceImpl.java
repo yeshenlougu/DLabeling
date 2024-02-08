@@ -15,6 +15,7 @@ import com.dlabeling.labeling.generate.DBManager;
 import com.dlabeling.labeling.mapper.DatasetsMapper;
 import com.dlabeling.labeling.mapper.LabelConfMapper;
 import com.dlabeling.labeling.service.GenerateService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
  * @Email 3223905473@qq.com
  * @Since 2024/1/23
  */
+@Slf4j
 @Service
 public class GenerateServiceImpl implements GenerateService {
 
@@ -60,6 +62,7 @@ public class GenerateServiceImpl implements GenerateService {
     @Transactional
     public void makeDataBase(DatasetsVO datasetsVO) throws FileException{
         Datasets datasets = DatasetsVO.convertToDatasets(datasetsVO);
+        log.info(datasets.toString());
         if (datasetsVO.getDataRootDir() == null && datasetsVO.getDataRootDir().isEmpty()){
             datasetsVO.setDataRootDir(labelConfig.getDefaultDataRootDir());
         }

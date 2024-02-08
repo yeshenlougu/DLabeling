@@ -8,10 +8,12 @@ import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
 import com.dlabeling.system.domain.vo.LoginUser;
 import com.dlabeling.system.service.user.ISysUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
@@ -21,6 +23,8 @@ import javax.annotation.Resource;
  * @Email 3223905473@qq.com
  * @Since 2024/1/14
  */
+@Slf4j
+@Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
     @Resource
@@ -35,6 +39,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        log.debug("test=================");
         User user = new User();
         if (StringUtils.isEmail(username)){
             user.setEmail(username);
@@ -51,7 +56,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
         passwordService.validate(userByEmailOrPhone);
         
-        return null;
+        return createLoginUser(user);
     }
 
     public UserDetails createLoginUser(User user)

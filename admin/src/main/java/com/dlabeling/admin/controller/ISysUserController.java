@@ -1,7 +1,9 @@
 package com.dlabeling.admin.controller;
 
 import com.dlabeling.common.core.domain.R;
+import com.dlabeling.common.core.domain.model.LoginBody;
 import com.dlabeling.common.exception.BusinessException;
+import com.dlabeling.framework.web.SysLoginService;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
 import com.dlabeling.system.mapper.user.UserInfoMapper;
@@ -32,6 +34,9 @@ public class ISysUserController {
 
     @Autowired
     UserInfoMapper userInfoMapper;
+
+    @Autowired
+    SysLoginService sysLoginService;
     
     @PostMapping("/register")
     public R<String> registerUser(User user){
@@ -45,10 +50,15 @@ public class ISysUserController {
     }
 
     @PostMapping("/login")
-    public R<String> login(User user){
+    public R<String> login(LoginBody loginBody){
         try{
-            ISysUserService.login(user);
-            return R.ok(null, "登录成功");
+            String username = loginBody.getUsername();
+            String password = loginBody.getPassword();
+            String code = loginBody.getCode();
+            String captchaUUID = loginBody.getUuid();
+
+            String token = sysLoginService.login(username, password, code, captchaUUID);
+            return R.ok(token, "登录成功");
         }catch (BusinessException e){
             return R.fail(e.getCode().getCode(), e.getMsg());
         }
