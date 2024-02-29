@@ -1,6 +1,5 @@
 package com.dlabeling.common.exception.base;
 
-import com.dlabeling.common.utils.MessageUtils;
 import com.dlabeling.common.utils.StringUtils;
 
 /**
@@ -67,7 +66,7 @@ public class BaseException extends RuntimeException{
         String message = null;
         if (!StringUtils.isEmpty(code))
         {
-            message = MessageUtils.message(code, args);
+            message = code;
         }
         if (message == null)
         {

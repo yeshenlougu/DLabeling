@@ -32,21 +32,27 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
+        if (loginTime == null || expireTime == null){
+            return true;
+        }
         return System.currentTimeMillis() < loginTime + expireTime;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return delete;
+        return !delete;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
+        if (loginTime == null || expireTime == null){
+            return true;
+        }
         return System.currentTimeMillis() < loginTime + expireTime;
     }
 
     @Override
     public boolean isEnabled() {
-        return delete;
+        return !delete;
     }
 }

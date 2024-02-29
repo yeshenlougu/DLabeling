@@ -97,6 +97,9 @@ spring:
       # 关闭超时时间
       shutdown-timeout: 1000
 
+  messages:
+    basename: message
+
 # Token自定义配置
 token:
   # 令牌自定义标识

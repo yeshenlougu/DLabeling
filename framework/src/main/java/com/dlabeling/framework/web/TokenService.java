@@ -67,6 +67,7 @@ public class TokenService {
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
                 String userKey = getTokenKey(uuid);
                 LoginUser loginUser = redisCache.getCacheObject(userKey);
+                return loginUser;
             }
             catch (Exception e){}
         }

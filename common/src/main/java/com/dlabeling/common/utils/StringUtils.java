@@ -636,13 +636,13 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
     }
     
     public static boolean isEmail(String text){
-        Pattern pattern = Pattern.compile("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\\\\.[a-zA-Z0-9-]+)*\\\\.[a-zA-Z0-9]{2,6}$");
+        Pattern pattern = Pattern.compile("^[\\w-]+(\\.[\\w-]+)*@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*(\\.[a-zA-Z]{2,})$");
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
     }
     
     public static boolean isPhone(String text){
-        Pattern pattern = Pattern.compile("^((13[0-9])|(14[0-9])|(15[0-9])|(16[0-9])|(17[0-9])|(18[0-9]))\\d{8}$+");
+        Pattern pattern = Pattern.compile("^1[3-9]\\d{9}$\n");
         Matcher matcher = pattern.matcher(text);
         return matcher.matches();
     }

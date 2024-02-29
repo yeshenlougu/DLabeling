@@ -9,6 +9,7 @@ import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.mapper.user.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,9 @@ public class ISysUserServiceImpl implements ISysUserService {
     
     @Autowired
     private UserInfoMapper userInfoMapper;
+
+    @Autowired
+    private PasswordEncoder bCryptPasswordEncoder;
     
     
     @Override
@@ -38,10 +42,15 @@ public class ISysUserServiceImpl implements ISysUserService {
     public void addUser(User user) {
         
         // TODO 进行参数校验
-        
+        String pwd = bCryptPasswordEncoder.encode(user.getPassword());
+        log.debug(pwd);
+        //进行密码加密
+        user.setPassword(pwd);
         User selectUser = userMapper.selectUser(user);
+
         if (selectUser == null){
             try{
+
                 user.setCreateTime(new Date());
                 log.info(user.toString());
                 userMapper.addUser(user);

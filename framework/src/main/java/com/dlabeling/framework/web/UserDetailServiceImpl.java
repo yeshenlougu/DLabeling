@@ -56,13 +56,14 @@ public class UserDetailServiceImpl implements UserDetailsService {
         }
         passwordService.validate(userByEmailOrPhone);
         
-        return createLoginUser(user);
+        return createLoginUser(userByEmailOrPhone);
     }
 
     public UserDetails createLoginUser(User user)
     {
         UserInfo userInfoById = iSysUserService.getUserInfoById(user.getId());
         LoginUser loginUser = new LoginUser();
+        loginUser.setPassword(user.getPassword());
         loginUser.setDelete( user.getDestroyTime()==null? Boolean.FALSE : Boolean.TRUE);
         loginUser.setUsername(user.getEmail());
         loginUser.setUserRole(UserRole.getRoleByCode(userInfoById.getPrivilege()).getRole());
