@@ -2,9 +2,12 @@ package com.dlabeling.framework.web;
 
 import com.dlabeling.common.constant.CacheConstants;
 import com.dlabeling.common.core.redis.RedisCache;
+import com.dlabeling.common.enums.ResponseCode;
+import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.ServiceException;
 import com.dlabeling.common.exception.user.CaptchaException;
 import com.dlabeling.common.exception.user.CaptchaExpireException;
+import com.dlabeling.common.exception.user.UserException;
 import com.dlabeling.common.exception.user.UserPasswordNotMatchException;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.framework.security.context.AuthenticationContextHolder;
@@ -68,10 +71,11 @@ public class SysLoginService {
             authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
         }catch (Exception e){
             if (e instanceof BadCredentialsException){
-                throw new UserPasswordNotMatchException();
-            }
-            else {
-                throw new ServiceException(e.getMessage());
+                throw new BusinessException(ResponseCode.USER_PWD_NOT_MATCH, ResponseCode.USER_PWD_NOT_MATCH.getMessage());
+            } else if (e.getCause() instanceof UserException) {
+                throw new BusinessException(ResponseCode.USER_PWD_NOT_MATCH, ResponseCode.USER_PWD_NOT_MATCH.getMessage());
+            } else {
+                throw new BusinessException(ResponseCode.USER_LOGIN_FAIL, "用户登录失败");
             }
         }
 

@@ -97,9 +97,9 @@ public class RedisCache {
      */
     public <T> T getCacheObject(final String key)
     {
-//        ValueOperations<String, T> operation = redisTemplate.opsForValue();
-//        return operation.get(key);
-        return (T) redisTemplate.opsForValue().get(key);
+        ValueOperations<String, T> operation = redisTemplate.opsForValue();
+        return operation.get(key);
+//        return (T) redisTemplate.opsForValue().get(key);
     }
 
     /**

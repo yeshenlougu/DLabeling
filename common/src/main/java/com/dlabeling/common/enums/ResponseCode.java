@@ -25,7 +25,12 @@ public enum ResponseCode {
     FILE_EXISTS(2100, "文件已存在"),
     FILE_NOT_EXISTS(2101, "文件不存在"),
     FILE_NOT_FILE(2102, "不是文件"),
-    FILE_NOT_DIR(2103, "不是文件夹");
+    FILE_NOT_DIR(2103, "不是文件夹"),
+
+    USER_PWD_NOT_MATCH(2200, "用户密码错误"),
+    USER_NOT_EXIST(2201, "用户不存在"),
+    USER_LOGIN_FAIL(2202, "用户登录失败"),
+    USER_UPDATE_FAIL(2203, "用户更新失败");
 
 
 

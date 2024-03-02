@@ -2,6 +2,10 @@ package com.dlabeling.system.service.user.impl;
 
 import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
+import com.dlabeling.common.utils.StringUtils;
+import com.dlabeling.system.constant.LevelApplyStatus;
+import com.dlabeling.system.domain.po.LevelApply;
+import com.dlabeling.system.mapper.LevelApplyMapper;
 import com.dlabeling.system.service.user.ISysUserService;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
@@ -13,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +39,9 @@ public class ISysUserServiceImpl implements ISysUserService {
     private UserInfoMapper userInfoMapper;
 
     @Autowired
+    private LevelApplyMapper levelApplyMapper;
+
+    @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
     
     
@@ -45,12 +53,12 @@ public class ISysUserServiceImpl implements ISysUserService {
         String pwd = bCryptPasswordEncoder.encode(user.getPassword());
         log.debug(pwd);
         //进行密码加密
-        user.setPassword(pwd);
+        user.setPassword(null);
         User selectUser = userMapper.selectUser(user);
 
         if (selectUser == null){
             try{
-
+                user.setPassword(pwd);
                 user.setCreateTime(new Date());
                 log.info(user.toString());
                 userMapper.addUser(user);
@@ -75,8 +83,15 @@ public class ISysUserServiceImpl implements ISysUserService {
     @Transactional
     public void updateUser(User user) {
         try{
+            if (StringUtils.isNotEmpty(user.getPassword())){
+                user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            }
+            if (!StringUtils.isNotNull(user.getId())){
+                throw new BusinessException(ResponseCode.USER_UPDATE_FAIL, "缺少userID");
+            }
+
             userMapper.updateUser(user);
-            userInfoMapper.updateById(new UserInfo(user));
+            userInfoMapper.updateUserInfo(new UserInfo(user));
         }catch (Exception e){
             log.error(e.getMessage(), e);
             throw new BusinessException(ResponseCode.SQL_UPDATE_ERROR, "用户更新失败");
@@ -86,7 +101,15 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Override
     public void updateUserInfo(UserInfo userInfo) {
+        userInfo.setUpdateTime(new Date());
         userInfoMapper.updateUserInfo(userInfo);
+
+        User user = new User();
+        user.setId(userInfo.getUserId());
+        user.setUsername(userInfo.getUsername());
+        user.setPhone(userInfo.getPhone());
+        user.setUpdateTime(userInfo.getUpdateTime());
+        userMapper.updateUser(user);
     }
 
     @Override
@@ -132,5 +155,43 @@ public class ISysUserServiceImpl implements ISysUserService {
         User selectUser = userMapper.selectUser(user);
         return selectUser;
     }
-    
+
+    @Override
+    public void addLevelApply(LevelApply levelApply) {
+        levelApply.setCreateTime(new Date());
+        levelApply.setStatus(LevelApplyStatus.APPLYING.getCode());
+        levelApplyMapper.addLevelApply(levelApply);
+    }
+
+    @Override
+    @Transactional
+    public void updateLevelApply(LevelApply levelApply) {
+        try {
+            levelApply.setUpdateTime(new Date());
+            levelApplyMapper.updateLevelApply(levelApply);
+            // 更新userInfo
+            if (levelApply.getStatus() == LevelApplyStatus.AGREE.getCode()){
+                UserInfo userInfo = new UserInfo();
+                userInfo.setUserId(levelApply.getApplyer());
+                userInfo.setPrivilege(levelApply.getPrivilege());
+                userInfo.setUpdateTime(levelApply.getUpdateTime());
+                userInfoMapper.updateUserInfo(userInfo);
+            }
+        }catch (Exception e){
+            throw new BusinessException(ResponseCode.SQL_UPDATE_ERROR, "权限更新失败");
+        }
+
+    }
+
+    @Override
+    public List<LevelApply> getAllLevelApply() {
+        List<LevelApply> allLevelApply = levelApplyMapper.getAllLevelApply();
+        return allLevelApply;
+    }
+
+    @Override
+    public List<LevelApply> getLevelApplyByStatus(int status) {
+        List<LevelApply> levelApplyByStatus = levelApplyMapper.getLevelApplyByStatus(status);
+        return levelApplyByStatus;
+    }
 }

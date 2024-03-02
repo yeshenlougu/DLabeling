@@ -1,5 +1,6 @@
 package com.dlabeling.framework.config;
 
+import com.dlabeling.framework.security.filter.JwtAuthenticationTokenFilter;
 import com.dlabeling.framework.security.handle.LogoutSuccessHandlerImpl;
 import com.dlabeling.framework.security.handle.UnAuthenticationEntryPointImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -26,6 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private LogoutSuccessHandlerImpl logoutSuccessHandlerImpl;
+
+    @Autowired
+    private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
     @Bean
     @Override
@@ -63,5 +68,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 添加Logout filter
         http.logout().logoutUrl("/user/logout").logoutSuccessHandler(logoutSuccessHandlerImpl);
+
+        // 添加jwt过滤器
+        http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

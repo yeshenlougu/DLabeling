@@ -65,9 +65,9 @@ CREATE TABLE `interface_address`(
 DROP TABLE IF EXISTS level_apply;
 CREATE TABLE `level_apply`(
 	`id` INT AUTO_INCREMENT  PRIMARY KEY COMMENT 'id标识',
-    `applyer` VARCHAR(40) NOT NULL COMMENT '申请者id',
-    `status` CHAR(1) NOT NULL COMMENT '申请状态  A:申请中, B:已批准, C:已拒绝',
-    `judger` VARCHAR(40) DEFAULT NULL COMMENT '审批人id',
+    `applyer`INT NOT NULL COMMENT '申请者id',
+    `status` INT NOT NULL COMMENT '申请状态  A:申请中, B:已批准, C:已拒绝',
+    `judger` INT DEFAULT NULL COMMENT '审批人id',
     `create_time` DATETIME NOT NULL COMMENT '用户信息创建时间',
     `update_time` DATETIME DEFAULT NULL COMMENT '用户信息修改时间',
     `destroy_time` DATETIME DEFAULT NULL COMMENT '用户信息删除时间',

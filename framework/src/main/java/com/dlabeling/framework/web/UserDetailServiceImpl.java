@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @Description:
@@ -27,9 +29,6 @@ import javax.annotation.Resource;
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
 
-    @Resource
-    RedisTemplate<String, String> redisTemplate;
-    
     @Resource
     ISysUserService iSysUserService;
     
@@ -66,7 +65,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
         loginUser.setPassword(user.getPassword());
         loginUser.setDelete( user.getDestroyTime()==null? Boolean.FALSE : Boolean.TRUE);
         loginUser.setUsername(user.getEmail());
-        loginUser.setUserRole(UserRole.getRoleByCode(userInfoById.getPrivilege()).getRole());
+
+        Set<String> roles = new HashSet<>();
+        roles.add(UserRole.getRoleByCode(userInfoById.getPrivilege()).getRole());
+        loginUser.setUserRole(roles);
         return loginUser;
     }
     

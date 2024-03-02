@@ -28,13 +28,15 @@
         UPDATE user
         <set>
             <trim suffixOverrides=",">
+                <if test="username != null and username != ''">username = #{username},</if>
                 <if test="email != null"> email = #{email},</if>
                 <if test="phone != null"> phone = #{phone},</if>
                 <if test="password != null"> `password` = #{password},</if>
+                <if test="true">update_time = #{updateTime}</if>
             </trim>
         </set>
         <where>
-            uuid = #{uuid}
+            `id` = #{id}
         </where>
     </update>
     
@@ -67,6 +69,11 @@
         <where>
             uuid = #{uuid}
         </where>
+    </select>
+
+    <select id="getAllUser" resultType="com.dlabeling.system.domain.po.user.User">
+        SELECT *
+        FROM user
     </select>
 
 

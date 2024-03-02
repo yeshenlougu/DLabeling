@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.system.mapper.LevelApplyMapper">
+
+    <insert id="addLevelApply">
+        INSERT INTO `level_apply`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">id,</if>
+            <if test="true">applyer,</if>
+            <if test="true">privilege,</if>
+            <if test="true">status,</if>
+            <if test="true">judger,</if>
+            <if test="true">create_time,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">#{id},</if>
+            <if test="true">#{applyer},</if>
+            <if test="true">#{privilege},</if>
+            <if test="true">#{status},</if>
+            <if test="true">#{judger},</if>
+            <if test="true">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <!-- 根据id  更新用户手机号、邮箱、密码  -->
+    <update id="updateLevelApply">
+        UPDATE `level_apply`
+        <set>
+            <trim suffixOverrides=",">
+                <if test="true">status = #{status},</if>
+                <if test="true">`judger` = #{judger},</if>
+                <if test="true">update_time = #{updateTime},</if>
+            </trim>
+        </set>
+        <where>
+            `id` = #{id}
+        </where>
+    </update>
+
+    <select id="getAllLevelApply" resultType="com.dlabeling.system.domain.po.LevelApply">
+        SELECT *
+        FROM `level_apply`
+    </select>
+
+    <select id="getLevelApplyByStatus" resultType="com.dlabeling.system.domain.po.LevelApply">
+        SELECT *
+        FROM `level_apply`
+        <where>
+            `status` = #{status}
+        </where>
+    </select>
+</mapper>

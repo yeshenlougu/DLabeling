@@ -1,5 +1,6 @@
 package com.dlabeling.system.service.user;
 
+import com.dlabeling.system.domain.po.LevelApply;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
 
@@ -34,4 +35,12 @@ public interface ISysUserService {
     User getUserByEmailOrPhone(User user);
     
     User login(User user);
+
+    void addLevelApply(LevelApply levelApply);
+
+    void updateLevelApply(LevelApply levelApply);
+
+    List<LevelApply> getAllLevelApply();
+
+    List<LevelApply> getLevelApplyByStatus(int status);
 }

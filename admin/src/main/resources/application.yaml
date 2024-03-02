@@ -124,6 +124,7 @@ captcha:
 logging:
   level:
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: trace
+#    root: debug
 
 # Swagger配置
 swagger:

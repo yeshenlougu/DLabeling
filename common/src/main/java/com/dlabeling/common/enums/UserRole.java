@@ -9,9 +9,9 @@ import java.util.stream.Stream;
  * @Since 2024/1/15
  */
 public enum UserRole {
-    ADMINISTRATOR(0, "admin", "管理员，拥有所有权限"),
-    LABELER(1, "labeler", "标注员，只有标注权限"),
-    TRAINER(2, "trainer", "训练员，拥有标注和训练权限");
+    ADMINISTRATOR(0, "ADMIN", "管理员，拥有所有权限"),
+    LABELER(1, "LABELER", "标注员，只有标注权限"),
+    TRAINER(2, "TRAINER", "训练员，拥有标注和训练权限");
 
 
     private int code;

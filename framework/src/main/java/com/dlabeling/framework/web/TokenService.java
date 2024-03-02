@@ -3,6 +3,8 @@ package com.dlabeling.framework.web;
 import com.dlabeling.common.constant.CacheConstants;
 import com.dlabeling.common.constant.Constants;
 import com.dlabeling.common.core.redis.RedisCache;
+import com.dlabeling.common.enums.ResponseCode;
+import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.common.utils.uuid.IDUtils;
 import com.dlabeling.system.domain.vo.LoginUser;
@@ -13,6 +15,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,6 +53,9 @@ public class TokenService {
 
     @Autowired
     private RedisCache redisCache;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
     
     @Autowired
     private ISysUserService iSysUserService;
@@ -67,9 +73,13 @@ public class TokenService {
                 String uuid = (String) claims.get(Constants.LOGIN_USER_KEY);
                 String userKey = getTokenKey(uuid);
                 LoginUser loginUser = redisCache.getCacheObject(userKey);
+                log.debug(loginUser.toString());
                 return loginUser;
             }
-            catch (Exception e){}
+            catch (Exception e){
+                log.debug(e.getMessage());
+                throw new BusinessException(ResponseCode.BUSINESS_ERROR, "getLoginUser error");
+            }
         }
         return null;
     }

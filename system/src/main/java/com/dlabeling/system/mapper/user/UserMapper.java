@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.system.domain.po.user.User;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @Description:
  * @Auther YYS
@@ -47,4 +49,6 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     User selectUserById(Integer uuid);
+
+    List<User> getAllUser();
 }
