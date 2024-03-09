@@ -1,5 +1,8 @@
 package com.dlabeling.system.domain.po.user;
 
+import com.dlabeling.common.enums.Gender;
+import com.dlabeling.common.enums.UserRole;
+import com.dlabeling.system.domain.vo.UserInfoVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -87,5 +90,20 @@ public class UserInfo implements Serializable {
      */
 //    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date destroyTime;
+
+    public static UserInfoVO convertToUserInfoVO(UserInfo userInfo){
+        UserInfoVO userInfoVO = new UserInfoVO();
+        userInfoVO.setId(userInfo.getId());
+        userInfoVO.setUserId(userInfo.getUserId());
+        userInfoVO.setUsername(userInfo.getUsername());
+        userInfoVO.setEmail(userInfo.getEmail());
+        userInfoVO.setPhone(userInfo.getPhone());
+        userInfoVO.setAddress(userInfo.getAddress());
+        userInfoVO.setPrivilege(UserRole.getRoleByCode(userInfo.getPrivilege()).getRole());
+        userInfoVO.setGender(Gender.getGenderByCode(userInfo.getGender()).getSex());
+
+        return userInfoVO;
+
+    }
 
 }

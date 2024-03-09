@@ -4,7 +4,11 @@ import com.dlabeling.common.utils.DateUtils;
 import com.dlabeling.labeling.core.enums.DataBaseType;
 import com.dlabeling.labeling.domain.po.Datasets;
 import lombok.Data;
+import org.apache.ibatis.annotations.Options;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -41,6 +45,8 @@ public class DatasetsVO {
      */
     private String dataRootDir;
 
+    private String creator;
+
 
 
     /**
@@ -48,9 +54,9 @@ public class DatasetsVO {
      */
     private Boolean visible;
 
-    private DataBaseType dataBaseType;
+    private String dataBaseType;
 
-    private List<LabelConfVO> labelConfVOList;
+    private List<LabelConfVO> labelConfList;
 
 
     public static Datasets convertToDatasets(DatasetsVO datasetsVO){
@@ -62,5 +68,18 @@ public class DatasetsVO {
         datasets.setVisible(datasetsVO.getVisible());
         datasets.setCreateTime(DateUtils.getNowDate());
         return datasets;
+    }
+
+    public static DatasetsVO convertToDatasetsVO(Datasets datasets){
+        DatasetsVO datasetsVO = new DatasetsVO();
+        datasetsVO.setName(datasets.getName());
+        datasetsVO.setDescription(datasets.getDescription());
+        datasetsVO.setType(datasets.getType());
+        datasetsVO.setDataRootDir(datasets.getDataRootDir());
+        datasetsVO.setVisible(datasets.getVisible());
+        datasetsVO.setId(datasets.getId());
+        datasetsVO.setDataBaseType(DataBaseType.getByCode(datasets.getType()).getName());
+
+        return datasetsVO;
     }
 }

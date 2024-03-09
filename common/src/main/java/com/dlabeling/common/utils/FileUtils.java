@@ -1,17 +1,17 @@
 package com.dlabeling.common.utils;
 
-import com.dlabeling.common.exception.file.FileException;
-import com.dlabeling.common.exception.file.FileExistsException;
-import com.dlabeling.common.exception.file.FileNotDirException;
-import com.dlabeling.common.exception.file.FileNotFileException;
+import com.dlabeling.common.exception.file.*;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,11 +25,12 @@ public class FileUtils {
 
     public static void makeDir(String dirPath){
         if(exists(dirPath)){
-            throw new FileExistsException();
+            if (!isDirectory(dirPath)){
+                throw new FileNotDirException();
+            }
+            throw new DirExistsException();
         }
-        if (!isDirectory(dirPath)){
-            throw new FileNotDirException();
-        }
+
         Path path = Paths.get(dirPath);
         try {
             Files.createDirectories(path);
@@ -37,6 +38,30 @@ public class FileUtils {
             throw new FileException("创建目录失败： "+dirPath, null);
         }
 
+    }
+
+    public static void deleteDir(String dirPath){
+        File file = new File(dirPath);
+        deleteFolder(file);
+    }
+
+    private static void deleteFolder(File folder){
+        if (folder.exists()) {
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        // 递归删除子文件夹
+                        deleteFolder(file);
+                    } else {
+                        // 删除文件
+                        file.delete();
+                    }
+                }
+            }
+            // 删除文件夹本身
+            folder.delete();
+        }
     }
 
     public static String resolvePath(String root, String sub){
@@ -81,5 +106,32 @@ public class FileUtils {
         return Files.isDirectory(path);
     }
 
+
+    public static String getFileName(String path){
+        if (isDirectory(path)){
+            throw new FileNotFileException();
+        }
+        char separatorChar = File.separatorChar;
+        int index = path.lastIndexOf(separatorChar);
+        String fileName = path.substring(index + 1);
+
+        return fileName;
+    }
+
+    public static String removeFileExtension(String fileName){
+        int i = fileName.lastIndexOf('.');
+        return fileName.substring(0, i+1);
+    }
+
+    public static String getBase64(String filePath) throws IOException {
+        File file = new File(filePath);
+        if (isDirectory(filePath)){
+            throw new FileNotFileException();
+        }
+        FileInputStream inputStream = new FileInputStream(file);
+        byte[] bytes = new byte[(int) file.length()];
+        inputStream.read(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
+    }
 
 }

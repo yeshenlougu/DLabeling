@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.labeling.mapper.DatasMapper">
+
+    <select id="selectDataLimit" resultType="map" statementType="STATEMENT">
+        SELECT
+            *
+        FROM ${table}
+
+        LIMIT ${limit} OFFSET ${offset}
+    </select>
+<!--    #         <if test="order != null"> ORDER BY #{order} </if>-->
+<!--    &lt;!&ndash; 定义ResultMap &ndash;&gt;-->
+<!--    <resultMap id="datasMap" type="com.dlabeling.labeling.domain.po.Datas">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result property="dataPath" column="data_path"/>-->
+<!--        <result property="labelPath" column="label_path"/>-->
+<!--        &lt;!&ndash; 使用association标签映射其他字段到labelMap &ndash;&gt;-->
+<!--        <association property="labelMap" javaType="java.util.HashMap">-->
+<!--            &lt;!&ndash; 使用foreach动态生成字段映射 &ndash;&gt;-->
+<!--            <foreach collection="columnNames" item="columnName" open="" close="" separator="">-->
+<!--                <result property="${columnName}" column="${columnName}"/>-->
+<!--            </foreach>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+
+
+</mapper>

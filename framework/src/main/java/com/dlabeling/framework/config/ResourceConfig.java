@@ -2,6 +2,7 @@ package com.dlabeling.framework.config;
 
 import com.dlabeling.common.config.DLabelingConfig;
 import com.dlabeling.common.constant.Constants;
+import com.dlabeling.framework.interceptors.LoggingInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @Since 2023/12/8
  */
 
-//@Configuration
+@Configuration
 public class ResourceConfig implements WebMvcConfigurer {
     
 
@@ -42,11 +43,11 @@ public class ResourceConfig implements WebMvcConfigurer {
     /**
      * 自定义拦截规则
      */
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry)
-//    {
-//        registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
-//    }
+    @Override
+    public void addInterceptors(InterceptorRegistry registry)
+    {
+        registry.addInterceptor(new LoggingInterceptor());
+    }
 
     /**
      * 跨域配置

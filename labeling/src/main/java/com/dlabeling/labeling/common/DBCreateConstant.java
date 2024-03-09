@@ -32,4 +32,6 @@ public class DBCreateConstant {
             "`{}` VARCHAR(255)   COMMENT '标注的值(模型)',\n" +
             "`{}` VARCHAR(255)   COMMENT '标注的值(测试)'";
 
+    public static final String SELECT_DATAS = "";
+
 }

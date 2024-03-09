@@ -18,13 +18,15 @@ public interface DatasetsMapper extends BaseMapper<Datasets> {
 
     void addDatasets(Datasets datasets);
 
-    List<Datasets> getAll();
+    List<Datasets> getAllDataset();
 
     void updateDatasetsByID(Datasets datasets);
 
     void deleteDatasetsByID(Integer id);
 
     Datasets selectByObj(Datasets datasets);
+
+    Datasets selectByID(Integer id);
 
 
 

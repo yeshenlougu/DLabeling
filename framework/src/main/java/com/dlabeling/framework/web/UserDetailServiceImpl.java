@@ -65,6 +65,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         loginUser.setPassword(user.getPassword());
         loginUser.setDelete( user.getDestroyTime()==null? Boolean.FALSE : Boolean.TRUE);
         loginUser.setUsername(user.getEmail());
+        loginUser.setId(user.getId());
 
         Set<String> roles = new HashSet<>();
         roles.add(UserRole.getRoleByCode(userInfoById.getPrivilege()).getRole());

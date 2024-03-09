@@ -23,7 +23,8 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoginUser implements UserDetails {
-    
+
+    private Integer id;
     private String username;
     private String password;
     private String token;

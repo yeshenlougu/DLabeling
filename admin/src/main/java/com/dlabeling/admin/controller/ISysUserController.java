@@ -1,9 +1,13 @@
 package com.dlabeling.admin.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.dlabeling.common.core.domain.R;
 import com.dlabeling.common.core.domain.model.LoginBody;
 import com.dlabeling.common.core.redis.RedisCache;
+import com.dlabeling.common.enums.ResponseCode;
+import com.dlabeling.common.enums.UserRole;
 import com.dlabeling.common.exception.BusinessException;
+import com.dlabeling.common.exception.user.UserException;
 import com.dlabeling.framework.web.SysLoginService;
 import com.dlabeling.system.domain.po.LevelApply;
 import com.dlabeling.system.domain.po.user.User;
@@ -13,12 +17,10 @@ import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.service.user.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,7 +31,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value = "/user")
 public class ISysUserController {
     
     @Autowired
@@ -43,26 +45,22 @@ public class ISysUserController {
 
     @Autowired
     RedisCache redisCache;
-    @GetMapping("/test")
-    public String test(HttpServletRequest httpServletRequest){
-        String key = "login_tokens:18a1b868-1923-4e9e-8b3c-f0c973b4c5a9";
-        LoginUser loginUser = (LoginUser) redisCache.getCacheObject(key);
-        return loginUser.toString();
-    }
     
     @PostMapping("/register")
-    public R<String> registerUser(User user){
+    public R<String> registerUser(@RequestBody User user){
         try{
             iSysUserService.addUser(user);
             return R.ok(null, "用户注册成功");
+        }catch (UserException e){
+            return R.fail(ResponseCode.USER_LOGIN_FAIL.getCode(), e.getMessage());
         }catch (BusinessException e){
             
-            return R.fail(e.getCode().getCode(), e.getMsg());
+            return R.fail(e.getMsg());
         }
     }
 
     @PostMapping("/login")
-    public R<String> login(LoginBody loginBody){
+    public R<Object> login(@RequestBody LoginBody loginBody){
         try{
             String username = loginBody.getUsername();
             String password = loginBody.getPassword();
@@ -70,9 +68,16 @@ public class ISysUserController {
             String captchaUUID = loginBody.getUuid();
 
             String token = sysLoginService.login(username, password, code, captchaUUID);
-            return R.ok(token, "登录成功");
+            User user = new User();
+            user.setUsername(username);
+            User userByEmailOrPhone = iSysUserService.getUserByEmailOrPhone(user);
+            UserInfo userInfo = iSysUserService.getUserInfoById(userByEmailOrPhone.getId());
+            HashMap<String, String> data = new HashMap<>();
+            data.put("token", token);
+            data.put("role", UserRole.getRoleByCode(userInfo.getPrivilege()).getRole());
+            return R.ok(data, "登录成功");
         }catch (BusinessException e){
-            return R.fail(e.getCode().getCode(), e.getMsg());
+            return R.fail(e.getMsg());
         }
     }
 

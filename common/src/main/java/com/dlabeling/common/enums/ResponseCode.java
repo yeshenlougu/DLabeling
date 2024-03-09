@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
  * @Since 2024/1/2
  */
 public enum ResponseCode {
-    
+
+    PARAMETER_ERROR(1001, "参数错误"),
+
     SQL_INSERT_ERROR(2001, "数据插入错误"),
     SQL_EXIST_ERROR(2002, "数据以存在"),
     SQL_UPDATE_ERROR(2003, "数据库更新错误"),
@@ -26,11 +28,16 @@ public enum ResponseCode {
     FILE_NOT_EXISTS(2101, "文件不存在"),
     FILE_NOT_FILE(2102, "不是文件"),
     FILE_NOT_DIR(2103, "不是文件夹"),
+    FILE_DELETE_ERROR(2104, "文件删除失败"),
+    FILE_ERROR(2105, "文件删除失败"),
+    DIR_CREATE_ERROR(2106, "文件夹创建失败"),
+    DIR_EXISTS(2107, "文件夹已存在"),
 
     USER_PWD_NOT_MATCH(2200, "用户密码错误"),
     USER_NOT_EXIST(2201, "用户不存在"),
     USER_LOGIN_FAIL(2202, "用户登录失败"),
-    USER_UPDATE_FAIL(2203, "用户更新失败");
+    USER_REGISTER_FAIL(2203, "用户登录失败"),
+    USER_UPDATE_FAIL(2204, "用户更新失败");
 
 
 

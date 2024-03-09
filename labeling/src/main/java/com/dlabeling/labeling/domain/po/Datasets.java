@@ -47,6 +47,11 @@ public class Datasets implements Serializable {
     private Boolean visible;
 
     /**
+     * 创建者id
+     */
+    private Integer creator;
+
+    /**
      * 数据集创建时间
      */
     private Date createTime;

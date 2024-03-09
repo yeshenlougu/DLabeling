@@ -2,6 +2,7 @@ package com.dlabeling.system.service.user.impl;
 
 import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
+import com.dlabeling.common.exception.user.UserException;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.system.constant.LevelApplyStatus;
 import com.dlabeling.system.domain.po.LevelApply;
@@ -48,7 +49,14 @@ public class ISysUserServiceImpl implements ISysUserService {
     @Override
     @Transactional
     public void addUser(User user) {
-        
+        if(StringUtils.isEmail(user.getUsername())){
+            user.setEmail(user.getUsername());
+        } else if (StringUtils.isPhone(user.getUsername())) {
+            user.setPhone(user.getUsername());
+        }else {
+            throw new UserException("用户名格式错误");
+        }
+
         // TODO 进行参数校验
         String pwd = bCryptPasswordEncoder.encode(user.getPassword());
         log.debug(pwd);
@@ -75,7 +83,7 @@ public class ISysUserServiceImpl implements ISysUserService {
         }else {
             String msg = "手机号或邮箱以注册，请找回密码或更改手机号或邮箱再注册";
             log.error(msg);
-            throw new BusinessException(ResponseCode.SQL_EXIST_ERROR, msg);
+            throw new UserException(msg);
         }
     }
 

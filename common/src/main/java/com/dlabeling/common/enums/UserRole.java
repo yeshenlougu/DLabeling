@@ -44,4 +44,11 @@ public enum UserRole {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static UserRole getRoleByString(String msg){
+        return Stream.of(UserRole.values())
+                .filter(e->e.role == msg)
+                .findFirst()
+                .orElse(null);
+    }
 }

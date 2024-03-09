@@ -141,4 +141,4 @@ user:
     # 密码锁定时间（默认10分钟）
     lockTime: 10
 server:
-  port: 8080
+  port: 8081

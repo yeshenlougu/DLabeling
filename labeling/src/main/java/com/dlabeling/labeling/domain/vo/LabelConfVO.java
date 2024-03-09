@@ -18,13 +18,13 @@ public class LabelConfVO {
 
     private String labelName;
 
-    private LabelType labelType;
+    private Integer labelType;
 
     public static LabelConf convertToLabelConf(LabelConfVO labelConfVO){
         LabelConf labelConf = new LabelConf();
         labelConf.setLabelName(labelConfVO.getLabelName());
-        labelConf.setLabelType(labelConf.getLabelType());
-        labelConf.setDatasetId(labelConf.getDatasetId());
+        labelConf.setLabelType(labelConfVO.getLabelType());
+        labelConf.setDatasetId(labelConfVO.getDatasetId());
         labelConf.setId(labelConfVO.getId());
 
         return labelConf;
@@ -35,7 +35,7 @@ public class LabelConfVO {
         labelConfVO.setId(labelConf.getId());
         labelConfVO.setDatasetId(labelConf.getDatasetId());
         labelConfVO.setLabelName(labelConf.getLabelName());
-        labelConfVO.setLabelType(LabelType.getByCode(labelConf.getLabelType()));
+        labelConfVO.setLabelType(labelConf.getLabelType());
         return labelConfVO;
     }
 }

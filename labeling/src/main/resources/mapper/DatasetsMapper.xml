@@ -12,7 +12,7 @@
             <if test="description != null or description != ''"> `description`,</if>
             <if test="true">`type`,</if>
             <if test="true">`data_root_dir`,</if>
-            <if test="true">`label_root_dir`,</if>
+            <if test="true">`creator`,</if>
             <if test="visible != null or visible != ' '">`visible`,</if>
             <if test="true">`create_time`,</if>
         </trim>
@@ -22,7 +22,7 @@
             <if test="description != null or description != ''"> #{description},</if>
             <if test="true">#{type},</if>
             <if test="true">#{dataRootDir},</if>
-            <if test="true">#{labelRootDir},</if>
+            <if test="true">#{creator},</if>
             <if test="visible != null or visible != ''">#{visible},</if>
             <choose>
                 <when test="createTime != null">#{createTime},</when>
@@ -32,7 +32,7 @@
         </trim>
     </insert>
 
-    <select id="getAll" resultType="com.dlabeling.labeling.domain.po.Datasets">
+    <select id="getAllDataset" resultType="com.dlabeling.labeling.domain.po.Datasets">
         SELECT
             `id`,
             `name`,
@@ -40,6 +40,7 @@
             `type`,
             `data_root_dir`,
             `visible`,
+            `creator`,
             `create_time`,
             `update_time`,
             `destroy_time`
@@ -89,5 +90,10 @@
             </trim>
         </where>
     </select>
+    <select id="selectByID" resultType="com.dlabeling.labeling.domain.po.Datasets">
+        SELECT * FROM `datasets`
+        WHERE `id` = #{id}
+    </select>
+
 
 </mapper>

@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * @Description:
@@ -28,8 +25,8 @@ public class DBManager {
     public void execute(String sql){
         try {
             Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.execute();
+            Statement statement = connection.createStatement();
+            statement.execute(sql);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
