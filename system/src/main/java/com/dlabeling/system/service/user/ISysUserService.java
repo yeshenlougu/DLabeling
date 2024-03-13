@@ -3,6 +3,7 @@ package com.dlabeling.system.service.user;
 import com.dlabeling.system.domain.po.LevelApply;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.vo.LevelApplyVO;
 
 import java.util.List;
 
@@ -38,9 +39,9 @@ public interface ISysUserService {
 
     void addLevelApply(LevelApply levelApply);
 
-    void updateLevelApply(LevelApply levelApply);
+    void updateLevelApply(LevelApplyVO levelApplyVO);
 
-    List<LevelApply> getAllLevelApply();
+    List<LevelApplyVO> getAllLevelApply( String type);
 
     List<LevelApply> getLevelApplyByStatus(int status);
 }

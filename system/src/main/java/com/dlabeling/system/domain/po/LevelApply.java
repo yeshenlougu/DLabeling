@@ -21,6 +21,8 @@ public class LevelApply implements Serializable {
 
     private int applyer;
 
+    private int type;
+
     private int privilege;
 
     private int status;

@@ -40,6 +40,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("test=================");
         User user = new User();
+        user.setUsername(username);
         if (StringUtils.isEmail(username)){
             user.setEmail(username);
         }else if (StringUtils.isPhone(username)){

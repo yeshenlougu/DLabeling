@@ -120,7 +120,7 @@ public class FileUtils {
 
     public static String removeFileExtension(String fileName){
         int i = fileName.lastIndexOf('.');
-        return fileName.substring(0, i+1);
+        return fileName.substring(0, i);
     }
 
     public static String getBase64(String filePath) throws IOException {

@@ -19,7 +19,7 @@ public interface LevelApplyMapper extends BaseMapper<LevelApply> {
 
     int updateLevelApply(LevelApply levelApply);
 
-    List<LevelApply> getAllLevelApply();
+    List<LevelApply> getAllLevelApply(Integer type);
 
     List<LevelApply> getLevelApplyByStatus(int status);
 }

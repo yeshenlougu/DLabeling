@@ -38,6 +38,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,9 +85,11 @@ public class GenerateServiceImpl implements GenerateService {
 
         log.info(datasets.toString());
         if (datasetsVO.getDataRootDir() == null || datasetsVO.getDataRootDir().isEmpty()){
-            datasetsVO.setDataRootDir(labelConfig.getDefaultDataRootDir());
+            datasets.setDataRootDir(labelConfig.getDefaultDataRootDir());
         }
         datasets.setVisible(datasetsVO.getVisible() != null ? datasetsVO.getVisible() : true);
+        datasets.setType(datasetsVO.getType()!=null? datasetsVO.getType() : DataBaseType.ImageDataBase.getCode());
+        datasets.setCreateTime(new Date());
         try {
             datasetsMapper.addDatasets(datasets);
         }catch (Exception e){

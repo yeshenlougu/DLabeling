@@ -93,4 +93,20 @@ CREATE TABLE `labels`(
     `dataset_id` INT NOT NULL COMMENT '',
     `label_name` VARCHAR(40) NOT NULL COMMENT '',
     `label_type` INT NOT NULL COMMENT ''
+);
+
+-- 训练集和测试集创建
+DROP TABLE IF EXISTS `data_split`;
+CREATE TABLE `data_split`(
+    `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID标识',
+    `dataset_id` INT NOT NULL COMMENT '数据集id',
+    `data_id` INT NOT NULL COMMENT '数据id',
+    `split_id` INT NOT NULL COMMENT '训练集、测试集id'
+);
+
+DROP TABLE IF EXISTS `split`;
+CREATE TABLE `split`(
+    `id` INT AUTO_INCREMENT PRIMARY KEY COMMENT 'ID标识',
+    `type` TINYINT NOT NULL COMMENT '数据集分类类型',
+    `name` VARCHAR(255) NOT NULL COMMENT '数据集分类名称'
 )

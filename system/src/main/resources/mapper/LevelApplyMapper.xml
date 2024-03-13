@@ -43,6 +43,7 @@
     <select id="getAllLevelApply" resultType="com.dlabeling.system.domain.po.LevelApply">
         SELECT *
         FROM `level_apply`
+        WHERE `type` = #{type}
     </select>
 
     <select id="getLevelApplyByStatus" resultType="com.dlabeling.system.domain.po.LevelApply">

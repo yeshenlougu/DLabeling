@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.system.mapper.DatasetPermissionMapper">
+
+
+    <insert id="addDatasetPermission">
+        INSERT INTO `dataset_permission`(`user_id`, `dataset_id`) VALUES (#{userId}, #{datasetId})
+    </insert>
+
+    <delete id="deleteDatasetPermission">
+        DELETE FROM dataset_permission WHERE `user_id`=#{userId} AND `dataset_id`=#{datasetId}
+    </delete>
+
+    <select id="selectDatasetPermission" resultType="com.dlabeling.system.domain.po.DatasetPermission">
+        SELECT
+            `id`,
+            `user_id`,
+            `dataset_id`
+        FROM `dataset_permission`
+        WHERE `user_id`=#{userId} AND `dataset_id`=#{datasetId}
+    </select>
+
+    <select id="selectDatasetPermissionById" resultType="com.dlabeling.system.domain.po.DatasetPermission">
+        SELECT
+            `id`,
+            `user_id`,
+            `dataset_id`
+        FROM `dataset_permission`
+        WHERE `dataset_id`=#{datasetId}
+    </select>
+</mapper>

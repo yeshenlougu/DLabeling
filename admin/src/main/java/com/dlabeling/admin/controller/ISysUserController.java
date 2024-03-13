@@ -12,6 +12,7 @@ import com.dlabeling.framework.web.SysLoginService;
 import com.dlabeling.system.domain.po.LevelApply;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.vo.LevelApplyVO;
 import com.dlabeling.system.domain.vo.LoginUser;
 import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.service.user.ISysUserService;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Description:
@@ -96,7 +100,12 @@ public class ISysUserController {
             return R.fail(null, e.getMsg());
         }
     }
-    
+
+    /**
+     * 更新用户信息
+     * @param userInfo
+     * @return
+     */
     @PostMapping("/updateUserInfo")
     public  R<String> updateUserInfo(UserInfo userInfo){
         try{
@@ -106,7 +115,12 @@ public class ISysUserController {
             return R.fail(null, e.getMsg());
         }
     }
-    
+
+    /**
+     * 删除用户
+     * @param user
+     * @return
+     */
     @GetMapping("/deleteUser")
     public R<String> deleteUser(User user){
         try {
@@ -131,7 +145,12 @@ public class ISysUserController {
             return R.fail(e.getCode().getCode(), e.getMsg());
         }
     }
-    
+
+    /**
+     * 获取某个用户信息
+     * @param id
+     * @return
+     */
     @GetMapping("/getUserInfo")
     public R<UserInfo> getUserInfo(Integer id){
         try {
@@ -142,6 +161,11 @@ public class ISysUserController {
         }
     }
 
+    /**
+     * 添加权限申请
+     * @param levelApply
+     * @return
+     */
     @PostMapping("/privilege/add")
     public R<String> addApplyPrivilege(LevelApply levelApply){
         try{
@@ -154,10 +178,15 @@ public class ISysUserController {
         }
     }
 
-    @PostMapping("/privilege/update")
-    public R<String> updateApplyPrivilege(LevelApply levelApply){
+    /**
+     * 处理权限申请
+     * @param levelApplyVO
+     * @return
+     */
+    @PostMapping("/privilegeApply/update")
+    public R<String> updateApplyPrivilege(@RequestBody LevelApplyVO levelApplyVO){
         try {
-            iSysUserService.updateLevelApply(levelApply);
+            iSysUserService.updateLevelApply(levelApplyVO);
             return R.ok(null, "完成审核");
         }catch (BusinessException e){
             return R.fail(null, e.getMsg());
@@ -167,10 +196,14 @@ public class ISysUserController {
 
     }
 
-    @GetMapping("/privilege/getAll")
-    public R<List<LevelApply>> getAllApplyPrivilege(){
+    /**
+     * 获取所有权限申请
+     * @return
+     */
+    @GetMapping("/privilegeApply/getAll")
+    public R<List<LevelApplyVO>> getAllApplyPrivilege(String type){
         try {
-            List<LevelApply> allLevelApply = iSysUserService.getAllLevelApply();
+            List<LevelApplyVO> allLevelApply = iSysUserService.getAllLevelApply(type);
             return R.ok(allLevelApply, "获取所有权限审核");
         }catch (BusinessException e){
             return R.fail(null, e.getMsg());
@@ -179,6 +212,11 @@ public class ISysUserController {
         }
     }
 
+    /**
+     * 根据申请状态筛选 申请
+     * @param status
+     * @return
+     */
     @GetMapping("/privilege/getByStatus")
     public R<List<LevelApply>> getApplyPrivilegeByStatus(int status){
         try {
@@ -189,5 +227,26 @@ public class ISysUserController {
         }catch (Exception e){
             return R.fail(null, "获取特定权限审核失败");
         }
+    }
+
+
+    /**
+     * 获取用户可以拥有的权限
+     * @return
+     */
+    @GetMapping("/permissionList")
+    public R<List<String>> getUserPermissionList(){
+        return R.ok(Stream.of(UserRole.values()).map(UserRole::getRole).collect(Collectors.toList()));
+    }
+
+    /**
+     * TODO 待完成
+     * 用户权限变更
+     * @param data
+     * @return
+     */
+    @PostMapping("/updateUserPermission")
+    public R<String> updateUserPermission(@RequestBody Map<String, Object> data){
+        return R.ok();
     }
 }

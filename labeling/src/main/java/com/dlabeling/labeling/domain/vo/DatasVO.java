@@ -17,7 +17,9 @@ import java.util.Map;
 public class DatasVO {
     private Integer id;
     private String fileName;
-    private Map<String, Object> labelList;
+    private String filePath;
+    private String labelPath;
+    private Map<String, String> labelList;
 
     private String file;
 }

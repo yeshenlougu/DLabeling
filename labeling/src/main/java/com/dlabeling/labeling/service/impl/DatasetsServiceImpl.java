@@ -4,17 +4,16 @@ import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.file.FileNotFileException;
 import com.dlabeling.common.utils.FileUtils;
-import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.labeling.common.LabelConstant;
 import com.dlabeling.labeling.domain.po.Datasets;
 import com.dlabeling.labeling.domain.po.LabelConf;
-import com.dlabeling.labeling.domain.po.Datas;
+import com.dlabeling.labeling.domain.po.Split;
 import com.dlabeling.labeling.domain.vo.DatasVO;
 import com.dlabeling.labeling.domain.vo.DatasetsVO;
 import com.dlabeling.labeling.domain.vo.LabelConfVO;
-import com.dlabeling.labeling.mapper.DatasMapper;
-import com.dlabeling.labeling.mapper.DatasetsMapper;
-import com.dlabeling.labeling.mapper.LabelConfMapper;
+import com.dlabeling.labeling.domain.vo.SplitVO;
+import com.dlabeling.labeling.enums.SplitType;
+import com.dlabeling.labeling.mapper.*;
 import com.dlabeling.labeling.service.DatasetsService;
 import com.dlabeling.labeling.utils.DatasetUtils;
 import com.dlabeling.system.domain.po.user.UserInfo;
@@ -23,11 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Description:
@@ -50,6 +48,12 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Autowired
     private DatasMapper datasMapper;
+
+    @Autowired
+    private SplitMapper splitMapper;
+
+    @Autowired
+    private DataSplitMapper dataSplitMapper;
 
     @Override
     public DatasetsVO getDatasetByID(Integer id) {
@@ -126,18 +130,24 @@ public class DatasetsServiceImpl implements DatasetsService {
 
                 datasVO.setId((Integer) value.get("id"));
                 datasVO.setFileName(FileUtils.removeFileExtension(FileUtils.getFileName(dataPath)));
-
+                datasVO.setFilePath(dataPath);
                 datasVO.setFile(base64File);
-                Map<String, Object> labelList = new HashMap<>();
+                datasVO.setLabelPath((String) value.get("label_path"));
+                Map<String, String> labelList = new HashMap<>();
+
+                value.remove("id");
+                value.remove("data_path");
+                value.remove("label_path");
+
                 for (String key : value.keySet()) {
                     String newKey = key;
-                    if (!(key.equals("id") || key.equals("data_path") || key.equals("label_path"))){
-                        int i = key.lastIndexOf("_");
-                        String suffix = key.substring(i+1);
-                        String pref = key.substring(0, i);
-                        newKey = fieldToLabel.get(pref) + "_" + suffix;
-                    }
-                    labelList.put(newKey, value.get(key));
+
+                    int i = key.lastIndexOf("_");
+                    String suffix = key.substring(i+1);
+                    String pref = key.substring(0, i);
+                    newKey = fieldToLabel.get(pref) + "_" + suffix;
+
+                    labelList.put(newKey, (String)value.get(key));
                 }
 
                 datasVO.setLabelList(labelList);
@@ -153,4 +163,45 @@ public class DatasetsServiceImpl implements DatasetsService {
     }
 
 
+    @Override
+    public List<String> getLabelList(Integer datasetId){
+        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasetId);
+
+        List<String> res = labelConfByDB.stream()
+                .flatMap(labelConf -> Stream.of(
+                        labelConf.getLabelName() + "_" + LabelConstant.DATA_FILED_VALUE,
+                        labelConf.getLabelName() + "_" + LabelConstant.DATA_FILED_POSITION,
+                        labelConf.getLabelName() + "_" + LabelConstant.DATA_FILED_AUTO,
+                        labelConf.getLabelName() + "_" + LabelConstant.DATA_FILED_TEST
+                ))
+                .collect(Collectors.toList());
+
+        return res;
+    }
+
+    @Override
+    public SplitVO addSplit(SplitVO splitVO) {
+        Split split = SplitVO.convertToSplit(splitVO);
+        splitMapper.addSplit(split);
+        Split split1 = splitMapper.selectSplit(split);
+        return SplitVO.convertToSplitVO(split1);
+    }
+
+    @Override
+    public List<SplitVO> getSplitVOListByID(Integer datasetId, String type){
+        int type2 =  SplitType.getSplitTypeByType(type).getCode();
+        List<Split> splits = splitMapper.selectByDatasetId(datasetId, type2);
+        List<SplitVO> splitVOList = splits.stream().map(SplitVO::convertToSplitVO).collect(Collectors.toList());
+        return splitVOList;
+    }
+
+    @Override
+    public List<DatasVO> getDatasBySplit(SplitVO splitVO){
+        return null;
+    }
+
+    @Override
+    public List<DatasetsVO> getDatasetByFilter(DatasetsVO datasetsVO) {
+        return null;
+    }
 }

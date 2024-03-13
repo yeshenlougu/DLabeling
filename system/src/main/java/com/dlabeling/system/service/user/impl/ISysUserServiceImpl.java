@@ -3,9 +3,15 @@ package com.dlabeling.system.service.user.impl;
 import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.user.UserException;
+import com.dlabeling.common.exception.user.UserNameIllegalException;
 import com.dlabeling.common.utils.StringUtils;
-import com.dlabeling.system.constant.LevelApplyStatus;
+import com.dlabeling.system.domain.po.DatasetPermission;
+import com.dlabeling.system.domain.vo.LevelApplyVO;
+import com.dlabeling.system.domain.vo.LoginUser;
+import com.dlabeling.system.enums.LevelApplyStatus;
 import com.dlabeling.system.domain.po.LevelApply;
+import com.dlabeling.system.enums.LevelApplyType;
+import com.dlabeling.system.mapper.DatasetPermissionMapper;
 import com.dlabeling.system.mapper.LevelApplyMapper;
 import com.dlabeling.system.service.user.ISysUserService;
 import com.dlabeling.system.domain.po.user.User;
@@ -18,9 +24,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -44,6 +50,12 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private DatasetPermissionMapper datasetPermissionMapper;
     
     
     @Override
@@ -154,6 +166,13 @@ public class ISysUserServiceImpl implements ISysUserService {
     
     @Override
     public User getUserByEmailOrPhone(User user){
+        if (StringUtils.isEmail(user.getUsername())){
+            user.setEmail(user.getUsername());
+        }else if (StringUtils.isPhone(user.getUsername())){
+            user.setPhone(user.getUsername());
+        }else {
+            throw new UserNameIllegalException();
+        }
         User selectUser = userMapper.selectUser(user);
         return selectUser;
     }
@@ -166,6 +185,7 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Override
     public void addLevelApply(LevelApply levelApply) {
+        LoginUser loginUser = TokenService.
         levelApply.setCreateTime(new Date());
         levelApply.setStatus(LevelApplyStatus.APPLYING.getCode());
         levelApplyMapper.addLevelApply(levelApply);
@@ -173,28 +193,46 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Override
     @Transactional
-    public void updateLevelApply(LevelApply levelApply) {
+    public void updateLevelApply(LevelApplyVO levelApplyVO) {
         try {
+            LevelApply levelApply = LevelApplyVO.convertToLevelApply(levelApplyVO);
             levelApply.setUpdateTime(new Date());
+            if (levelApplyVO.getApproval()){
+                levelApply.setStatus(LevelApplyStatus.AGREE.getCode());
+            }else {
+                levelApply.setStatus(LevelApplyStatus.REJECT.getCode());
+            }
             levelApplyMapper.updateLevelApply(levelApply);
             // 更新userInfo
+
+
             if (levelApply.getStatus() == LevelApplyStatus.AGREE.getCode()){
-                UserInfo userInfo = new UserInfo();
-                userInfo.setUserId(levelApply.getApplyer());
-                userInfo.setPrivilege(levelApply.getPrivilege());
-                userInfo.setUpdateTime(levelApply.getUpdateTime());
-                userInfoMapper.updateUserInfo(userInfo);
+                if (levelApply.getType() == LevelApplyType.USER_APPLY.getCode()){
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.setUserId(levelApply.getApplyer());
+                    userInfo.setPrivilege(levelApply.getPrivilege());
+                    userInfo.setUpdateTime(levelApply.getUpdateTime());
+                    userInfoMapper.updateUserInfo(userInfo);
+                }else if (levelApply.getType() == LevelApplyType.DATASET_APPLY.getCode()){
+                    DatasetPermission datasetPermission = new DatasetPermission();
+                    datasetPermission.setDatasetId(levelApply.getPrivilege());
+                    datasetPermission.setUserId(levelApply.getApplyer());
+                    datasetPermissionMapper.addDatasetPermission(datasetPermission);
+                }
             }
         }catch (Exception e){
+            log.error(e.getMessage());
             throw new BusinessException(ResponseCode.SQL_UPDATE_ERROR, "权限更新失败");
         }
 
     }
 
     @Override
-    public List<LevelApply> getAllLevelApply() {
-        List<LevelApply> allLevelApply = levelApplyMapper.getAllLevelApply();
-        return allLevelApply;
+    public List<LevelApplyVO> getAllLevelApply(String type) {
+        Integer typeNum = LevelApplyType.getLevelApplyTypeByType(type).getCode();
+        List<LevelApply> allLevelApply = levelApplyMapper.getAllLevelApply(typeNum);
+        List<LevelApplyVO> levelApplyVOList = allLevelApply.stream().map(LevelApplyVO::converToLevelApplyVO).collect(Collectors.toList());
+        return levelApplyVOList;
     }
 
     @Override
