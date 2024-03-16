@@ -54,6 +54,8 @@
     <!--  根据id批量查询用户信息  -->
     <select id="fetchBatchUserInfoById" resultType="com.dlabeling.system.domain.po.user.UserInfo" parameterType="java.util.List">
         SELECT
+            id,
+            user_id,
             username,
             email,
             phone,
@@ -76,6 +78,8 @@
     <!--  根据id查询用户信息  -->
     <select id="getUserInfoById" resultType="com.dlabeling.system.domain.po.user.UserInfo">
         SELECT
+            id,
+            user_id,
             username,
             email,
             phone,
@@ -92,12 +96,14 @@
     <!--  根据字段查询用户信息  -->
     <select id="getUserInfoByDetail" resultType="com.dlabeling.system.domain.po.user.UserInfo">
         SELECT
-        username,
-        email,
-        phone,
-        privilege,
-        gender,
-        address
+            id,
+            user_id,
+            username,
+            email,
+            phone,
+            privilege,
+            gender,
+            address
         FROM
         user_info
         <where>
@@ -114,14 +120,67 @@
     <!--  获取使用用户信息  -->
     <select id="getAllUserInfo" resultType="com.dlabeling.system.domain.po.user.UserInfo">
         SELECT
-        username,
-        email,
-        phone,
-        privilege,
-        gender,
-        address
+            id,
+            user_id,
+            username,
+            email,
+            phone,
+            privilege,
+            gender,
+            address
         FROM
         user_info
+    </select>
+    <select id="selectUserInfoLike" parameterType="com.dlabeling.system.domain.po.user.UserInfo" resultType="com.dlabeling.system.domain.po.user.UserInfo">
+        SELECT
+            id,
+            user_id,
+            username,
+            email,
+            phone,
+            privilege,
+            gender,
+            address
+        FROM
+        user_info
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="username != null and username != ''">
+                    username LIKE CONCAT('%', #{username}, '%') AND
+                </if>
+                <if test="email != null and email != ''">
+                    email LIKE CONCAT('%', #{email}, '%') AND
+                </if>
+                <if test="phone != null and phone != ''">
+                    phone LIKE CONCAT('%', #{phone}, '%') AND
+                </if>
+                <if test="privilege != null">
+                    privilege LIKE CONCAT('%', #{privilege}, '%') AND
+                </if>
+                <if test="gender != null">
+                    gender LIKE CONCAT('%', #{gender}, '%') AND
+                </if>
+            </trim>
+        </where>
+    </select>
+    <select id="getUserInfoByListID" resultType="com.dlabeling.system.domain.po.user.UserInfo">
+        SELECT
+            id,
+            user_id,
+            username,
+            email,
+            phone,
+            privilege,
+            gender,
+            address
+        FROM
+            user_info
+        <where>
+            `user_id` in
+            <foreach collection="list" item="item" separator="," open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
     </select>
 
 

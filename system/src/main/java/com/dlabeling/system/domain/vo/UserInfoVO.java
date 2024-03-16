@@ -70,4 +70,21 @@ public class UserInfoVO {
 
         return userInfo;
     }
+
+    public static UserInfoVO convertToUserInfoVO(UserInfo userInfo){
+        UserInfoVO userInfoVO = new UserInfoVO();
+        userInfoVO.setId(userInfo.getId());
+        userInfoVO.setUserId(userInfo.getUserId());
+        userInfoVO.setUsername(userInfo.getUsername());
+        userInfoVO.setEmail(userInfo.getEmail());
+        userInfoVO.setPhone(userInfo.getPhone());
+        userInfoVO.setAddress(userInfo.getAddress());
+        UserRole role = UserRole.getRoleByCode(userInfo.getPrivilege());
+        userInfoVO.setPrivilege(role != null ? role.getRole() : null);
+
+        Gender gender1 = Gender.getGenderByCode(userInfo.getGender());
+        userInfoVO.setGender(gender1 != null ? gender1.getSex() : null);
+
+        return userInfoVO;
+    }
 }

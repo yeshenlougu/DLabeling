@@ -41,7 +41,10 @@ public interface ISysUserService {
 
     void updateLevelApply(LevelApplyVO levelApplyVO);
 
+    @Deprecated
     List<LevelApplyVO> getAllLevelApply( String type);
 
     List<LevelApply> getLevelApplyByStatus(int status);
+
+    List<UserInfo> getUserInfoLike(UserInfo userInfo);
 }

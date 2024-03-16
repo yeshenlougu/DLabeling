@@ -1,10 +1,9 @@
 package com.dlabeling.labeling.service;
 
 import com.dlabeling.labeling.domain.po.Datas;
+import com.dlabeling.labeling.domain.po.InterfaceAddress;
 import com.dlabeling.labeling.domain.po.Split;
-import com.dlabeling.labeling.domain.vo.DatasVO;
-import com.dlabeling.labeling.domain.vo.DatasetsVO;
-import com.dlabeling.labeling.domain.vo.SplitVO;
+import com.dlabeling.labeling.domain.vo.*;
 
 import java.util.List;
 
@@ -28,7 +27,19 @@ public interface DatasetsService {
 
     List<SplitVO> getSplitVOListByID(Integer datasetId, String type);
 
-    List<DatasVO> getDatasBySplit(SplitVO splitVO);
-
     List<DatasetsVO> getDatasetByFilter(DatasetsVO datasetsVO);
+
+    List<String> getCreatorList();
+
+    List<InterfaceAddress> getInterfaceList(Integer datasetID, String type);
+
+    void addDataToSplit(Integer datasetID, Integer splitID, List<Integer> dataIdList);
+
+    List<DatasVO> getDatasByFilter(DatasFilterVO datasFilterVO);
+
+    void batchEditDatas(DatasEditVO datasEditVO);
+
+    List<DatasVO> getSplitDatas(Integer datasetID, Integer splitID);
+
+    DatasVO getDatasByID(Integer datasetID, Integer dataID);
 }

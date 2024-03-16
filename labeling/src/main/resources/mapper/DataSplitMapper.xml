@@ -6,6 +6,14 @@
     <insert id="addDataSplit">
         INSERT INTO `data_split`(`dataset_id`, `data_id`, `split_id`) VALUES (#{datasetId}, #{dataId}, #{splitId})
     </insert>
+    <insert id="batchAddDataSplit">
+        INSERT INTO `data_split`(`dataset_id`, `data_id`,`split_id`)
+        VALUES 
+            <foreach collection="dataIdList" item="dataId" separator=",">
+                (#{datasetID}, #{dataId}, #{splitID})
+            </foreach>
+
+    </insert>
 
     <delete id="deleteDataSplit">
         DELETE FROM `data_split` WHERE `dataset_id`=#{datasetId} AND `data_id`=#{dataId} AND `split_id`=#{splitId}

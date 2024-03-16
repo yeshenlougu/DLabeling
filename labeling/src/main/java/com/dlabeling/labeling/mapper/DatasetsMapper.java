@@ -3,7 +3,9 @@ package com.dlabeling.labeling.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.labeling.domain.po.Datasets;
+import com.dlabeling.labeling.domain.vo.DatasetsVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -28,7 +30,12 @@ public interface DatasetsMapper extends BaseMapper<Datasets> {
 
     Datasets selectByID(Integer id);
 
+    List<Datasets> selectDatasetLike(@Param("datasets") Datasets datasets, @Param("creatorList") List<Integer> creatorList);
 
 
+    List<DatasetsVO> selectDatasetByJoinBatch(@Param("datasetsList") List<Datasets> datasetsList);
 
+    List<DatasetsVO> selectDatasetByJoinBatchWithFilter(@Param("datasetsFilter")DatasetsVO datasets);
+
+    List<String> fetchCreatorList();
 }

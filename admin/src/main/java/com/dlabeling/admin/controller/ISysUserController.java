@@ -1,6 +1,7 @@
 package com.dlabeling.admin.controller;
 
 import com.alibaba.fastjson2.JSON;
+import com.dlabeling.admin.service.LevelApplyService;
 import com.dlabeling.common.core.domain.R;
 import com.dlabeling.common.core.domain.model.LoginBody;
 import com.dlabeling.common.core.redis.RedisCache;
@@ -8,12 +9,15 @@ import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.enums.UserRole;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.user.UserException;
+import com.dlabeling.common.utils.ServletUtils;
 import com.dlabeling.framework.web.SysLoginService;
+import com.dlabeling.framework.web.TokenService;
 import com.dlabeling.system.domain.po.LevelApply;
 import com.dlabeling.system.domain.po.user.User;
 import com.dlabeling.system.domain.po.user.UserInfo;
 import com.dlabeling.system.domain.vo.LevelApplyVO;
 import com.dlabeling.system.domain.vo.LoginUser;
+import com.dlabeling.system.domain.vo.UserInfoVO;
 import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.service.user.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +50,10 @@ public class ISysUserController {
 
     @Autowired
     SysLoginService sysLoginService;
+    @Autowired
+    TokenService tokenService;
+    @Autowired
+    LevelApplyService levelApplyService;
 
     @Autowired
     RedisCache redisCache;
@@ -137,13 +145,23 @@ public class ISysUserController {
      */
     //    TODO 进行权限校验
     @PostMapping("/getAllUserInfo")
-    public R<List<UserInfo>> getAllUserInfo(){
+    public R<List<UserInfoVO>> getAllUserInfo(){
         try{
             List<UserInfo> userInfoList = iSysUserService.getAllUserInfo();
-            return R.ok(userInfoList, "获取所有用户信息成功");
+            List<UserInfoVO> userInfoVOList = userInfoList.stream().map(UserInfoVO::convertToUserInfoVO).collect(Collectors.toList());
+            return R.ok(userInfoVOList, "获取所有用户信息成功");
         }catch (BusinessException e){
             return R.fail(e.getCode().getCode(), e.getMsg());
         }
+    }
+
+    /**
+     * 筛选用户
+     */
+    @PostMapping("/getFilterUser")
+    public R<List<UserInfo>> getFilterUser(@RequestBody UserInfoVO userInfoVO){
+        List<UserInfo> userInfoList = iSysUserService.getUserInfoLike(UserInfo.convertToUserInfo(userInfoVO));
+        return R.ok(userInfoList);
     }
 
     /**
@@ -169,6 +187,8 @@ public class ISysUserController {
     @PostMapping("/privilege/add")
     public R<String> addApplyPrivilege(LevelApply levelApply){
         try{
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
+            levelApply.setApplyer(loginUser.getId());
             iSysUserService.addLevelApply(levelApply);
             return R.ok(null, "以提交申请");
         }catch (BusinessException e){
@@ -203,7 +223,7 @@ public class ISysUserController {
     @GetMapping("/privilegeApply/getAll")
     public R<List<LevelApplyVO>> getAllApplyPrivilege(String type){
         try {
-            List<LevelApplyVO> allLevelApply = iSysUserService.getAllLevelApply(type);
+            List<LevelApplyVO> allLevelApply = levelApplyService.getAllLevelApply(type);
             return R.ok(allLevelApply, "获取所有权限审核");
         }catch (BusinessException e){
             return R.fail(null, e.getMsg());

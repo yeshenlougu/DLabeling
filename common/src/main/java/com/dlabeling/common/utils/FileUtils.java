@@ -134,4 +134,11 @@ public class FileUtils {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
+    public static String changeSuffix(String fileName, String suffix){
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex>0 && dotIndex < fileName.length()-1);
+        String newName = fileName.substring(0, dotIndex) + suffix;
+        return newName;
+    }
+
 }

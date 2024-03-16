@@ -22,7 +22,7 @@ public class SplitVO {
 
     public static SplitVO convertToSplitVO(Split split){
         SplitVO splitVO = new SplitVO();
-        splitVO.setId(splitVO.getId());
+        splitVO.setId(split.getId());
         splitVO.setDatasetId(split.getDatasetId());
         splitVO.setName(split.getName());
         splitVO.setType(SplitType.getSplitTypeByCode(split.getType()).getType());

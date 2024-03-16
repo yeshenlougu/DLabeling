@@ -51,4 +51,6 @@ public interface UserMapper extends BaseMapper<User> {
     User selectUserById(Integer uuid);
 
     List<User> getAllUser();
+
+    List<User> selectUserLike(User userFilter);
 }

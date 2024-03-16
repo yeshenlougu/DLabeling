@@ -3,6 +3,7 @@ package com.dlabeling.labeling.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.labeling.domain.po.DataSplit;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface DataSplitMapper extends BaseMapper<DataSplit> {
     void deleteDataSplit(DataSplit dataSplit);
 
     List<DataSplit> selectDataSplit(DataSplit dataSplit);
+
+    void batchAddDataSplit(@Param("datasetID") Integer datasetID, @Param("splitID") Integer splitID, @Param("dataIdList") List<Integer> dataIdList);
 }

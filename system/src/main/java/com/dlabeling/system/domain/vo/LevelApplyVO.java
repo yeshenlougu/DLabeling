@@ -17,14 +17,17 @@ public class LevelApplyVO {
     private int id;
 
     private int applyer;
+    private String applyerName;
 
     private String type;
 
     private String privilege;
+    private String privilegeName;
 
     private String status;
 
     private int judger;
+    private String jugerName;
 
     private Boolean approval;
 

@@ -1,5 +1,6 @@
 package com.dlabeling.labeling.domain.vo;
 
+import com.alibaba.fastjson2.JSON;
 import com.dlabeling.common.utils.DateUtils;
 import com.dlabeling.labeling.core.enums.DataBaseType;
 import com.dlabeling.labeling.domain.po.Datasets;
@@ -57,7 +58,12 @@ public class DatasetsVO {
     private String dataBaseType;
 
     private List<LabelConfVO> labelConfList;
+    private String labelConfListJson;
 
+    public void setLabelConfListJson(String json){
+        this.labelConfListJson = json;
+        this.labelConfList = (List<LabelConfVO>) JSON.parse(json);
+    }
 
     public static Datasets convertToDatasets(DatasetsVO datasetsVO){
         Datasets datasets = new Datasets();
@@ -66,7 +72,6 @@ public class DatasetsVO {
         datasets.setType(datasetsVO.getType());
         datasets.setDataRootDir(datasetsVO.getDataRootDir());
         datasets.setVisible(datasetsVO.getVisible());
-        datasets.setCreateTime(DateUtils.getNowDate());
         return datasets;
     }
 

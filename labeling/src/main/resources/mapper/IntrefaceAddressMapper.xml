@@ -10,7 +10,6 @@
         <set>
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="true">`dataset_id`,</if>
-                <if test="true">`dataset_name`,</if>
                 <if test="true">`interface_type`,</if>
                 <if test="true">`interface_name`</if>
                 <if test="true">`interface_address`</if>
@@ -20,7 +19,6 @@
         VALUES
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="true">#{datasetId},</if>
-                <if test="true">#{datasetName},</if>
                 <if test="true">#{interfaceType},</if>
                 <if test="true">#{interfaceName},</if>
                 <if test="true">#{interfaceAddress},</if>
@@ -33,7 +31,6 @@
         <set>
             <trim suffixOverrides=",">
                 <if test="interfaceType != null"> `interface_type` = #{interfaceType}</if>
-                <if test="interfaceName != null and interfaceName != ''"> `interface_name` = #{interfaceName}</if>
                 <if test="interfaceAddress != null and interfaceAddress != ''"> `interface_address` = #{interfaceAddress}</if>
                 <if test="updateTime != null">`update_time` = #{updateTime}</if>
             </trim>
@@ -52,7 +49,6 @@
         SELECT
             `id`,
             `dataset_id`,
-            `dataset_name`,
             `interface_type`,
             `interface_name`,
             `interface_address`,
@@ -65,5 +61,27 @@
             `dataset_id` = #{datasetId}
         </where>
     </select>
-    
+    <select id="selectInterfaceByObj" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
+        SELECT
+        `id`,
+        `dataset_id`,
+        `interface_type`,
+        `interface_name`,
+        `interface_address`,
+        `create_time`,
+        `update_time`,
+        `destroy_time`
+        FROM
+        `interface_address`
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="id != null">`id` = #{id} AND</if>
+                <if test="datasetId != null">`dataset_id` = #{datasetId} AND</if>
+                <if test="interfaceType != null ">`interface_type` = #{interfaceType} AND</if>
+                <if test="interfaceName != null and interfaceName !=''">`interface_name`= #{interfaceName} AND</if>
+                <if test="interfaceAddress != null and interfaceAddress !=''">`interface_address` = #{interfaceAddress} AND</if>
+            </trim>
+        </where>
+    </select>
+
 </mapper>

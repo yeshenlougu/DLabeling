@@ -85,7 +85,7 @@ public class GenerateServiceImpl implements GenerateService {
 
         log.info(datasets.toString());
         if (datasetsVO.getDataRootDir() == null || datasetsVO.getDataRootDir().isEmpty()){
-            datasets.setDataRootDir(labelConfig.getDefaultDataRootDir());
+            datasets.setDataRootDir(FileUtils.resolvePath(labelConfig.getDefaultDataRootDir(),datasetsVO.getName()));
         }
         datasets.setVisible(datasetsVO.getVisible() != null ? datasetsVO.getVisible() : true);
         datasets.setType(datasetsVO.getType()!=null? datasetsVO.getType() : DataBaseType.ImageDataBase.getCode());
@@ -100,7 +100,6 @@ public class GenerateServiceImpl implements GenerateService {
 
         Datasets selectDatasets = datasetsMapper.selectByObj(datasets);
         String dbRootDir = datasetsVO.getDataRootDir();
-        dbRootDir = FileUtils.resolvePath(dbRootDir, selectDatasets.getName());
 
         Boolean deleteDirFlag = false;
         try {

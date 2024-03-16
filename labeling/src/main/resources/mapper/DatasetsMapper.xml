@@ -90,9 +90,105 @@
             </trim>
         </where>
     </select>
+
     <select id="selectByID" resultType="com.dlabeling.labeling.domain.po.Datasets">
         SELECT * FROM `datasets`
         WHERE `id` = #{id}
+    </select>
+
+    <select id="selectDatasetLike" resultType="com.dlabeling.labeling.domain.po.Datasets">
+        SELECT
+            `id`,
+            `name`,
+            `description`,
+            `type`,
+            `data_root_dir`,
+            `visible`,
+            `create_time`,
+            `update_time`,
+            `destroy_time`
+        FROM `datasets`
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="datasets.name!=null and datasets.name !=''">
+                    `name` LIKE CONCAT('%', #{datasets.name}, '%') AND
+                </if>
+                <if test="datasets.description != null and datasets.description !=''">
+                    `description` LIKE CONCAT('%', #{datasets.description}, '%') AND
+                </if>
+                <if test="creatorList != null and creatorList.size() > 0">
+                    `creator` IN
+                    <foreach item="item" index="index" collection="creatorList" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
+                     AND
+                </if>
+            </trim>
+        </where>
+    </select>
+    <select id="selectDatasetByJoinBatch" resultType="com.dlabeling.labeling.domain.vo.DatasetsVO">
+        SELECT
+            datasets.id as id,
+            datasets.name as name,
+            datasets.description as description,
+            datasets.type as type,
+            user.username as creator,
+            datasets.data_root_dir as dataRootDir,
+            datasets.visible as visible,
+            JSON_ARRAYAGG(JSON_OBJECT(
+                          "id", label_conf.id,
+                          "datasetId", label_conf.dataset_id,
+                          "labelName", label_conf.label_name,
+                          "labelType", label_conf.label_type
+                          )) as labelConfList
+        FROM datasets
+        JOIN user on datasets.creator = user.id
+        JOIN label_conf on datasets.id = label_conf.dataset_id
+        <where>
+            datasets.id IN
+            <foreach item="item" index="index" collection="datasetsList" open="(" separator="," close=")">
+                #{item.id}
+            </foreach>
+
+        </where>
+        GROUP BY datasets.id
+    </select>
+    <select id="selectDatasetByJoinBatchWithFilter" resultType="com.dlabeling.labeling.domain.vo.DatasetsVO">
+        SELECT
+        datasets.id as id,
+        datasets.name as name,
+        datasets.description as description,
+        datasets.type as type,
+        user.username as creator,
+        datasets.data_root_dir as dataRootDir,
+        datasets.visible as visible,
+        JSON_ARRAYAGG(JSON_OBJECT(
+        "id", label_conf.id,
+        "datasetId", label_conf.dataset_id,
+        "labelName", label_conf.label_name,
+        "labelType", label_conf.label_type
+        )) as labelConfListJson
+        FROM datasets
+        JOIN user on datasets.creator = user.id
+        JOIN label_conf on datasets.id = label_conf.dataset_id
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="datasetsFilter.name!=null and datasetsFilter.name !=''">
+                    datasets.`name` LIKE CONCAT('%', #{datasetsFilter.name}, '%') AND
+                </if>
+                <if test="datasetsFilter.description != null and datasetsFilter.description !=''">
+                    datasets.`description` LIKE CONCAT('%', #{datasetsFilter.description}, '%') AND
+                </if>
+                <if test="datasetsFilter.creator !=null and datasetsFilter != ''">
+                    user.username LIKE CONCAT('%', #{datasetsFilter.creator}, '%') AND
+                </if>
+            </trim>
+        </where>
+        GROUP BY datasets.id
+    </select>
+    <select id="fetchCreatorList" resultType="java.lang.String">
+        SELECT DISTINCT user.username FROM user JOIN datasets on user.id=datasets.creator
+
     </select>
 
 

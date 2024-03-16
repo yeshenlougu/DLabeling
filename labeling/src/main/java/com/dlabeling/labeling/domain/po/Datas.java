@@ -20,5 +20,5 @@ public class Datas {
 
     private String labelPath;
 
-    private Map<String, Objects> labelMap;
+    private Map<String, Object> labelMap;
 }

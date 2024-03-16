@@ -21,5 +21,5 @@ public interface InterfaceAddressMapper extends BaseMapper<InterfaceAddress> {
 
     void deleteInterfaceAddressByID(Integer id);
 
-    List<InterfaceAddress> selectInterfaceAddressesByDataset(Integer datesetID);
+    List<InterfaceAddress> selectInterfaceByObj(InterfaceAddress interfaceAddress);
 }

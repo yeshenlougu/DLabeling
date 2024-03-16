@@ -1,6 +1,7 @@
 package com.dlabeling.system.service.user.impl;
 
 import com.dlabeling.common.enums.ResponseCode;
+import com.dlabeling.common.enums.UserRole;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.user.UserException;
 import com.dlabeling.common.exception.user.UserNameIllegalException;
@@ -24,8 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -50,9 +50,6 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private TokenService tokenService;
 
     @Autowired
     private DatasetPermissionMapper datasetPermissionMapper;
@@ -185,7 +182,6 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Override
     public void addLevelApply(LevelApply levelApply) {
-        LoginUser loginUser = TokenService.
         levelApply.setCreateTime(new Date());
         levelApply.setStatus(LevelApplyStatus.APPLYING.getCode());
         levelApplyMapper.addLevelApply(levelApply);
@@ -227,11 +223,33 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     }
 
+    @Deprecated
     @Override
     public List<LevelApplyVO> getAllLevelApply(String type) {
         Integer typeNum = LevelApplyType.getLevelApplyTypeByType(type).getCode();
         List<LevelApply> allLevelApply = levelApplyMapper.getAllLevelApply(typeNum);
+
         List<LevelApplyVO> levelApplyVOList = allLevelApply.stream().map(LevelApplyVO::converToLevelApplyVO).collect(Collectors.toList());
+
+        Set<Integer> userIdList = new HashSet<>();
+        allLevelApply.stream().map(levelApply->{
+            userIdList.add(levelApply.getApplyer());
+            userIdList.add(levelApply.getJudger());
+            return null;
+        });
+        List<UserInfo> userInfoList = userInfoMapper.getUserInfoByListID(userIdList);
+        Map<Integer, String> userIdToName = new HashMap<>();
+
+        for (UserInfo userInfo : userInfoList) {
+            userIdToName.put(userInfo.getUserId(), userInfo.getUsername());
+        }
+
+        for (LevelApplyVO levelApplyVO : levelApplyVOList) {
+            levelApplyVO.setApplyerName(userIdToName.get(levelApplyVO.getApplyer()));
+            levelApplyVO.setJugerName(userIdToName.get(levelApplyVO.getJudger()));
+        }
+
+
         return levelApplyVOList;
     }
 
@@ -239,5 +257,11 @@ public class ISysUserServiceImpl implements ISysUserService {
     public List<LevelApply> getLevelApplyByStatus(int status) {
         List<LevelApply> levelApplyByStatus = levelApplyMapper.getLevelApplyByStatus(status);
         return levelApplyByStatus;
+    }
+
+    @Override
+    public List<UserInfo> getUserInfoLike(UserInfo userInfo) {
+        List<UserInfo> userInfoList = userInfoMapper.selectUserInfoLike(userInfo);
+        return userInfoList;
     }
 }

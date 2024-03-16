@@ -76,5 +76,24 @@
         FROM user
     </select>
 
+    <select id="selectUserLike" resultType="com.dlabeling.system.domain.po.user.User">
+        SELECT *
+        FROM user
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="email != null and email != ''">
+                    `email` LIKE CONCAT('%', #{email}, '%') AND
+                </if>
+                <if test="phone != null and phone != ''">
+                    `phone` LIKE  CONCAT('%', #{phone}, '%')  AND
+                </if>
+                <if test="password != null and password != ''">
+                  `password` LIKE  CONCAT('%', #{password}, '%')  AND
+                </if>
+            </trim>
+        </where>
+
+    </select>
+
 
 </mapper>

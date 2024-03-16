@@ -3,6 +3,23 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dlabeling.labeling.mapper.DatasMapper">
+    <insert id="insertData">
+        INSERT INTO ${table}(`data_path`, `label_path`) VALUES(#{insertDatas.dataPath}, #{insertDatas.labelPath})
+    </insert>
+    <update id="updateDatasBatch">
+
+    </update>
+    <update id="updateDatas">
+        UPDATE ${table}
+        <set>
+            <foreach collection="datas.labelMap" index="key" item="value" separator="," >
+                ${key} = #{value}
+            </foreach>
+        </set>
+        <where>
+            `id` = #{datas.id}
+        </where>
+    </update>
 
     <select id="selectDataLimit" resultType="map" statementType="STATEMENT">
         SELECT
@@ -11,21 +28,38 @@
 
         LIMIT ${limit} OFFSET ${offset}
     </select>
-<!--    #         <if test="order != null"> ORDER BY #{order} </if>-->
-<!--    &lt;!&ndash; 定义ResultMap &ndash;&gt;-->
-<!--    <resultMap id="datasMap" type="com.dlabeling.labeling.domain.po.Datas">-->
-<!--        <id property="id" column="id"/>-->
-<!--        <result property="dataPath" column="data_path"/>-->
-<!--        <result property="labelPath" column="label_path"/>-->
-<!--        &lt;!&ndash; 使用association标签映射其他字段到labelMap &ndash;&gt;-->
-<!--        <association property="labelMap" javaType="java.util.HashMap">-->
-<!--            &lt;!&ndash; 使用foreach动态生成字段映射 &ndash;&gt;-->
-<!--            <foreach collection="columnNames" item="columnName" open="" close="" separator="">-->
-<!--                <result property="${columnName}" column="${columnName}"/>-->
-<!--            </foreach>-->
-<!--        </association>-->
-<!--    </resultMap>-->
-
+    <select id="selectDataFilterLimit" resultType="java.util.Map">
+        SELECT *
+        FROM ${table}
+        <where>
+            <foreach collection="labelValueMap.entrySet()" item="value" index="key" separator="AND">
+                ${key} LIKE CONCAT('%',${value},'%')
+            </foreach>
+        </where>
+        LIMIT ${limit} OFFSET ${offset}
+    </select>
+    <select id="selectDatasByIDList" resultType="java.util.Map">
+        SELECT *
+        FROM ${table}
+        <where>
+            `id` IN
+            <foreach item="item" collection="editDatasList" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+    <select id="selectDatasBySplit" resultType="java.util.Map">
+        SELECT *
+        FROM ${table}
+        WHERE `id` IN (
+            SELECT `data_id` FROM data_split where dataset_id = #{datasetID} and split_id = #{splitID}
+            )
+    </select>
+    <select id="selectDatasByID" resultType="java.util.Map">
+        SELECT *
+        FROM ${table}
+        WHERE `id`= #{id}
+    </select>
 
 
 </mapper>

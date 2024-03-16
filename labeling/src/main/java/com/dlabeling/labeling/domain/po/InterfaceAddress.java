@@ -26,11 +26,6 @@ public class InterfaceAddress implements Serializable {
     private Integer datasetId;
 
     /**
-     * DATASET名称
-     */
-    private String datasetName;
-
-    /**
      * 接口所属类型，(0:自动标注,1:测试,2:查验)
      */
     private Integer interfaceType;

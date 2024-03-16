@@ -39,7 +39,7 @@ public enum Gender {
 
     public static Gender getGenderByString(String msg){
         return Stream.of(Gender.values())
-                .filter(e->e.sex == msg)
+                .filter(e->e.sex.equals(msg))
                 .findFirst()
                 .orElse(null);
     }

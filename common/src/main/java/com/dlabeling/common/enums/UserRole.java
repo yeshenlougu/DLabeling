@@ -47,7 +47,7 @@ public enum UserRole {
 
     public static UserRole getRoleByString(String msg){
         return Stream.of(UserRole.values())
-                .filter(e->e.role == msg)
+                .filter(e->e.role.equals(msg))
                 .findFirst()
                 .orElse(null);
     }

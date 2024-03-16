@@ -14,5 +14,9 @@ public class FileExistsException extends FileException{
         super("file.exists.true", null, ResponseCode.FILE_EXISTS.getMessage());
     }
 
+    public FileExistsException(String msg){
+        super("file.exists.true", null, msg);
+    }
+
 
 }

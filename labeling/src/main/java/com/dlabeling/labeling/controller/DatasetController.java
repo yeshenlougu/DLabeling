@@ -3,18 +3,15 @@ package com.dlabeling.labeling.controller;
 import com.dlabeling.common.core.domain.R;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.labeling.domain.po.Datas;
-import com.dlabeling.labeling.domain.vo.DatasVO;
-import com.dlabeling.labeling.domain.vo.DatasetsVO;
-import com.dlabeling.labeling.domain.vo.SplitVO;
+import com.dlabeling.labeling.domain.po.InterfaceAddress;
+import com.dlabeling.labeling.domain.vo.*;
 import com.dlabeling.labeling.service.DatasetsService;
 import com.dlabeling.labeling.service.GenerateService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -59,7 +56,7 @@ public class DatasetController {
 
 
     @GetMapping("/getAllDataset")
-    public R<List<DatasetsVO>> getDataset(){
+    public R<List<DatasetsVO>> getAllDataset(){
         try {
             List<DatasetsVO> allDatasets = datasetsService.getAllDatasets();
             return R.ok(allDatasets);
@@ -67,28 +64,42 @@ public class DatasetController {
             return R.fail(e.getMsg());
         }
     }
-
-    @PostMapping("/getDatasetByFilter")
-    public R<List<DatasetsVO>> getDatasetByFilter(@RequestBody DatasetsVO datasetsVO){
-        try {
-            List<DatasetsVO> datasetByFilter = datasetsService.getDatasetByFilter(datasetsVO);
-            return R.ok(datasetByFilter);
-        }catch (BusinessException e){
-            return R.fail(e.getMsg());
-        }
+    /**
+     * 创建者列表
+     * @return
+     */
+    @GetMapping("/creatorList")
+    public R<List<String>> getCreatorList(){
+        List<String> creatorList = datasetsService.getCreatorList();
+        return R.ok(creatorList);
     }
 
+    /**
+     * 数据集标签列表
+     * @param id
+     * @return
+     */
     @GetMapping("/labelList")
     public R<List<String>> getLabelList(Integer id){
         List<String> labelList = datasetsService.getLabelList(id);
         return R.ok(labelList);
     }
 
+    /**
+     * 删除数据集
+     * @param id
+     * @return
+     */
     @GetMapping("/delete")
     public R<String> deleteDataset(Integer id){
         return R.ok();
     }
 
+    /**
+     * 分页 获取数据
+     * @param data
+     * @return
+     */
     @PostMapping("/datas")
     public R<List<DatasVO>> getDataOfDataset(@RequestBody Map<String, Object> data){
         Integer id = (Integer) data.get("id");
@@ -98,18 +109,83 @@ public class DatasetController {
         return R.ok(datasBySetID);
     }
 
+    @PostMapping("/getDatasByID")
+    public R<DatasVO> getDataByID(Integer datasetID, Integer dataID){
+        DatasVO datasVO = datasetsService.getDatasByID(datasetID, dataID);
+        return R.ok(datasVO);
+    }
+
+    @PostMapping("/datas/filter")
+    public R<List<DatasVO>> getDatasByFilter(@RequestBody DatasFilterVO datasFilterVO){
+        List<DatasVO> datasVOList = datasetsService.getDatasByFilter(datasFilterVO);
+
+        return R.ok(datasVOList);
+    }
+
+    @PostMapping("/data/batchEdit")
+    public R<String> batchEditDatas(@RequestBody DatasEditVO datasEditVO){
+        try {
+            Map<String, Integer> editForm = datasEditVO.getEditForm();
+            datasetsService.batchEditDatas(datasEditVO);
+            return R.ok();
+        }catch (Exception e){
+            return R.fail(e.getMessage());
+        }
+
+    }
+
+
+
+    /**
+     * 查询获取训练集、测试集列表
+     * @param data
+     * @return
+     */
     @PostMapping("/splitList")
-    public R<List<String>> getSplitList(@RequestBody Map<String, Object> data){
+    public R<List<SplitVO>> getSplitList(@RequestBody Map<String, Object> data){
         Integer datasetId = (Integer) data.get("id");
         String type = (String) data.get("type");
 
         List<SplitVO> splitVOListByID = datasetsService.getSplitVOListByID(datasetId, type);
-        List<String> res = splitVOListByID.stream().map(SplitVO::getName).collect(Collectors.toList());
-        return R.ok(res);
+
+        return R.ok(splitVOListByID);
     }
 
-    @PostMapping("/interfaceList")
-    public R<String> getInterfaceList(){
+    @PostMapping("/splitData")
+    public R<List<DatasVO>> getSplitDatas(Integer datasetID, Integer splitID){
+        List<DatasVO> datasVOList = datasetsService.getSplitDatas(datasetID, splitID);
+        return R.ok(datasVOList);
+    }
+
+    @PostMapping("/split/addData")
+    public R<String> addDataToSplit(Integer datasetID, Integer splitID, @RequestParam("dataIdList") ArrayList<Integer> dataIdList){
+        try {
+            datasetsService.addDataToSplit(datasetID, splitID, dataIdList);
+            return R.ok();
+        }catch (BusinessException e){
+            log.error(e.getMsg());
+            return R.fail(e.getMsg());
+        }
+    }
+
+    @PostMapping("/split/create")
+    public R<String> createSplit(@RequestBody SplitVO splitVO){
+        datasetsService.addSplit(splitVO);
         return R.ok();
     }
+
+    /**
+     * 获取接口列表
+     * @return
+     */
+    @PostMapping("/interfaceList")
+    public R<List<InterfaceAddress>> getInterfaceList(Integer datasetID, String type){
+        List<InterfaceAddress> interfaceAddressList = datasetsService.getInterfaceList(datasetID, type);
+        return R.ok(interfaceAddressList);
+    }
+
+    /**
+     *
+     */
+
 }

@@ -99,11 +99,27 @@ public class UserInfo implements Serializable {
         userInfoVO.setEmail(userInfo.getEmail());
         userInfoVO.setPhone(userInfo.getPhone());
         userInfoVO.setAddress(userInfo.getAddress());
-        userInfoVO.setPrivilege(UserRole.getRoleByCode(userInfo.getPrivilege()).getRole());
-        userInfoVO.setGender(Gender.getGenderByCode(userInfo.getGender()).getSex());
+
+        UserRole role = UserRole.getRoleByCode(userInfo.getPrivilege());
+        userInfoVO.setPrivilege(role != null? role.getRole(): null);
+        Gender gender1 = Gender.getGenderByCode(userInfo.getGender());
+        userInfoVO.setGender(gender1!=null ? gender1.getSex(): null);
 
         return userInfoVO;
 
     }
 
+    public static UserInfo convertToUserInfo(UserInfoVO userInfoVO) {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(userInfoVO.getId());
+        userInfo.setUserId(userInfoVO.getUserId());
+        userInfo.setUsername(userInfoVO.getUsername());
+        userInfo.setEmail(userInfoVO.getEmail());
+        userInfo.setPhone(userInfoVO.getPhone());
+        userInfo.setAddress(userInfoVO.getAddress());
+
+        userInfo.setPrivilege(UserRole.getRoleByString(userInfoVO.getPrivilege())!=null?UserRole.getRoleByString(userInfoVO.getPrivilege()).getCode():null);
+        userInfo.setGender(Gender.getGenderByString(userInfoVO.getGender())!=null ?Gender.getGenderByString(userInfoVO.getGender()).getCode():null);
+        return userInfo;
+    }
 }
