@@ -15,9 +15,9 @@ public class DatasFilterVO {
 
     private int id;
 
-    private int start;
-
-    private int end;
+//    private int start;
+//
+//    private int end;
 
     private Map<String, String> labelValueMap;
 

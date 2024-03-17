@@ -19,7 +19,7 @@ public interface DatasetsService {
 
     List<DatasetsVO> getAllDatasets();
 
-    List<DatasVO> getDatasBySetID(Integer id, Integer start, Integer end);
+    List<DatasVO> getDatasBySetID(Integer id);
 
     List<String> getLabelList(Integer datasetId);
 
@@ -42,4 +42,6 @@ public interface DatasetsService {
     List<DatasVO> getSplitDatas(Integer datasetID, Integer splitID);
 
     DatasVO getDatasByID(Integer datasetID, Integer dataID);
+
+    void updateDatas(DatasVO datasVO);
 }

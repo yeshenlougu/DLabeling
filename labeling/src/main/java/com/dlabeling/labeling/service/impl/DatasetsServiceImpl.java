@@ -112,7 +112,7 @@ public class DatasetsServiceImpl implements DatasetsService {
     }
 
     @Override
-    public List<DatasVO> getDatasBySetID(Integer id, Integer start, Integer end){
+    public List<DatasVO> getDatasBySetID(Integer id){
         List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(id);
         Map<String, String> fieldToLabel = new HashMap<>();
         labelConfByDB.forEach(labelConf -> {
@@ -121,9 +121,9 @@ public class DatasetsServiceImpl implements DatasetsService {
         });
 
         String tableName = DatasetUtils.getDataTable(id);
-        Integer limit = end - start;
+//        Integer limit = end - start;
 
-        Map<String, Map<String, Object>> stringObjectMap = datasMapper.selectDataLimit(limit, start, tableName);
+        Map<String, Map<String, Object>> stringObjectMap = datasMapper.selectDataLimit(tableName);
 
         List<DatasVO> datasVOList = new ArrayList<>();
 
@@ -180,8 +180,7 @@ public class DatasetsServiceImpl implements DatasetsService {
         });
 
         // 获取过滤后的数据
-        Map<String, Map<String, Object>> selectedMap =  datasMapper.selectDataFilterLimit(datasFilterVO.getLabelValueMap(),tableName,
-                datasFilterVO.getStart(), datasFilterVO.getEnd()-datasFilterVO.getStart());
+        Map<String, Map<String, Object>> selectedMap =  datasMapper.selectDataFilterLimit(datasFilterVO.getLabelValueMap(),tableName);
         List<DatasVO> datasVOList = new ArrayList<>();
         for (Map<String, Object> value : selectedMap.values()) {
             try{
@@ -395,4 +394,26 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     }
 
+    @Override
+    public void updateDatas(DatasVO datasVO) {
+        Set<String> labelName = new HashSet<>();
+        Map<String, Object> labelObject = new HashMap<>();
+        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasVO.getDatasetID());
+        Map<String, Integer> labelName2ID = new HashMap<>();
+
+        labelConfByDB.forEach(labelConf -> labelName2ID.put(labelConf.getLabelName(), labelConf.getId()));
+        for (Map.Entry<String, String> entry : datasVO.getLabelList().entrySet()) {
+            String key = entry.getKey();
+            String[] split = key.split("_");
+            labelObject.put("label_"+labelName2ID.get(split[0])+"_" + split[1], entry.getValue());
+        }
+
+        String table = DatasetUtils.getDataTable(datasVO.getDatasetID());
+        Datas datas = new Datas();
+        datas.setId(datasVO.getId());
+        datas.setLabelMap(labelObject);
+        datasMapper.updateDatas(datas, table);
+
+
+    }
 }

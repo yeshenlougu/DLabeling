@@ -26,7 +26,6 @@
             *
         FROM ${table}
 
-        LIMIT ${limit} OFFSET ${offset}
     </select>
     <select id="selectDataFilterLimit" resultType="java.util.Map">
         SELECT *
@@ -36,7 +35,6 @@
                 ${key} LIKE CONCAT('%',${value},'%')
             </foreach>
         </where>
-        LIMIT ${limit} OFFSET ${offset}
     </select>
     <select id="selectDatasByIDList" resultType="java.util.Map">
         SELECT *

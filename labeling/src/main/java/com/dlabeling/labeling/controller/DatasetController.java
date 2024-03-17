@@ -105,7 +105,7 @@ public class DatasetController {
         Integer id = (Integer) data.get("id");
         Integer start = (Integer) data.get("start");
         Integer end = (Integer) data.get("end");
-        List<DatasVO> datasBySetID = datasetsService.getDatasBySetID(id, start, end);
+        List<DatasVO> datasBySetID = datasetsService.getDatasBySetID(id);
         return R.ok(datasBySetID);
     }
 
@@ -134,6 +134,11 @@ public class DatasetController {
 
     }
 
+    @PostMapping("/datas/update")
+    public R<String> updateDatas(@RequestBody DatasVO datasVO){
+        datasetsService.updateDatas(datasVO);
+        return R.ok();
+    }
 
 
     /**

@@ -19,13 +19,19 @@ import java.util.Map;
 public interface DatasMapper extends BaseMapper<Datas> {
 
 
+//    @MapKey("id")
+//    Map<String, Map<String, Object>> selectDataLimit(@Param("limit") Integer limit, @Param("offset") Integer offset, @Param("table") String table);
+
     @MapKey("id")
-    Map<String, Map<String, Object>> selectDataLimit(@Param("limit") Integer limit, @Param("offset") Integer offset, @Param("table") String table);
+    Map<String, Map<String, Object>> selectDataLimit( @Param("table") String table);
 
     void insertData(@Param("insertDatas") Datas insertDatas, @Param("table") String table);
 
+//    @MapKey("id")
+//    Map<String, Map<String, Object>> selectDataFilterLimit(@Param("labelValueMap") Map<String, String> labelValueMap, @Param("table") String table, @Param("offset") Integer offset, @Param("limit") Integer limit);
+
     @MapKey("id")
-    Map<String, Map<String, Object>> selectDataFilterLimit(@Param("labelValueMap") Map<String, String> labelValueMap, @Param("table") String table, @Param("offset") Integer offset, @Param("limit") Integer limit);
+    Map<String, Map<String, Object>> selectDataFilterLimit(@Param("labelValueMap") Map<String, String> labelValueMap, @Param("table") String table);
 
     @MapKey("id")
     Map<String, Map<String, Object>> updateDatasBatch(@Param("table") String table, @Param("labelValeMap") Map<String, String> labelValueMap);

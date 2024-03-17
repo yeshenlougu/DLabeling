@@ -24,7 +24,9 @@ public class DatasVO {
     private String labelPath;
     private Map<String, String> labelList;
 
+
     private String file;
+    private Integer datasetID;
 
     public static DatasVO convertMapToDatasVO(Map<String, Object> datasMap, Map<String, String> fieldToLabel) throws IOException {
 
