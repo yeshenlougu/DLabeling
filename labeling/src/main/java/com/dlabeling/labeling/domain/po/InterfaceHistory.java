@@ -21,4 +21,6 @@ public class InterfaceHistory {
     private Integer datasetId;
 
     private Integer splitId;
+
+    private Integer type;
 }

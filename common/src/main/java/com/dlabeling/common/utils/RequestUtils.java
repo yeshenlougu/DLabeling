@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class RequestUtils {
 
-    public static Response labelFile(String url, File file){
+    public static Response sendLabelFile(String url, File file){
         OkHttpClient okHttpClient = new OkHttpClient();
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)

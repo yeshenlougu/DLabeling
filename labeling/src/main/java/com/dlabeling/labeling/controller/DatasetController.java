@@ -213,7 +213,7 @@ public class DatasetController {
     }
 
     @PostMapping("/interface/link")
-    public R<String> checkOrTestData(DoLabelVO doLabelVO){
+    public R<String> checkOrTestData(@RequestBody DoLabelVO doLabelVO){
 
         interfaceService.doLabelInterface(doLabelVO);
         return R.ok();

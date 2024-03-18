@@ -32,4 +32,8 @@ public class LabelConstant {
 
     public static final String DATA_FILED_TEST = "test";
 
+    public static final String INTERFACE_LABEL_LIST = "labelList";
+
+    public static final String INTERFACE_LABEL_DATAS = "labels";
+
 }
