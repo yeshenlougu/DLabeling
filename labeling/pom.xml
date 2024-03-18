@@ -26,6 +26,11 @@
             <groupId>com.dlabeling</groupId>
             <artifactId>framework</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.dlabeling</groupId>
+            <artifactId>plugin</artifactId>
+            <version>1.0</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.projectlombok</groupId>-->
 <!--            <artifactId>lombok</artifactId>-->

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dlabeling.labeling.mapper.InterfaceHistoryMapper">
+
+    <insert id="addInterfaceHistory">
+        INSERT INTO `interface_history`(`id`, `name`, `interfaece_id`, `dataset_id`, `split_id`)
+        VALUES (#{id}, #{name}, #{interfaceId}, #{datasetId}, #{splitId})
+    </insert>
+
+    <select id="selectInterfaceHistoryVO" resultType="com.dlabeling.labeling.domain.vo.InterfaceHistoryVO">
+        SELECT
+            `interface_history`.id as `id`,
+            `interface_history`.name as `name`,
+            `interface_history`.dataset_id as `datasetId`,
+            `interface_history`.interfaece_id as `interfaceId`,
+            `datasets`.name as `datasetName`,
+            `interface_address`.interface_name as `interfaceName`,
+            `split`.name as `splitName`
+        FROM `interface_history`
+        JOIN datasets ON datasets.id = interface_history.dataset_id
+        JOIN split ON split.id = interface_history.split_id
+        JOIN interface_address ON interface_history.interfaece_id=interface_address.id
+        WHERE interface_history.id = #{id}
+    </select>
+
+    <select id="selectAllInterfaceHistory" resultType="com.dlabeling.labeling.domain.vo.InterfaceHistoryVO">
+        SELECT
+            `interface_history`.id as `id`,
+            `interface_history`.name as `name`,
+            `interface_history`.dataset_id as `datasetId`,
+            `interface_history`.interfaece_id as `interfaceId`,
+            `datasets`.name as `datasetName`,
+            `interface_address`.interface_name as `interfaceName`,
+            `split`.name as `splitName`
+        FROM `interface_history`
+                 JOIN datasets ON datasets.id = interface_history.dataset_id
+                 JOIN split ON split.id = interface_history.split_id
+                 JOIN interface_address ON interface_history.interfaece_id=interface_address.id
+    </select>
+    <select id="selectInterfaceHistoryBySplitType" resultType="com.dlabeling.labeling.domain.vo.InterfaceHistoryVO">
+        SELECT
+            `interface_history`.id as `id`,
+            `interface_history`.name as `name`,
+            `interface_history`.dataset_id as `datasetId`,
+            `interface_history`.interfaece_id as `interfaceId`,
+            `datasets`.name as `datasetName`,
+            `interface_address`.interface_name as `interfaceName`,
+            `split`.name as `splitName`
+        FROM `interface_history`
+                 JOIN datasets ON datasets.id = interface_history.dataset_id
+                 JOIN split ON split.id = interface_history.split_id
+                 JOIN interface_address ON interface_history.interfaece_id=interface_address.id
+        WHERE datasets.id = #{datasetID} AND split.type = #{type}
+    </select>
+    <select id="selectDatasOfInterfaceHistory" resultType="java.util.Map">
+        SELECT *
+        FROM ${table}
+        WHERE ${table}.id IN
+        (SELECT data_id FROM  data_split JOIN interface_history ON data_split.split_id=interface_history.split_id WHERE interface_history.id = #{interfaceHistoryId})
+
+    </select>
+</mapper>

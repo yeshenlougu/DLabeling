@@ -15,6 +15,7 @@ import com.dlabeling.labeling.enums.SplitType;
 import com.dlabeling.labeling.mapper.*;
 import com.dlabeling.labeling.service.DatasetsService;
 import com.dlabeling.labeling.utils.DatasetUtils;
+import com.dlabeling.labeling.utils.LabelWriteUtils;
 import com.dlabeling.system.domain.po.user.UserInfo;
 import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.service.user.ISysUserService;
@@ -129,34 +130,7 @@ public class DatasetsServiceImpl implements DatasetsService {
 
         for (Map<String, Object> value : stringObjectMap.values()) {
             try {
-                String dataPath = (String) value.get("data_path");
-                String base64File = FileUtils.getBase64(dataPath);
-                DatasVO datasVO = new DatasVO();
-
-                datasVO.setId((Integer) value.get("id"));
-                datasVO.setFileName(FileUtils.removeFileExtension(FileUtils.getFileName(dataPath)));
-                datasVO.setFilePath(dataPath);
-                datasVO.setFile(base64File);
-                datasVO.setLabelPath((String) value.get("label_path"));
-                Map<String, String> labelList = new HashMap<>();
-
-                value.remove("id");
-                value.remove("data_path");
-                value.remove("label_path");
-
-                for (String key : value.keySet()) {
-                    String newKey = key;
-
-                    int i = key.lastIndexOf("_");
-                    String suffix = key.substring(i+1);
-                    String pref = key.substring(0, i);
-                    newKey = fieldToLabel.get(pref) + "_" + suffix;
-
-                    labelList.put(newKey, (String)value.get(key));
-                }
-
-                datasVO.setLabelList(labelList);
-
+                DatasVO datasVO = DatasVO.convertMapToDatasVO(value, fieldToLabel);
                 datasVOList.add(datasVO);
             }catch (IOException | FileNotFileException e){
                 continue;
@@ -289,6 +263,12 @@ public class DatasetsServiceImpl implements DatasetsService {
 
         List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasetID);
         List<Integer> labelIDList = labelConfByDB.stream().filter(labelConf -> editLabelList.contains(labelConf.getLabelName())).map(LabelConf::getId).collect(Collectors.toList());
+        List<String> labelNameList = labelConfByDB.stream().map(LabelConf::getLabelName).collect(Collectors.toList());
+        Map<String, String> fieldToLabel = new HashMap<>();
+        labelConfByDB.forEach(labelConf -> {
+            String field = LabelConstant.DATA_FILED_PREF + "_" + labelConf.getId();
+            fieldToLabel.put(field, labelConf.getLabelName());
+        });
 
         String table = DatasetUtils.getDataTable(datasetID);
 
@@ -297,9 +277,12 @@ public class DatasetsServiceImpl implements DatasetsService {
         Map<String, Map<String, Object>> selectedDatas = datasMapper.selectDatasByIDList(table, editDatasList);
 
         List<Datas> datasList = new ArrayList<>();
+
         for (Map<String, Object> value : selectedDatas.values()) {
             Datas datas = new Datas();
             datas.setId((Integer) value.get("id"));
+            datas.setDataPath((String) value.get("data_path"));
+            datas.setLabelPath((String) value.get("label_path"));
             Map<String, Object> labelMap = new HashMap<>();
 
             for (String key : value.keySet()) {
@@ -319,7 +302,14 @@ public class DatasetsServiceImpl implements DatasetsService {
         }
         // 批量修改 datas
         for (Datas datas : datasList) {
-            datasMapper.updateDatas(datas, table);
+            try {
+                datasMapper.updateDatas(datas, table);
+                DatasVO datasVO = DatasVO.convertDatasToDatasVO(datas, fieldToLabel);
+                LabelWriteUtils.writeLabelJSON(datasVO.getLabelPath(), datasVO, labelNameList);
+            }catch (IOException e){
+                continue;
+            }
+
         }
     }
 
@@ -396,23 +386,41 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Override
     public void updateDatas(DatasVO datasVO) {
-        Set<String> labelName = new HashSet<>();
-        Map<String, Object> labelObject = new HashMap<>();
-        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasVO.getDatasetID());
-        Map<String, Integer> labelName2ID = new HashMap<>();
+        try {
+            Set<String> labelName = new HashSet<>();
+            Map<String, Object> labelObject = new HashMap<>();
+            List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasVO.getDatasetID());
+            Map<String, Integer> labelName2ID = new HashMap<>();
+            labelConfByDB.forEach(labelConf -> labelName2ID.put(labelConf.getLabelName(), labelConf.getId()));
+            Map<String, String> fieldToLabel = new HashMap<>();
+            labelConfByDB.forEach(labelConf -> {
+                String field = LabelConstant.DATA_FILED_PREF + "_" + labelConf.getId();
+                fieldToLabel.put(field, labelConf.getLabelName());
+            });
 
-        labelConfByDB.forEach(labelConf -> labelName2ID.put(labelConf.getLabelName(), labelConf.getId()));
-        for (Map.Entry<String, String> entry : datasVO.getLabelList().entrySet()) {
-            String key = entry.getKey();
-            String[] split = key.split("_");
-            labelObject.put("label_"+labelName2ID.get(split[0])+"_" + split[1], entry.getValue());
+            for (Map.Entry<String, String> entry : datasVO.getLabelList().entrySet()) {
+                String key = entry.getKey();
+                String[] split = key.split("_");
+                labelObject.put("label_"+labelName2ID.get(split[0])+"_" + split[1], entry.getValue());
+            }
+
+            String table = DatasetUtils.getDataTable(datasVO.getDatasetID());
+            Datas datas = new Datas();
+            datas.setId(datasVO.getId());
+            datas.setLabelMap(labelObject);
+            datasMapper.updateDatas(datas, table);
+            Map<String, Map<String, Object>> stringMapMap = datasMapper.selectDatasByID(table, datas.getId());
+            for (Map<String, Object> value : stringMapMap.values()) {
+                datas.setDataPath((String) value.get("data_path"));
+                datas.setLabelPath((String) value.get("label_path"));
+            }
+
+            DatasVO datasVO1 = DatasVO.convertDatasToDatasVO(datas, fieldToLabel);
+            LabelWriteUtils.writeLabelJSON(datasVO1.getLabelPath(), datasVO1, new ArrayList<>(labelName2ID.keySet()));
+        }catch (IOException e){
+
         }
 
-        String table = DatasetUtils.getDataTable(datasVO.getDatasetID());
-        Datas datas = new Datas();
-        datas.setId(datasVO.getId());
-        datas.setLabelMap(labelObject);
-        datasMapper.updateDatas(datas, table);
 
 
     }

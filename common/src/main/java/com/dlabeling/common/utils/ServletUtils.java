@@ -30,6 +30,17 @@ public class ServletUtils {
         }
     }
 
+    public static HttpServletResponse getHttpServletResponse(){
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (attributes != null) {
+            // 获取HttpServletRequest对象
+            HttpServletResponse response = attributes.getResponse();
+            return response;
+        }
+        return null;
+    }
+
     public static HttpServletRequest getHttpServletRequest(){
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 

@@ -20,6 +20,6 @@ public interface InterfaceAddressMapper extends BaseMapper<InterfaceAddress> {
     void updateInterfaceAddress(InterfaceAddress interfaceAddress);
 
     void deleteInterfaceAddressByID(Integer id);
-
+    InterfaceAddress selectInterfaceAddressByID(Integer id);
     List<InterfaceAddress> selectInterfaceByObj(InterfaceAddress interfaceAddress);
 }

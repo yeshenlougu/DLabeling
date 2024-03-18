@@ -83,5 +83,19 @@
             </trim>
         </where>
     </select>
+    <select id="selectInterfaceAddressByID" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
+        SELECT
+            `id`,
+            `dataset_id`,
+            `interface_type`,
+            `interface_name`,
+            `interface_address`,
+            `create_time`,
+            `update_time`,
+            `destroy_time`
+        FROM
+            `interface_address`
+        WHERE id = #{id}
+    </select>
 
 </mapper>

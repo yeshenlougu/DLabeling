@@ -32,6 +32,7 @@ public enum ResponseCode {
     FILE_ERROR(2105, "文件删除失败"),
     DIR_CREATE_ERROR(2106, "文件夹创建失败"),
     DIR_EXISTS(2107, "文件夹已存在"),
+    FILE_MOVE_FAIL(2108, "文件移到失败"),
 
     USER_PWD_NOT_MATCH(2200, "用户密码错误"),
     USER_NOT_EXIST(2201, "用户不存在"),

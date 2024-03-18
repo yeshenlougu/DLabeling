@@ -2,10 +2,7 @@ package com.dlabeling.common.utils;
 
 import com.dlabeling.common.exception.file.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -141,4 +138,23 @@ public class FileUtils {
         return newName;
     }
 
+    public static void replace(File file, String pathDir){
+        try {
+            Path filePath = file.toPath();
+            String fileName = file.getName();
+            Path targetPath = Paths.get(FileUtils.resolvePath(pathDir, fileName));
+            Files.move(filePath, targetPath);
+        }catch (IOException e){
+            throw new FileMoveException(file.getAbsolutePath()+" 移动到目标目录" + pathDir + "失败");
+        }
+
+    }
+
+    public static void copyTo(String basePath, String newPath) {
+        try {
+            Files.copy(Paths.get(basePath), new File(newPath).toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

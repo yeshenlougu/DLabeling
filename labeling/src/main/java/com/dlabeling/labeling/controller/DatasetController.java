@@ -4,13 +4,18 @@ import com.dlabeling.common.core.domain.R;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.labeling.domain.po.Datas;
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
+import com.dlabeling.labeling.domain.po.InterfaceHistory;
+import com.dlabeling.labeling.domain.po.LabelHistory;
 import com.dlabeling.labeling.domain.vo.*;
 import com.dlabeling.labeling.service.DatasetsService;
 import com.dlabeling.labeling.service.GenerateService;
+import com.dlabeling.labeling.service.InterfaceService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,6 +36,9 @@ public class DatasetController {
 
     @Autowired
     DatasetsService datasetsService;
+
+    @Autowired
+    InterfaceService interfaceService;
 
     @PostMapping("/createDB")
     public R<String> createDB(@RequestBody DatasetsVO datasetsVO){
@@ -128,7 +136,7 @@ public class DatasetController {
             Map<String, Integer> editForm = datasEditVO.getEditForm();
             datasetsService.batchEditDatas(datasEditVO);
             return R.ok();
-        }catch (Exception e){
+        }catch (BusinessException e){
             return R.fail(e.getMessage());
         }
 
@@ -192,5 +200,22 @@ public class DatasetController {
     /**
      *
      */
+    @GetMapping("/interfaceHistory/list")
+    public R<List<InterfaceHistoryVO>> getInterfaceHistoryVOList(@Param("id") Integer id, @Param("type") String type){
+        List<InterfaceHistoryVO> interfaceHistoryList = interfaceService.getInterfaceHistoryList(id, type);
+        return R.ok(interfaceHistoryList);
+    }
 
+    @PostMapping("/interfaceHistory/datas")
+    public R<List<DatasVO>> getLabelHistoryDatasList(InterfaceHistoryVO interfaceHistory){
+        List<DatasVO> datasVOList = interfaceService.getLabelHistoryDatasList(interfaceHistory);
+        return R.ok(datasVOList);
+    }
+
+    @PostMapping("/interface/link")
+    public R<String> checkOrTestData(DoLabelVO doLabelVO){
+
+        interfaceService.doLabelInterface(doLabelVO);
+        return R.ok();
+    }
 }
