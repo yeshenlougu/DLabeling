@@ -44,4 +44,6 @@ public interface DatasetsService {
     DatasVO getDatasByID(Integer datasetID, Integer dataID);
 
     void updateDatas(DatasVO datasVO);
+
+    void updateDatasetInfo(DatasetsVO datasetsVO);
 }

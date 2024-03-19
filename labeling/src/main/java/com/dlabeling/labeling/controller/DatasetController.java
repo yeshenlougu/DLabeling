@@ -148,6 +148,11 @@ public class DatasetController {
         return R.ok();
     }
 
+    @PostMapping("/dataset/update")
+    public R<String> updateDatasetInfo(@RequestBody DatasetsVO datasetsVO) {
+        datasetsService.updateDatasetInfo(datasetsVO);
+        return R.ok();
+    }
 
     /**
      * 查询获取训练集、测试集列表

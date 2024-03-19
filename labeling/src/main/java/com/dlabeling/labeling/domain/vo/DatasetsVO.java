@@ -1,6 +1,7 @@
 package com.dlabeling.labeling.domain.vo;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.dlabeling.common.utils.DateUtils;
 import com.dlabeling.labeling.core.enums.DataBaseType;
 import com.dlabeling.labeling.domain.po.Datasets;
@@ -11,6 +12,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description:
@@ -62,11 +64,13 @@ public class DatasetsVO {
 
     public void setLabelConfListJson(String json){
         this.labelConfListJson = json;
-        this.labelConfList = (List<LabelConfVO>) JSON.parse(json);
+        List<JSONObject> jsonObjectList =  (List<JSONObject>) JSON.parse(json);
+        this.labelConfList = jsonObjectList.stream().map(LabelConfVO::convertJsonObjectToLabelConfVO).collect(Collectors.toList());
     }
 
     public static Datasets convertToDatasets(DatasetsVO datasetsVO){
         Datasets datasets = new Datasets();
+        datasets.setId(datasetsVO.getId());
         datasets.setName(datasetsVO.getName());
         datasets.setDescription(datasetsVO.getDescription());
         datasets.setType(datasetsVO.getType());

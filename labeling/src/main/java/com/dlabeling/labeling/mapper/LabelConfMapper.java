@@ -19,6 +19,8 @@ public interface LabelConfMapper extends BaseMapper<LabelConf> {
 
     void batchAddLabelConf(List<LabelConf> labelConfList);
 
+    LabelConf selectByObj(LabelConf labelConf);
+
     List<LabelConf> getLabelConfByDB(Integer datasetId);
 
     void updateLabelConfByID(LabelConf labelConf);

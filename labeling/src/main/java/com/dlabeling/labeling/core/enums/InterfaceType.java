@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum InterfaceType {
-    LABEL(0, "label"), TEST(1, "test"), CHECK(2, "check");
+    LABEL(0, "auto"), TEST(1, "test"), CHECK(2, "check");
     private int code;
 
     private String name;

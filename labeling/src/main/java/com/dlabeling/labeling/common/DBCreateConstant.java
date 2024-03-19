@@ -34,4 +34,8 @@ public class DBCreateConstant {
 
     public static final String SELECT_DATAS = "";
 
+    public static final String DELETE_COLUMN = "ALTER TABLE `{}` DROP `{}`";
+
+    public static final String ADD_COLUMN = "ALTER  TABLE `{}` ADD `{}` VARCHAR(255)";
+
 }

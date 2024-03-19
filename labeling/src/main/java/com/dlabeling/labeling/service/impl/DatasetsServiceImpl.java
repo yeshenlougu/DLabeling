@@ -7,11 +7,14 @@ import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.file.FileNotFileException;
 import com.dlabeling.common.utils.FileUtils;
 import com.dlabeling.common.utils.StringUtils;
+import com.dlabeling.labeling.common.DBCreateConstant;
 import com.dlabeling.labeling.common.LabelConstant;
 import com.dlabeling.labeling.core.enums.InterfaceType;
+import com.dlabeling.labeling.core.enums.LabelType;
 import com.dlabeling.labeling.domain.po.*;
 import com.dlabeling.labeling.domain.vo.*;
 import com.dlabeling.labeling.enums.SplitType;
+import com.dlabeling.labeling.generate.DBManager;
 import com.dlabeling.labeling.mapper.*;
 import com.dlabeling.labeling.service.DatasetsService;
 import com.dlabeling.labeling.utils.DatasetUtils;
@@ -22,6 +25,7 @@ import com.dlabeling.system.service.user.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.*;
@@ -61,6 +65,9 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Autowired
     private InterfaceAddressMapper interfaceAddressMapper;
+
+    @Autowired
+    DBManager dbManager;
 
     @Override
     public DatasetsVO getDatasetByID(Integer id) {
@@ -422,6 +429,58 @@ public class DatasetsServiceImpl implements DatasetsService {
         }
 
 
+    }
+
+    @Override
+    @Transactional
+    public void updateDatasetInfo(DatasetsVO datasetsVO) {
+        Datasets datasets = DatasetsVO.convertToDatasets(datasetsVO);
+        datasetsMapper.updateDatasetsByID(datasets);
+
+        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasetsVO.getId());
+        List<LabelConfVO> labelConfVOList = datasetsVO.getLabelConfList();
+        List<LabelConf> labelConfList = labelConfVOList.stream().map(LabelConfVO::convertToLabelConf).collect(Collectors.toList());
+        if (labelConfList.size() != labelConfByDB.size()){
+            // 交集
+            List<LabelConf> intersection = new ArrayList<>(labelConfByDB);
+            intersection.retainAll(labelConfList);
+
+            // 要delete的label
+            labelConfByDB.removeAll(intersection);
+
+            String table = DatasetUtils.getDataTable(datasets.getId());
+
+            for (LabelConf labelConf : labelConfByDB) {
+                String baseFiledName = "label_" + labelConf.getId();
+                List<String> sqlFiled = new ArrayList<>();
+                sqlFiled.add(StringUtils.format(DBCreateConstant.DELETE_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_VALUE));
+                sqlFiled.add(StringUtils.format(DBCreateConstant.DELETE_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_POSITION));
+                sqlFiled.add(StringUtils.format(DBCreateConstant.DELETE_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_AUTO));
+                sqlFiled.add(StringUtils.format(DBCreateConstant.DELETE_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_TEST));
+                for (String sql : sqlFiled) {
+                    dbManager.execute(sql);
+                }
+
+                labelConfMapper.deleteLabelConfByID(labelConf.getId());
+            }
+            // 要添加的
+            labelConfList.removeAll(intersection);
+            for (LabelConf labelConf : labelConfList) {
+                labelConfMapper.addLabelConf(labelConf);
+                LabelConf selectByObj = labelConfMapper.selectByObj(labelConf);
+
+                String baseFiledName = "label_" + selectByObj.getId();
+                List<String> sqlFiled = new ArrayList<>();
+                sqlFiled.add(StringUtils.format(DBCreateConstant.ADD_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_VALUE));
+                sqlFiled.add(StringUtils.format(DBCreateConstant.ADD_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_POSITION));
+                sqlFiled.add(StringUtils.format(DBCreateConstant.ADD_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_AUTO));
+                sqlFiled.add(StringUtils.format(DBCreateConstant.ADD_COLUMN, table, baseFiledName+"_"+LabelConstant.DATA_FILED_TEST));
+                for (String sql : sqlFiled) {
+                    dbManager.execute(sql);
+                }
+
+            }
+        }
 
     }
 }

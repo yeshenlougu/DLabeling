@@ -1,5 +1,7 @@
 package com.dlabeling.labeling.domain.vo;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.dlabeling.labeling.core.enums.LabelType;
 import com.dlabeling.labeling.domain.po.LabelConf;
 import lombok.Data;
@@ -37,5 +39,16 @@ public class LabelConfVO {
         labelConfVO.setLabelName(labelConf.getLabelName());
         labelConfVO.setLabelType(labelConf.getLabelType());
         return labelConfVO;
+    }
+
+    public static LabelConfVO convertJsonObjectToLabelConfVO(JSONObject labelConfVO){
+
+        LabelConfVO labelConf = new LabelConfVO();
+        labelConf.setLabelName((String) labelConfVO.get("labelName"));
+        labelConf.setLabelType((Integer) labelConfVO.get("labelType"));
+        labelConf.setDatasetId((Integer) labelConfVO.get("datasetId"));
+        labelConf.setId((Integer) labelConfVO.get("id"));
+
+        return labelConf;
     }
 }

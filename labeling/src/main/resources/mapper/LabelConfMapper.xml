@@ -47,6 +47,23 @@
             `dataset_id` = #{datasetId}
         </where>
     </select>
+    <select id="selectByObj" resultType="com.dlabeling.labeling.domain.po.LabelConf">
+        SELECT
+        `id`,
+        `dataset_id`,
+        `label_name`,
+        `label_type`
+        FROM `label_conf`
+        <where>
+            <trim suffixOverrides="AND">
+                <if test="id!=null"> id = #{id}</if>
+                <if test="datasetId != null"> dataset_id = #{datasetId} AND</if>
+                <if test="labelName != null">label_name = #{labelName} AND</if>
+                <if test="labelType != null"> label_type = #{labelType} AND</if>
+            </trim>
+        </where>
+
+    </select>
 
     <update id="updateLabelConfByID">
         UPDATE `label_conf`
