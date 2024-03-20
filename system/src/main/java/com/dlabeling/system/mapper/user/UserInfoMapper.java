@@ -2,6 +2,7 @@ package com.dlabeling.system.mapper.user;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.system.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.vo.UserInfoVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -66,4 +67,6 @@ public interface  UserInfoMapper extends BaseMapper<UserInfo> {
     List<UserInfo> selectUserInfoLike(UserInfo userInfoFilter);
 
     List<UserInfo> getUserInfoByListID(@Param("list") Set<Integer> list);
+
+    UserInfoVO selectUserInfoVO(@Param("userId") Integer id);
 }

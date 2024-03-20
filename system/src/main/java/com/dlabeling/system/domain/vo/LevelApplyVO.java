@@ -34,11 +34,14 @@ public class LevelApplyVO {
     public static LevelApply convertToLevelApply(LevelApplyVO levelApplyVO){
         LevelApply levelApply = new LevelApply();
         levelApply.setId(levelApplyVO.getId());
-        levelApply.setStatus(LevelApplyStatus.getLevelApplyStatusByMsg(levelApplyVO.getStatus()).getCode());
-        levelApply.setType(LevelApplyType.getLevelApplyTypeByType(levelApplyVO.getType()).getCode());
+
+        LevelApplyStatus levelApplyStatus = LevelApplyStatus.getLevelApplyStatusByMsg(levelApplyVO.getStatus());
+        levelApply.setStatus( levelApplyStatus == null?LevelApplyStatus.APPLYING.getCode():levelApplyStatus.getCode());
+        levelApply.setType(LevelApplyType.getLevelApplyTypeByType(levelApplyVO.getType()) !=null ? LevelApplyType.getLevelApplyTypeByType(levelApplyVO.getType()).getCode() : LevelApplyType.USER_APPLY.getCode());
+
         levelApply.setJudger(levelApplyVO.getJudger());
         levelApply.setApplyer(levelApplyVO.getApplyer());
-        levelApply.setPrivilege(Integer.valueOf(levelApplyVO.getPrivilege()));
+        levelApply.setPrivilege(Integer.parseInt(levelApplyVO.getPrivilege()));
 
         return levelApply;
     }

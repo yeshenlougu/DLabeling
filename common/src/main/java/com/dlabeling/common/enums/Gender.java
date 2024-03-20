@@ -9,7 +9,7 @@ import java.util.stream.Stream;
  * @Since 2024/3/5
  */
 public enum Gender {
-    UNKNOWN(0, "不知"), FEMALE(1, "女"), MALE(2, "男");
+    UNKNOWN(0, "无"), FEMALE(1, "女"), MALE(2, "男");
 
     private int code;
 

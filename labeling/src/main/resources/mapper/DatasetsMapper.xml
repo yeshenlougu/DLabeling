@@ -190,6 +190,22 @@
         SELECT DISTINCT user.username FROM user JOIN datasets on user.id=datasets.creator
 
     </select>
+    <select id="getDatasetHas" resultType="com.dlabeling.labeling.domain.po.Datasets">
+        SELECT
+            datasets.`id`,
+            datasets.`name`,
+            datasets.`description`,
+            datasets.`type`,
+            datasets.`data_root_dir`,
+            datasets.`visible`,
+            datasets.`creator`,
+            datasets.`create_time`,
+            datasets.`update_time`,
+            datasets.`destroy_time`
+        FROM `datasets`
+        JOIN dataset_permission on datasets.id = dataset_permission.dataset_id
+        WHERE dataset_permission.user_id = #{userId}
+    </select>
 
 
 </mapper>

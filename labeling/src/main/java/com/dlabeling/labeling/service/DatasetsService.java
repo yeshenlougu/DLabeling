@@ -46,4 +46,8 @@ public interface DatasetsService {
     void updateDatas(DatasVO datasVO);
 
     void updateDatasetInfo(DatasetsVO datasetsVO);
+
+    List<DatasetsVO> getDatasetHas();
+
+    List<DatasetsVO> getDatasetDontHas();
 }

@@ -6,6 +6,7 @@ import com.dlabeling.system.domain.po.user.UserInfo;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @Description:
@@ -33,6 +34,8 @@ public class UserInfoVO {
      * 用户邮箱
      */
     private String email;
+
+    private String password;
 
     /**
      * 用户手机号
@@ -85,6 +88,19 @@ public class UserInfoVO {
         Gender gender1 = Gender.getGenderByCode(userInfo.getGender());
         userInfoVO.setGender(gender1 != null ? gender1.getSex() : null);
 
+        return userInfoVO;
+    }
+
+    public static UserInfoVO convertMapToUserInfoVO(Map<String, Object> userInfoVOMap) {
+        UserInfoVO userInfoVO = new UserInfoVO();
+        userInfoVO.setId((Integer) userInfoVOMap.get("id"));
+        userInfoVO.setPrivilege((String) userInfoVOMap.get("privilege"));
+        userInfoVO.setGender((String) userInfoVOMap.get("gender"));
+        userInfoVO.setEmail((String) userInfoVOMap.get("email"));
+        userInfoVO.setPrivilege((String) userInfoVOMap.get("phone"));
+        userInfoVO.setAddress((String) userInfoVOMap.get("address"));
+        userInfoVO.setUserId((Integer) userInfoVOMap.get("userId"));
+        userInfoVO.setUsername((String) userInfoVOMap.get("username"));
         return userInfoVO;
     }
 }

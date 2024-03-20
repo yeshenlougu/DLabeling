@@ -182,6 +182,22 @@
             </foreach>
         </where>
     </select>
+    <select id="selectUserInfoVO" resultType="com.dlabeling.system.domain.vo.UserInfoVO">
+        SELECT
+            `user_info`.id AS id,
+            `user_info`.user_id AS userId,
+            u.username AS username,
+            u.password AS password,
+            user_info.email AS email,
+            user_info.phone AS phone,
+            user_info.privilege AS privilege,
+            user_info.gender AS gender,
+            user_info.address AS address
+
+        FROM user_info
+        JOIN dlabeling.user u on u.id = user_info.user_id
+        WHERE user_info.user_id = #{userId}
+    </select>
 
 
 </mapper>

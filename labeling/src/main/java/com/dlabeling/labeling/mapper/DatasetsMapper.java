@@ -24,11 +24,11 @@ public interface DatasetsMapper extends BaseMapper<Datasets> {
 
     void updateDatasetsByID(Datasets datasets);
 
-    void deleteDatasetsByID(Integer id);
+    void deleteDatasetsByID(@Param("id") Integer id);
 
     Datasets selectByObj(Datasets datasets);
 
-    Datasets selectByID(Integer id);
+    Datasets selectByID(@Param("id") Integer id);
 
     List<Datasets> selectDatasetLike(@Param("datasets") Datasets datasets, @Param("creatorList") List<Integer> creatorList);
 
@@ -38,4 +38,6 @@ public interface DatasetsMapper extends BaseMapper<Datasets> {
     List<DatasetsVO> selectDatasetByJoinBatchWithFilter(@Param("datasetsFilter")DatasetsVO datasets);
 
     List<String> fetchCreatorList();
+
+    List<Datasets> getDatasetHas(@Param("userId") Integer id);
 }

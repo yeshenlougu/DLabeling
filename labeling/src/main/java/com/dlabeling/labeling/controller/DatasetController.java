@@ -72,6 +72,26 @@ public class DatasetController {
             return R.fail(e.getMsg());
         }
     }
+
+    @GetMapping("/datasetHas")
+    public R<List<DatasetsVO>> getDatasetHas(){
+        try {
+            List<DatasetsVO> allDatasets = datasetsService.getDatasetHas();
+            return R.ok(allDatasets);
+        }catch (BusinessException e){
+            return R.fail(e.getMsg());
+        }
+    }
+
+    @GetMapping("/datasetOther")
+    public R<List<DatasetsVO>> getDatasetDontHas(){
+        try {
+            List<DatasetsVO> allDatasets = datasetsService.getDatasetDontHas();
+            return R.ok(allDatasets);
+        }catch (BusinessException e){
+            return R.fail(e.getMsg());
+        }
+    }
     /**
      * 创建者列表
      * @return

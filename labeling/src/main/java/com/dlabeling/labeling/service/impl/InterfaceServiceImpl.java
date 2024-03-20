@@ -77,6 +77,9 @@ public class InterfaceServiceImpl implements InterfaceService {
     @Override
     @Transactional
     public void doLabelInterface(DoLabelVO doLabelVO){
+        if (doLabelVO.getName()==null){
+            doLabelVO.setName(doLabelVO.getLabelType()+"_temp");
+        }
         if (doLabelVO.getLabelType().equals("test")){
             DataSplit dataSplit = new DataSplit();
             dataSplit.setSplitId(doLabelVO.getSplitId());

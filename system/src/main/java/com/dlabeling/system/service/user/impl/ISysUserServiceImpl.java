@@ -1,5 +1,6 @@
 package com.dlabeling.system.service.user.impl;
 
+import com.dlabeling.common.enums.Gender;
 import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.enums.UserRole;
 import com.dlabeling.common.exception.BusinessException;
@@ -8,7 +9,7 @@ import com.dlabeling.common.exception.user.UserNameIllegalException;
 import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.system.domain.po.DatasetPermission;
 import com.dlabeling.system.domain.vo.LevelApplyVO;
-import com.dlabeling.system.domain.vo.LoginUser;
+import com.dlabeling.system.domain.vo.UserInfoVO;
 import com.dlabeling.system.enums.LevelApplyStatus;
 import com.dlabeling.system.domain.po.LevelApply;
 import com.dlabeling.system.enums.LevelApplyType;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,6 +55,7 @@ public class ISysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private DatasetPermissionMapper datasetPermissionMapper;
+
     
     
     @Override
@@ -117,14 +120,16 @@ public class ISysUserServiceImpl implements ISysUserService {
     }
 
     @Override
-    public void updateUserInfo(UserInfo userInfo) {
+    public void updateUserInfo(UserInfoVO userInfoVO) {
+
+        UserInfo userInfo = UserInfoVO.convertToUserInfo(userInfoVO);
         userInfo.setUpdateTime(new Date());
         userInfoMapper.updateUserInfo(userInfo);
 
         User user = new User();
-        user.setId(userInfo.getUserId());
-        user.setUsername(userInfo.getUsername());
-        user.setPhone(userInfo.getPhone());
+        user.setId(userInfoVO.getUserId());
+        user.setUsername(userInfoVO.getUsername());
+        user.setPhone(userInfoVO.getPhone());
         user.setUpdateTime(userInfo.getUpdateTime());
         userMapper.updateUser(user);
     }
@@ -181,10 +186,16 @@ public class ISysUserServiceImpl implements ISysUserService {
     }
 
     @Override
-    public void addLevelApply(LevelApply levelApply) {
-        levelApply.setCreateTime(new Date());
-        levelApply.setStatus(LevelApplyStatus.APPLYING.getCode());
-        levelApplyMapper.addLevelApply(levelApply);
+    public void addLevelApply(LevelApplyVO levelApplyVO) {
+        try {
+            LevelApply levelApply = LevelApplyVO.convertToLevelApply(levelApplyVO);
+            levelApply.setCreateTime(new Date());
+            levelApply.setStatus(LevelApplyStatus.APPLYING.getCode());
+            levelApplyMapper.addLevelApply(levelApply);
+        }catch (Exception e){
+            throw new BusinessException(ResponseCode.SQL_INSERT_ERROR, "申请已提交");
+        }
+
     }
 
     @Override
@@ -263,5 +274,24 @@ public class ISysUserServiceImpl implements ISysUserService {
     public List<UserInfo> getUserInfoLike(UserInfo userInfo) {
         List<UserInfo> userInfoList = userInfoMapper.selectUserInfoLike(userInfo);
         return userInfoList;
+    }
+
+    @Override
+    public UserInfoVO getUserInfoVOById(Integer id) {
+        UserInfoVO userInfoVO = userInfoMapper.selectUserInfoVO(id);
+        userInfoVO.setPrivilege(UserRole.getRoleByCode(Integer.parseInt(userInfoVO.getPrivilege())).getRole());
+        userInfoVO.setGender(Gender.getGenderByCode(Integer.parseInt(userInfoVO.getGender())).getSex());
+        return userInfoVO;
+    }
+
+    @Override
+    public void batchUpdateUserPermission(String permission, List<Map<String, Object>> userList) {
+        int permi = UserRole.getRoleByString(permission).getCode();
+        for (Map<String, Object> userInfoVOMap : userList) {
+            UserInfoVO userInfoVO = UserInfoVO.convertMapToUserInfoVO(userInfoVOMap);
+            userInfoVO.setPrivilege(UserRole.getRoleByCode(permi).getRole());
+            userInfoMapper.updateUserInfo(UserInfoVO.convertToUserInfo(userInfoVO));
+        }
+
     }
 }

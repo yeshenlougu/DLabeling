@@ -6,7 +6,9 @@ import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.file.FileNotFileException;
 import com.dlabeling.common.utils.FileUtils;
+import com.dlabeling.common.utils.ServletUtils;
 import com.dlabeling.common.utils.StringUtils;
+import com.dlabeling.framework.web.TokenService;
 import com.dlabeling.labeling.common.DBCreateConstant;
 import com.dlabeling.labeling.common.LabelConstant;
 import com.dlabeling.labeling.core.enums.InterfaceType;
@@ -20,6 +22,7 @@ import com.dlabeling.labeling.service.DatasetsService;
 import com.dlabeling.labeling.utils.DatasetUtils;
 import com.dlabeling.labeling.utils.LabelWriteUtils;
 import com.dlabeling.system.domain.po.user.UserInfo;
+import com.dlabeling.system.domain.vo.LoginUser;
 import com.dlabeling.system.mapper.user.UserInfoMapper;
 import com.dlabeling.system.service.user.ISysUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +71,9 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Autowired
     DBManager dbManager;
+
+    @Autowired
+    TokenService tokenService;
 
     @Override
     public DatasetsVO getDatasetByID(Integer id) {
@@ -482,5 +488,73 @@ public class DatasetsServiceImpl implements DatasetsService {
             }
         }
 
+    }
+
+    @Override
+    public List<DatasetsVO> getDatasetHas() {
+        try {
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
+            List<Datasets> datasetsList = datasetsMapper.getDatasetHas(loginUser.getId());
+            List<DatasetsVO> datasetsVOList = datasetsList.stream()
+                    .map(datasets -> {
+                        DatasetsVO datasetsVO = DatasetsVO.convertToDatasetsVO(datasets);
+
+                        List<LabelConf> labelConfList = labelConfMapper.getLabelConfByDB(datasetsVO.getId());
+                        List<LabelConfVO> labelConfVOList = labelConfList.stream()
+                                .map(LabelConfVO::convertToLabelConfVO)
+                                .collect(Collectors.toList());
+                        datasetsVO.setLabelConfList(labelConfVOList);
+
+                        UserInfo userInfoById = userService.getUserInfoById(datasets.getCreator());
+                        datasetsVO.setCreator(userInfoById.getUsername());
+
+                        return datasetsVO;
+                    })
+                    .collect(Collectors.toList());
+
+
+            return datasetsVOList;
+        }
+        catch (Exception e){
+            throw new BusinessException(ResponseCode.BUSINESS_ERROR, "获取拥有数据集");
+        }
+//        finally {
+//
+//        }
+    }
+
+    @Override
+    public List<DatasetsVO> getDatasetDontHas() {
+        try {
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
+            List<Datasets> hasDatasetsList = datasetsMapper.getDatasetHas(loginUser.getId());
+            List<Datasets> allDatasetList = datasetsMapper.getAllDataset();
+
+            List<Datasets> otherDatasetList = new ArrayList<>(allDatasetList);
+            otherDatasetList.removeAll(hasDatasetsList);
+
+            List<DatasetsVO> datasetsVOList = otherDatasetList.stream()
+                    .map(datasets -> {
+                        DatasetsVO datasetsVO = DatasetsVO.convertToDatasetsVO(datasets);
+
+                        List<LabelConf> labelConfList = labelConfMapper.getLabelConfByDB(datasetsVO.getId());
+                        List<LabelConfVO> labelConfVOList = labelConfList.stream()
+                                .map(LabelConfVO::convertToLabelConfVO)
+                                .collect(Collectors.toList());
+                        datasetsVO.setLabelConfList(labelConfVOList);
+
+                        UserInfo userInfoById = userService.getUserInfoById(datasets.getCreator());
+                        datasetsVO.setCreator(userInfoById.getUsername());
+
+                        return datasetsVO;
+                    })
+                    .collect(Collectors.toList());
+
+
+            return datasetsVOList;
+        }
+        catch (Exception e){
+            throw new BusinessException(ResponseCode.BUSINESS_ERROR, "获取其他数据集");
+        }
     }
 }

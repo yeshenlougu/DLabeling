@@ -115,7 +115,7 @@ public class ISysUserController {
      * @return
      */
     @PostMapping("/updateUserInfo")
-    public  R<String> updateUserInfo(UserInfo userInfo){
+    public  R<String> updateUserInfo(@RequestBody UserInfoVO userInfo){
         try{
             iSysUserService.updateUserInfo(userInfo);
             return R.ok(null, "更改用户信息成功");
@@ -166,13 +166,13 @@ public class ISysUserController {
 
     /**
      * 获取某个用户信息
-     * @param id
      * @return
      */
     @GetMapping("/getUserInfo")
-    public R<UserInfo> getUserInfo(Integer id){
+    public R<UserInfoVO> getUserInfo(){
         try {
-            UserInfo userInfo = iSysUserService.getUserInfoById(id);
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
+            UserInfoVO userInfo = iSysUserService.getUserInfoVOById(loginUser.getId());
             return R.ok(userInfo, "获取用户信息成功");
         }catch (BusinessException e){
             return R.fail(e.getCode().getCode(), e.getMsg());
@@ -185,13 +185,14 @@ public class ISysUserController {
      * @return
      */
     @PostMapping("/privilege/add")
-    public R<String> addApplyPrivilege(LevelApply levelApply){
+    public R<String> addApplyPrivilege(@RequestBody LevelApplyVO levelApply){
         try{
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
             levelApply.setApplyer(loginUser.getId());
             iSysUserService.addLevelApply(levelApply);
             return R.ok(null, "以提交申请");
-        }catch (BusinessException e){
+        }
+        catch (BusinessException e){
             return R.fail(null, e.getMsg());
         }catch (Exception e){
             return R.fail(null, "提交申请失败");
@@ -260,13 +261,14 @@ public class ISysUserController {
     }
 
     /**
-     * TODO 待完成
      * 用户权限变更
      * @param data
      * @return
      */
     @PostMapping("/updateUserPermission")
     public R<String> updateUserPermission(@RequestBody Map<String, Object> data){
+
+        iSysUserService.batchUpdateUserPermission((String) data.get("permission"), (List<Map<String, Object>>) data.get("userList"));
         return R.ok();
     }
 }
