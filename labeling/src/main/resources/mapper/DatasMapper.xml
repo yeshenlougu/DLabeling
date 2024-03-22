@@ -32,7 +32,10 @@
         FROM ${table}
         <where>
             <foreach collection="labelValueMap.entrySet()" item="value" index="key" separator="AND">
-                ${key} LIKE CONCAT('%',${value},'%')
+                <if test="value != '' and value != null">
+                    ${key} LIKE CONCAT('%',${value},'%')
+                </if>
+
             </foreach>
         </where>
     </select>

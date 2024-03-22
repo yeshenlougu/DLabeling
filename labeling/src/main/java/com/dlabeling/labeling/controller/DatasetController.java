@@ -73,6 +73,16 @@ public class DatasetController {
         }
     }
 
+    @PostMapping("/getDatasetByFilter")
+    public R<List<DatasetsVO>> getDatasetByFilter(@RequestBody DatasetsVO datasetsVO){
+        try {
+            List<DatasetsVO> allDatasets = datasetsService.getDatasetByFilter(datasetsVO);
+            return R.ok(allDatasets);
+        }catch (BusinessException e){
+            return R.fail(e.getMsg());
+        }
+    }
+
     @GetMapping("/datasetHas")
     public R<List<DatasetsVO>> getDatasetHas(){
         try {

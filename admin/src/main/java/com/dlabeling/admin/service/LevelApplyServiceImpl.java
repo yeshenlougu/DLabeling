@@ -46,14 +46,14 @@ public class LevelApplyServiceImpl implements LevelApplyService{
         }
         List<UserInfo> userInfoList = userInfoMapper.getUserInfoByListID(userIdList);
         Map<Integer, String> userIdToName = new HashMap<>();
-
+        userIdToName.put(0, "无");
         for (UserInfo userInfo : userInfoList) {
             userIdToName.put(userInfo.getUserId(), userInfo.getUsername());
         }
 
         for (LevelApplyVO levelApplyVO : levelApplyVOList) {
             levelApplyVO.setApplyerName(userIdToName.get(levelApplyVO.getApplyer()));
-            levelApplyVO.setJugerName(userIdToName.get(levelApplyVO.getJudger()));
+            levelApplyVO.setJudgerName(userIdToName.get(levelApplyVO.getJudger()));
             if (LevelApplyType.getLevelApplyTypeByType(type) == LevelApplyType.USER_APPLY){
                 levelApplyVO.setPrivilegeName(UserRole.getRoleByCode(Integer.parseInt(levelApplyVO.getPrivilege())).getRole());
             }else {

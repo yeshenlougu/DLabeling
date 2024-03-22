@@ -13,7 +13,6 @@
             <if test="true">`type`,</if>
             <if test="true">`data_root_dir`,</if>
             <if test="true">`creator`,</if>
-            <if test="visible != null or visible != ' '">`visible`,</if>
             <if test="true">`create_time`,</if>
         </trim>
         VALUES
@@ -23,7 +22,6 @@
             <if test="true">#{type},</if>
             <if test="true">#{dataRootDir},</if>
             <if test="true">#{creator},</if>
-            <if test="visible != null or visible != ''">#{visible},</if>
             <choose>
                 <when test="createTime != null">#{createTime},</when>
                 <otherwise>CURRENT_TIMESTAMP,</otherwise>
@@ -39,7 +37,6 @@
             `description`,
             `type`,
             `data_root_dir`,
-            `visible`,
             `creator`,
             `create_time`,
             `update_time`,
@@ -54,7 +51,6 @@
                 <if test="name != null and name != ''">`name` = #{name},</if>
                 <if test="description != null and description != ''"> `description` = #{description},</if>
                 <if test="dataRootDir != null and dataRootDir != ''">`data_root_dir` = #{dataRootDir},</if>
-                <if test="visible != null">`visible` = #{visible},</if>
                 <if test="updateTime != null"> `update_time` = #{updateTime},</if>
                 <if test="destroyTime != null"> `destroy_time` = #{destroyTime},</if>
             </trim>
@@ -75,7 +71,6 @@
             `description`,
             `type`,
             `data_root_dir`,
-            `visible`,
             `create_time`,
             `update_time`,
             `destroy_time`
@@ -86,7 +81,6 @@
                 <if test="description != null"> `description` = #{description} AND </if>
                 <if test="type != null"> `type` = #{type} AND</if>
                 <if test="dataRootDir != null"> `data_root_dir` = #{dataRootDir} AND</if>
-                <if test="visible != null"> `visible` = #{visible} AND</if>
             </trim>
         </where>
     </select>
@@ -103,7 +97,6 @@
             `description`,
             `type`,
             `data_root_dir`,
-            `visible`,
             `create_time`,
             `update_time`,
             `destroy_time`
@@ -134,7 +127,6 @@
             datasets.type as type,
             user.username as creator,
             datasets.data_root_dir as dataRootDir,
-            datasets.visible as visible,
             JSON_ARRAYAGG(JSON_OBJECT(
                           "id", label_conf.id,
                           "datasetId", label_conf.dataset_id,
@@ -161,7 +153,6 @@
         datasets.type as type,
         user.username as creator,
         datasets.data_root_dir as dataRootDir,
-        datasets.visible as visible,
         JSON_ARRAYAGG(JSON_OBJECT(
         "id", label_conf.id,
         "datasetId", label_conf.dataset_id,
@@ -197,7 +188,6 @@
             datasets.`description`,
             datasets.`type`,
             datasets.`data_root_dir`,
-            datasets.`visible`,
             datasets.`creator`,
             datasets.`create_time`,
             datasets.`update_time`,

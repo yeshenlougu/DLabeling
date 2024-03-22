@@ -194,7 +194,8 @@ public class ISysUserController {
         }
         catch (BusinessException e){
             return R.fail(null, e.getMsg());
-        }catch (Exception e){
+        }
+        catch (Exception e){
             return R.fail(null, "提交申请失败");
         }
     }

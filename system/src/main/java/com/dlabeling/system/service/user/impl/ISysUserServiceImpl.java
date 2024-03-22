@@ -192,8 +192,12 @@ public class ISysUserServiceImpl implements ISysUserService {
             levelApply.setCreateTime(new Date());
             levelApply.setStatus(LevelApplyStatus.APPLYING.getCode());
             levelApplyMapper.addLevelApply(levelApply);
-        }catch (Exception e){
-            throw new BusinessException(ResponseCode.SQL_INSERT_ERROR, "申请已提交");
+        }
+        catch (Exception e){
+            if (e.getMessage().contains("Duplicate")){
+                throw new BusinessException(ResponseCode.SQL_INSERT_ERROR, "数据已存在");
+            }
+            throw e;
         }
 
     }
@@ -257,7 +261,7 @@ public class ISysUserServiceImpl implements ISysUserService {
 
         for (LevelApplyVO levelApplyVO : levelApplyVOList) {
             levelApplyVO.setApplyerName(userIdToName.get(levelApplyVO.getApplyer()));
-            levelApplyVO.setJugerName(userIdToName.get(levelApplyVO.getJudger()));
+            levelApplyVO.setJudgerName(userIdToName.get(levelApplyVO.getJudger()));
         }
 
 

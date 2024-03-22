@@ -44,7 +44,7 @@ public class Datasets implements Serializable {
     /**
      * 数据集可见性
      */
-    private Boolean visible;
+//    private Boolean visible;
 
     /**
      * 创建者id

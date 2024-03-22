@@ -27,7 +27,7 @@ public class LevelApplyVO {
     private String status;
 
     private int judger;
-    private String jugerName;
+    private String judgerName;
 
     private Boolean approval;
 
@@ -50,6 +50,7 @@ public class LevelApplyVO {
         LevelApplyVO levelApplyVO = new LevelApplyVO();
         levelApplyVO.setId(levelApply.getId());
         levelApplyVO.setApplyer(levelApply.getApplyer());
+        levelApplyVO.setJudger(levelApply.getJudger());
         levelApplyVO.setType(LevelApplyType.getLevelApplyTypeByCode(levelApply.getType()).getType());
         levelApplyVO.setPrivilege(String.valueOf(levelApply.getPrivilege()));
         levelApplyVO.setStatus(LevelApplyStatus.getLevelApplyStatusByCode(levelApply.getStatus()).getMsg());

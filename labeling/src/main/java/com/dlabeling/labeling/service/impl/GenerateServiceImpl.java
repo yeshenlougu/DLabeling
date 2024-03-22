@@ -87,12 +87,13 @@ public class GenerateServiceImpl implements GenerateService {
         if (datasetsVO.getDataRootDir() == null || datasetsVO.getDataRootDir().isEmpty()){
             datasets.setDataRootDir(FileUtils.resolvePath(labelConfig.getDefaultDataRootDir(),datasetsVO.getName()));
         }
-        datasets.setVisible(datasetsVO.getVisible() != null ? datasetsVO.getVisible() : true);
+//        datasets.setVisible(datasetsVO.getVisible() != null ? datasetsVO.getVisible() : true);
         datasets.setType(datasetsVO.getType()!=null? datasetsVO.getType() : DataBaseType.ImageDataBase.getCode());
         datasets.setCreateTime(new Date());
         try {
             datasetsMapper.addDatasets(datasets);
-        }catch (Exception e){
+        }
+        catch (Exception e){
             if (StringUtils.contains(e.getMessage(), "datasets.name")){
                 throw new BusinessException(ResponseCode.SQL_INSERT_ERROR, "数据集名称冲突");
             }
@@ -153,7 +154,6 @@ public class GenerateServiceImpl implements GenerateService {
         }catch (FileException e){
             throw e;
         }
-
     }
     
     private void createDir(String path){
@@ -206,12 +206,12 @@ public class GenerateServiceImpl implements GenerateService {
         String newTableName = createTableName(datasets.getId());
         StringBuilder createDBTableSQL = new StringBuilder();
 
-//        createDBTableSQL.append(StringUtils.format(DBCreateConstant.DROP_TABLE, newTableName)).append("\n");
-
         // 添加建表
         createDBTableSQL.append(StringUtils.format(DBCreateConstant.CREATE_TABLE, newTableName)).append("(").append("\n");
 
-        createDBTableSQL.append(DBCreateConstant.ID_FIELD).append("\n").append(DBCreateConstant.DATA_PATH_FIELD).append("\n").append(DBCreateConstant.LABEL_PATH_FIELD).append("\n");
+        createDBTableSQL.append(DBCreateConstant.ID_FIELD).append("\n")
+                .append(DBCreateConstant.DATA_PATH_FIELD).append("\n")
+                .append(DBCreateConstant.LABEL_PATH_FIELD).append("\n");
         for (int i = 0; i < labelConfList.size(); i++) {
             LabelConf labelConf = labelConfList.get(i);
             String labelBaseName = LabelConstant.DATA_FILED_PREF + "_" + labelConf.getId();

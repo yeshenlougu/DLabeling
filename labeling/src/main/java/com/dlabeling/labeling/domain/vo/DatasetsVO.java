@@ -55,7 +55,7 @@ public class DatasetsVO {
     /**
      * 数据集可见性
      */
-    private Boolean visible;
+//    private Boolean visible;
 
     private String dataBaseType;
 
@@ -75,7 +75,7 @@ public class DatasetsVO {
         datasets.setDescription(datasetsVO.getDescription());
         datasets.setType(datasetsVO.getType());
         datasets.setDataRootDir(datasetsVO.getDataRootDir());
-        datasets.setVisible(datasetsVO.getVisible());
+//        datasets.setVisible(datasetsVO.getVisible());
         return datasets;
     }
 
@@ -85,7 +85,7 @@ public class DatasetsVO {
         datasetsVO.setDescription(datasets.getDescription());
         datasetsVO.setType(datasets.getType());
         datasetsVO.setDataRootDir(datasets.getDataRootDir());
-        datasetsVO.setVisible(datasets.getVisible());
+//        datasetsVO.setVisible(datasets.getVisible());
         datasetsVO.setId(datasets.getId());
         datasetsVO.setDataBaseType(DataBaseType.getByCode(datasets.getType()).getName());
 

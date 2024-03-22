@@ -204,13 +204,6 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Override
     public List<DatasVO> getSplitDatas(Integer datasetID, Integer splitID) {
-        // 获取数据集分类有多少数据
-//        DataSplit dataSplitSelecter = new DataSplit();
-//        dataSplitSelecter.setDatasetId(datasetID);
-//        dataSplitSelecter.setSplitId(splitID);
-//
-//        List<DataSplit> dataSplitList = dataSplitMapper.getDataSplit(dataSplitSelecter);
-
         // 查询数据
         String table = DatasetUtils.getDataTable(datasetID);
         Map<String, Map<String, Object>> selectedDatasMap = datasMapper.selectDatasBySplit(table, datasetID, splitID);
@@ -360,7 +353,7 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Override
     public List<DatasetsVO> getDatasetByFilter(DatasetsVO datasetsVO) {
-        Datasets datasetsFilter = DatasetsVO.convertToDatasets(datasetsVO);
+//        Datasets datasetsFilter = DatasetsVO.convertToDatasets(datasetsVO);
         List<DatasetsVO> datasetsVOList = datasetsMapper.selectDatasetByJoinBatchWithFilter(datasetsVO);
         return datasetsVOList;
     }
