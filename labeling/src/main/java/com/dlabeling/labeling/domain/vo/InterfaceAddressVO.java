@@ -2,6 +2,7 @@ package com.dlabeling.labeling.domain.vo;
 
 import com.dlabeling.labeling.core.enums.InterfaceType;
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
+import lombok.Data;
 
 /**
  * @Description:
@@ -9,6 +10,7 @@ import com.dlabeling.labeling.domain.po.InterfaceAddress;
  * @Email 3223905473@qq.com
  * @Since 2024/1/23
  */
+@Data
 public class InterfaceAddressVO {
 
     /**
@@ -29,7 +31,7 @@ public class InterfaceAddressVO {
     /**
      * 接口所属类型，(0:自动标注,1:测试,2:查验)
      */
-    private InterfaceType interfaceType;
+    private String interfaceType;
 
     /**
      * 接口别名
@@ -41,6 +43,12 @@ public class InterfaceAddressVO {
      */
     private String interfaceAddress;
 
+    public void setInterfaceType(Integer interfaceType) {
+        this.interfaceType = InterfaceType.getInterfaceTypeByCode(interfaceType).getName();
+    }
+    public void setInterfaceType(String interfaceType){
+        this.interfaceType = interfaceType;
+    }
 
     public static InterfaceAddress convertToInterfaceAddress(){
         return new InterfaceAddress();

@@ -14,6 +14,7 @@ import com.dlabeling.labeling.domain.po.*;
 import com.dlabeling.labeling.domain.vo.DatasVO;
 import com.dlabeling.labeling.domain.vo.DoLabelVO;
 import com.dlabeling.labeling.domain.vo.InterfaceHistoryVO;
+import com.dlabeling.labeling.domain.vo.InterfaceVO;
 import com.dlabeling.labeling.enums.SplitType;
 import com.dlabeling.labeling.mapper.*;
 import com.dlabeling.labeling.service.InterfaceService;
@@ -71,6 +72,18 @@ public class InterfaceServiceImpl implements InterfaceService {
     public List<InterfaceHistoryVO> getInterfaceHistoryList(Integer datasetID, String type) {
 //        List<InterfaceHistoryVO> interfaceHistoryVOList = interfaceHistoryMapper.selectAllInterfaceHistory();
         List<InterfaceHistoryVO> interfaceHistoryVOList = interfaceHistoryMapper.selectInterfaceHistoryBySplitType(datasetID, SplitType.getSplitTypeByType("test").getCode());
+        interfaceHistoryVOList.forEach(interfaceHistoryVO -> {
+            interfaceHistoryVO.setType(InterfaceType.getInterfaceTypeByCode(Integer.parseInt(interfaceHistoryVO.getType())).getDescription());//映射interfaceHistoryType
+            interfaceHistoryVO.getInterfaceAddressVO().setInterfaceType(
+                    InterfaceType.getInterfaceTypeByCode(Integer.parseInt(
+                            interfaceHistoryVO.getInterfaceAddressVO().getInterfaceType()
+                            )).getDescription());
+            interfaceHistoryVO.getSplitVO().setType(
+                    SplitType.getSplitTypeByCode(Integer.parseInt(
+                            interfaceHistoryVO.getSplitVO().getType()
+                    )).getDescription()
+            );
+        });
         return interfaceHistoryVOList;
     }
 
@@ -125,7 +138,6 @@ public class InterfaceServiceImpl implements InterfaceService {
                 String filePath = (String) value.get("data_path");
                 response = RequestUtils.sendLabelFile(interfaceUrl, new File(filePath));
                 String jsonString = response.body().string();
-//                String jsonString = "{\"labelList\":\"[\\\"label1\\\",\\\"label2\\\",\\\"label3\\\"]\",\"id\":\"null\",\"dataPath\":\"C:\\\\Users\\\\YYS\\\\Desktop\\\\temp\\\\test1\\\\data\\\\username-login3.png\",\"labels\":[{\"name\":\"label1\",\"position\":\"\",\"value\":\"\"},{\"name\":\"label2\",\"position\":\"\",\"value\":\"\"},{\"name\":\"label3\",\"position\":\"\",\"value\":\"\"}]}";
                 // 写入文件
                 LabelWriteUtils.writeJSON(
                         FileUtils.resolvePath(doLabelDir,
@@ -160,9 +172,9 @@ public class InterfaceServiceImpl implements InterfaceService {
 
     @Override
     public List<DatasVO> getLabelHistoryDatasList(InterfaceHistoryVO interfaceHistory) {
-        Map<String, Map<String, Object>> datasMapMap = interfaceHistoryMapper.selectDatasOfInterfaceHistory(interfaceHistory.getId(), DatasetUtils.getDataTable(interfaceHistory.getDatasetId()));
+        Map<String, Map<String, Object>> datasMapMap = interfaceHistoryMapper.selectDatasOfInterfaceHistory(interfaceHistory.getId(), DatasetUtils.getDataTable(interfaceHistory.getDatasets().getId()));
 
-        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(interfaceHistory.getDatasetId());
+        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(interfaceHistory.getDatasets().getId());
         Map<String, String> fieldToLabel = new HashMap<>();
         labelConfByDB.forEach(labelConf -> {
             String field = LabelConstant.DATA_FILED_PREF + "_" + labelConf.getId();
@@ -206,5 +218,31 @@ public class InterfaceServiceImpl implements InterfaceService {
             }
         }
         return datasVOList;
+    }
+
+
+    @Override
+    public List<InterfaceAddress> getInterfaceList(Integer datasetID, String type){
+        InterfaceAddress interfaceAddressFilter = new InterfaceAddress();
+        interfaceAddressFilter.setDatasetId(datasetID);
+        InterfaceType interfaceType = InterfaceType.getInterfaceTypeByType(type);
+        assert interfaceType != null;
+        interfaceAddressFilter.setInterfaceType(interfaceType.getCode());
+        List<InterfaceAddress> interfaceAddressList = interfaceAddressMapper.selectInterfaceByObj(interfaceAddressFilter);
+
+        return interfaceAddressList;
+    }
+
+    @Override
+    public List<InterfaceVO> getAllInterface() {
+        List<InterfaceVO> interfaceVOList = interfaceAddressMapper.selectAllInterfaceVO();
+        interfaceVOList.forEach(interfaceVO -> {
+            interfaceVO.getInterfaceAddressVOList().forEach(interfaceAddressVO -> {
+                interfaceAddressVO.setInterfaceType(InterfaceType.getInterfaceTypeByCode(
+                        Integer.parseInt(interfaceAddressVO.getInterfaceType()))
+                        .getDescription());
+            });
+        });
+        return interfaceVOList;
     }
 }

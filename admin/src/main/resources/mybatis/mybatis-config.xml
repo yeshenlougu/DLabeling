@@ -19,6 +19,7 @@
     </settings>
 
     <typeAliases>
-<!--        <package name="com.dlabeling.system.domain.po"/>-->
+        <package name="com.dlabeling.**.domain.po.**"/>
+        <package name="com.dlabeling.**.domain.vo.**"/>
     </typeAliases>
 </configuration>

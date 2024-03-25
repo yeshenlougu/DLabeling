@@ -13,12 +13,21 @@ import lombok.Data;
 @Data
 public class SplitVO {
 
-    int id;
-    int datasetId;
+    private int id;
+    private int datasetId;
 
-    String type;
+    private String type;
 
-    String name;
+    private String name;
+
+    private Integer dataCount;
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    public void setType(Integer type){
+        this.type = SplitType.getSplitTypeByCode(type).getType();
+    }
 
     public static SplitVO convertToSplitVO(Split split){
         SplitVO splitVO = new SplitVO();

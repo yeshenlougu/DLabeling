@@ -2,6 +2,7 @@ package com.dlabeling.labeling.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.labeling.domain.po.LabelHistory;
+import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

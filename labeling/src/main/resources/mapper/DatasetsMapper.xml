@@ -196,6 +196,31 @@
         JOIN dataset_permission on datasets.id = dataset_permission.dataset_id
         WHERE dataset_permission.user_id = #{userId}
     </select>
+    <select id="getSetItemList" resultMap="setItemMap">
+        SELECT
+            datasets.id as id,
+            datasets.name as datasetName,
+            split.id as splitId,
+            split.type as splitType,
+            split.name as splitName,
+            count(dataSplit.data_id) as splitDataCount
+        FROM datasets
+        JOIN split on datasets.id = split.dataset_id
+        LEFT JOIN data_split dataSplit on split.id = dataSplit.split_id
+        WHERE split.type = #{type}
+        GROUP BY split.id;
+    </select>
+    <resultMap id="setItemMap" type="SetItem">
+        <id property="datasetId" column="id"/>
+        <result property="datasetName" column="datasetName"/>
+        <collection property="splitVOList" ofType="SplitVO">
+            <id property="id" column="splitId"/>
+            <result property="datasetId" column="id"/>
+            <result property="dataCount" column="splitDataCount"/>
+            <result property="name" column="splitName"/>
+            <result property="type" column="splitType"/>
+        </collection>
+    </resultMap>
 
 
 </mapper>

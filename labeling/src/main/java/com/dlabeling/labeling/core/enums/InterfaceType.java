@@ -15,10 +15,13 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum InterfaceType {
-    LABEL(0, "auto"), TEST(1, "test"), CHECK(2, "check");
-    private int code;
+    LABEL(0, "auto", "自动标注接口"),
+    TEST(1, "test", "测试接口"),
+    CHECK(2, "check", "查验接口");
 
-    private String name;
+    private final int code;
+    private final String name;
+    private final String description;
 
     public static InterfaceType getInterfaceTypeByType(String type) {
         return Stream.of(InterfaceType.values())

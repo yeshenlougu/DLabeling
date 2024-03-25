@@ -4,6 +4,7 @@ package com.dlabeling.labeling.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.labeling.domain.po.Datasets;
 import com.dlabeling.labeling.domain.vo.DatasetsVO;
+import com.dlabeling.labeling.domain.vo.SetItem;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,4 +41,6 @@ public interface DatasetsMapper extends BaseMapper<Datasets> {
     List<String> fetchCreatorList();
 
     List<Datasets> getDatasetHas(@Param("userId") Integer id);
+
+    List<SetItem> getSetItemList(@Param("type") Integer type);
 }

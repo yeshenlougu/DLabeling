@@ -11,13 +11,15 @@ import java.util.stream.Stream;
  * @Since 2024/3/11
  */
 public enum SplitType {
-    TRAIN(0, "train"), TEST(1, "test");
-    int code;
-    String type;
+    TRAIN(0, "train", "训练集"), TEST(1, "test", "测试集");
+    private int code;
+    private String type;
+    private String description;
 
-    SplitType(int code, String type){
+    SplitType(int code, String type, String description){
         this.code = code;
         this.type = type;
+        this.description =description;
     }
 
     public int getCode() {
@@ -26,6 +28,10 @@ public enum SplitType {
 
     public String getType() {
         return type;
+    }
+
+    public String getDescription(){
+        return description;
     }
 
     public static SplitType getSplitTypeByType(String type){

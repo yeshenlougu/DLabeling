@@ -1,9 +1,7 @@
 package com.dlabeling.labeling.service;
 
-import com.dlabeling.labeling.domain.po.Datas;
-import com.dlabeling.labeling.domain.po.InterfaceAddress;
-import com.dlabeling.labeling.domain.po.Split;
 import com.dlabeling.labeling.domain.vo.*;
+import com.dlabeling.labeling.domain.vo.SetItem;
 
 import java.util.List;
 
@@ -31,7 +29,6 @@ public interface DatasetsService {
 
     List<String> getCreatorList();
 
-    List<InterfaceAddress> getInterfaceList(Integer datasetID, String type);
 
     void addDataToSplit(Integer datasetID, Integer splitID, List<Integer> dataIdList);
 
@@ -50,4 +47,6 @@ public interface DatasetsService {
     List<DatasetsVO> getDatasetHas();
 
     List<DatasetsVO> getDatasetDontHas();
+
+    List<SetItem> getAllSetByType(String type);
 }

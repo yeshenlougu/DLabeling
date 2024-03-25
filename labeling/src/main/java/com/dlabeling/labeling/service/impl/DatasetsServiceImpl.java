@@ -11,10 +11,9 @@ import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.framework.web.TokenService;
 import com.dlabeling.labeling.common.DBCreateConstant;
 import com.dlabeling.labeling.common.LabelConstant;
-import com.dlabeling.labeling.core.enums.InterfaceType;
-import com.dlabeling.labeling.core.enums.LabelType;
 import com.dlabeling.labeling.domain.po.*;
 import com.dlabeling.labeling.domain.vo.*;
+import com.dlabeling.labeling.domain.vo.SetItem;
 import com.dlabeling.labeling.enums.SplitType;
 import com.dlabeling.labeling.generate.DBManager;
 import com.dlabeling.labeling.mapper.*;
@@ -366,18 +365,6 @@ public class DatasetsServiceImpl implements DatasetsService {
     }
 
     @Override
-    public List<InterfaceAddress> getInterfaceList(Integer datasetID, String type){
-        InterfaceAddress interfaceAddressFilter = new InterfaceAddress();
-        interfaceAddressFilter.setDatasetId(datasetID);
-        InterfaceType interfaceType = InterfaceType.getInterfaceTypeByType(type);
-        assert interfaceType != null;
-        interfaceAddressFilter.setInterfaceType(interfaceType.getCode());
-        List<InterfaceAddress> interfaceAddressList = interfaceAddressMapper.selectInterfaceByObj(interfaceAddressFilter);
-
-        return interfaceAddressList;
-    }
-
-    @Override
     public void addDataToSplit(Integer datasetID, Integer splitID, List<Integer> dataIdList) {
         try {
             dataSplitMapper.batchAddDataSplit(datasetID, splitID, dataIdList);
@@ -549,5 +536,19 @@ public class DatasetsServiceImpl implements DatasetsService {
         catch (Exception e){
             throw new BusinessException(ResponseCode.BUSINESS_ERROR, "获取其他数据集");
         }
+    }
+
+    @Override
+    public List<SetItem> getAllSetByType(String type) {
+        List<SetItem> setItemList = new ArrayList<>();
+        SplitType splitTypeByType = SplitType.getSplitTypeByType(type);
+        setItemList = datasetsMapper.getSetItemList(splitTypeByType.getCode());
+
+        setItemList.forEach(setItem -> {
+            setItem.getSplitVOList().forEach(splitVO -> splitVO.setType(
+                    SplitType.getSplitTypeByCode(Integer.parseInt(splitVO.getType()))
+                    .getDescription()));
+        });
+        return setItemList;
     }
 }

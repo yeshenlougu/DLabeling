@@ -9,16 +9,19 @@
         VALUES (#{id}, #{name}, #{interfaceId}, #{datasetId}, #{splitId}, #{type})
     </insert>
 
-    <select id="selectInterfaceHistoryVO" resultType="com.dlabeling.labeling.domain.vo.InterfaceHistoryVO">
+    <select id="selectInterfaceHistoryVO" resultMap="interfaceHistoryVOMap">
         SELECT
-            `interface_history`.id as `id`,
-            `interface_history`.name as `name`,
-            `interface_history`.dataset_id as `datasetId`,
-            `interface_history`.interfaece_id as `interfaceId`,
+            `interface_history`.id as interfaceHistoryID,
+            `interface_history`.name as interfaceHistoryName,
+            `interface_history`.`type` as interfaceHistoryType,
+            `interface_history`.dataset_id as `datasetID`,
+            `interface_history`.interfaece_id as `interfaceAddressID`,
             `datasets`.name as `datasetName`,
             `interface_address`.interface_name as `interfaceName`,
-            `split`.name as `splitName`,
-            `interface_address`.interface_type as `typeCode`
+            `split`.id as splitID,
+            `split`.name as splitName,
+            `split`.type as splitType,
+            `interface_address`.interface_type as `interfaceType`
         FROM `interface_history`
         JOIN datasets ON datasets.id = interface_history.dataset_id
         JOIN split ON split.id = interface_history.split_id
@@ -26,31 +29,37 @@
         WHERE interface_history.id = #{id}
     </select>
 
-    <select id="selectAllInterfaceHistory" resultType="com.dlabeling.labeling.domain.vo.InterfaceHistoryVO">
+    <select id="selectAllInterfaceHistory" resultMap="interfaceHistoryVOMap">
         SELECT
-            `interface_history`.id as `id`,
-            `interface_history`.name as `name`,
-            `interface_history`.dataset_id as `datasetId`,
-            `interface_history`.interfaece_id as `interfaceId`,
+            `interface_history`.id as interfaceHistoryID,
+            `interface_history`.name as interfaceHistoryName,
+            `interface_history`.`type` as interfaceHistoryType,
+            `interface_history`.dataset_id as `datasetID`,
+            `interface_history`.interfaece_id as `interfaceAddressID`,
             `datasets`.name as `datasetName`,
             `interface_address`.interface_name as `interfaceName`,
-            `split`.name as `splitName`,
-            `interface_address`.interface_type as `typeCode`
+            `split`.id as splitID,
+            `split`.name as splitName,
+            `split`.type as splitType,
+            `interface_address`.interface_type as `interfaceType`
         FROM `interface_history`
                  JOIN datasets ON datasets.id = interface_history.dataset_id
                  JOIN split ON split.id = interface_history.split_id
                  JOIN interface_address ON interface_history.interfaece_id=interface_address.id
     </select>
-    <select id="selectInterfaceHistoryBySplitType" resultType="com.dlabeling.labeling.domain.vo.InterfaceHistoryVO">
+    <select id="selectInterfaceHistoryBySplitType" resultMap="interfaceHistoryVOMap">
         SELECT
-            `interface_history`.id as `id`,
-            `interface_history`.name as `name`,
-            `interface_history`.dataset_id as `datasetId`,
-            `interface_history`.interfaece_id as `interfaceId`,
+            `interface_history`.id as interfaceHistoryID,
+            `interface_history`.name as interfaceHistoryName,
+            `interface_history`.`type` as interfaceHistoryType,
+            `interface_history`.dataset_id as `datasetID`,
+            `interface_history`.interfaece_id as `interfaceAddressID`,
             `datasets`.name as `datasetName`,
             `interface_address`.interface_name as `interfaceName`,
-            `split`.name as `splitName`,
-            `interface_address`.interface_type as `typeCode`
+            `split`.id as splitID,
+            `split`.name as splitName,
+            `split`.type as splitType,
+            `interface_address`.interface_type as `interfaceType`
         FROM `interface_history`
                  JOIN datasets ON datasets.id = interface_history.dataset_id
                  JOIN split ON split.id = interface_history.split_id
@@ -64,4 +73,76 @@
         (SELECT data_id FROM  data_split JOIN interface_history ON data_split.split_id=interface_history.split_id WHERE interface_history.id = #{interfaceHistoryId})
 
     </select>
+
+    <select id="getAllLabelHistoryItem" resultType="labelHistoryItem">
+        SELECT
+            `interface_history`.id as interfaceHistoryID,
+            `interface_history`.name as interfaceHistoryName,
+            `interface_history`.`type` as interfaceHistoryType,
+            `interface_address`.id as interfaceAddressID,
+            `datasets`.id as datasetID,
+            `datasets`.name as datasetName,
+            `interface_address`.interface_type as interfaceType,
+            `interface_address`.interface_name as interfaceName,
+            `interface_address`.interface_address as interfaceAddress,
+            `split`.id as splitID,
+            `split`.name as splitName,
+            `split`.type as splitType,
+            count(data_split.id) as splitDataCount
+
+        FROM `interface_history`
+        JOIN datasets ON datasets.id = interface_history.dataset_id
+        JOIN interface_address ON interface_history.interfaece_id = interface_address.id
+        JOIN split ON split.id = interface_history.split_id
+        LEFT JOIN data_split ON split.id = data_split.split_id
+        group by datasets.id, interface_history.split_id;
+    </select>
+
+    <resultMap id="interfaceHistoryVOMap" type="InterfaceHistoryVO">
+        <id property="id" column="interfaceHistoryID"/>
+        <result property="name" column="interfaceHistoryName"/>
+        <result property="type" column="interfaceHistoryType"/>
+        <association property="interfaceAddressVO" javaType="InterfaceAddressVO">
+            <id property="id" column="interfaceAddressID"/>
+            <result property="datasetId" column="datasetID"/>
+            <result property="datasetName" column="datasetName"/>
+            <result property="interfaceType" column="interfaceType"/>
+            <result property="interfaceName" column="interfaceName"/>
+            <result property="interfaceAddress" column="interfaceAddress"/>
+        </association>
+        <association property="splitVO" javaType="SplitVO">
+            <id property="id" column="splitID"/>
+            <result property="datasetId" column="datasetID"/>
+            <result property="type" column="splitType"/>
+            <result property="name" column="splitName"/>
+            <result property="dataCount" column="splitDataCount"/>
+        </association>
+        <association property="datasets" javaType="Datasets">
+            <id property="id" column="datasetID"/>
+            <result property="name" column="datasetName"/>
+        </association>
+
+    </resultMap>
+<!--    <resultMap id="labelHistoryItem" type="LabelHistoryItem">-->
+<!--        <id property="datasetId" column="datasetID"/>-->
+<!--        <result property="datasetName" column="datasetName"-->
+<!--    </resultMap>-->
+
+<!--    <resultMap id="labelHistoryItem" type="LabelHistoryItem">-->
+<!--        <id property="datasetId" column="datasetID"/>-->
+<!--        <result property="datasetName" column="datasetName"/>-->
+<!--        <collection property="interfaceHistoryVOList" ofType="interfaceHistoryVO">-->
+<!--            <id property="id" column="interfaceHistoryID"/>-->
+<!--            <result property="name" column="interfaceHistoryName"/>-->
+<!--            <result property="datasetId" column="datasetID"/>-->
+<!--            <result property="datasetName" column="datasetName"/>-->
+<!--            <result property="interfaceId" column="interfaceID"/>-->
+<!--            <result property="interfaceName" column="interfaceName"/>-->
+<!--            <result property="interfaceType" column="interfaceType"/>-->
+<!--            <result property="splitId" column="splitID"/>-->
+<!--            <result property="splitName" column="splitName"/>-->
+<!--            <result property="typeCode" column="interfaceHistoryType"/>-->
+<!--            <result property="dataCount" column="splitDataCount"/>-->
+<!--        </collection>-->
+<!--    </resultMap>-->
 </mapper>

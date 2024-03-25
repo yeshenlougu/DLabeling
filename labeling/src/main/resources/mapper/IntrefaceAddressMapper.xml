@@ -97,5 +97,29 @@
             `interface_address`
         WHERE id = #{id}
     </select>
+    <select id="selectAllInterfaceVO" resultMap="interfaceVOMap">
+        SELECT
+            datasets.id as datasetID,
+            datasets.name as datasetName,
+            interface_address.id as interfaceID,
+            interface_address.interface_type as interfaceType,
+            interface_address.interface_name as interfaceName,
+            interface_address.interface_address as interfaceAddress
+        FROM interface_address
+        JOIN datasets on datasets.id = interface_address.dataset_id
+
+    </select>
+    <resultMap id="interfaceVOMap" type="InterfaceVO">
+        <id property="datasetId" column="datasetID"/>
+        <result property="datasetName" column="datasetName"/>
+        <collection property="interfaceAddressVOList" ofType="InterfaceAddressVO">
+            <id property="id" column="interfaceID"/>
+            <result property="datasetName" column="datasetName"/>
+            <result property="datasetId" column="datasetID"/>
+            <result property="interfaceType" column="interfaceType"/>
+            <result property="interfaceName" column="interfaceName"/>
+            <result property="interfaceAddress" column="interfaceAddress"/>
+        </collection>
+    </resultMap>
 
 </mapper>
