@@ -2,10 +2,8 @@ package com.dlabeling.labeling.controller;
 
 import com.dlabeling.common.core.domain.R;
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
-import com.dlabeling.labeling.domain.vo.DatasVO;
-import com.dlabeling.labeling.domain.vo.DoLabelVO;
-import com.dlabeling.labeling.domain.vo.InterfaceHistoryVO;
-import com.dlabeling.labeling.domain.vo.InterfaceVO;
+import com.dlabeling.labeling.domain.vo.*;
+import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 import com.dlabeling.labeling.service.InterfaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
@@ -29,12 +27,12 @@ public class InterfaceController {
     private InterfaceService interfaceService;
 
     /**
-     * 获取接口列表
+     * 获取某个数据集、某个类型的接口列表
      * @return
      */
     @PostMapping("/interfaceList")
-    public R<List<InterfaceAddress>> getInterfaceList(Integer datasetID, String type){
-        List<InterfaceAddress> interfaceAddressList = interfaceService.getInterfaceList(datasetID, type);
+    public R<List<InterfaceAddressVO>> getInterfaceList(Integer datasetID, String type){
+        List<InterfaceAddressVO> interfaceAddressList = interfaceService.getInterfaceList(datasetID, type);
         return R.ok(interfaceAddressList);
     }
     /**
@@ -47,7 +45,7 @@ public class InterfaceController {
     }
 
     /**
-     *
+     * 获取某个数据集 中某个类型的标注历史 目前只有test
      */
     @GetMapping("/interfaceHistory/list")
     public R<List<InterfaceHistoryVO>> getInterfaceHistoryVOList(@Param("id") Integer id, @Param("type") String type){
@@ -68,4 +66,9 @@ public class InterfaceController {
         return R.ok();
     }
 
+    @GetMapping("/getAllInterfaceHistory")
+    public R<List<LabelHistoryItem>> getAllLabelHistory(String type){
+        List<LabelHistoryItem> labelHistoryItemList = interfaceService.getAllLabelHistoryVO(type);
+        return R.ok(labelHistoryItemList);
+    }
 }

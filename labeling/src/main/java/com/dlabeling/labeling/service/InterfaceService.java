@@ -2,10 +2,8 @@ package com.dlabeling.labeling.service;
 
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
 import com.dlabeling.labeling.domain.po.InterfaceHistory;
-import com.dlabeling.labeling.domain.vo.DatasVO;
-import com.dlabeling.labeling.domain.vo.DoLabelVO;
-import com.dlabeling.labeling.domain.vo.InterfaceHistoryVO;
-import com.dlabeling.labeling.domain.vo.InterfaceVO;
+import com.dlabeling.labeling.domain.vo.*;
+import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 
 import java.util.List;
 
@@ -25,7 +23,9 @@ public interface InterfaceService {
 
     List<DatasVO> getLabelHistoryDatasList(InterfaceHistoryVO interfaceHistory);
 
-    List<InterfaceAddress> getInterfaceList(Integer datasetID, String type);
+    List<InterfaceAddressVO> getInterfaceList(Integer datasetID, String type);
 
     List<InterfaceVO> getAllInterface();
+
+    List<LabelHistoryItem> getAllLabelHistoryVO(String type);
 }

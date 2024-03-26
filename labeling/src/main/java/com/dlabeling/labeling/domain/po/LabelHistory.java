@@ -38,9 +38,19 @@ public class LabelHistory implements Serializable {
     private Integer dataId;
 
     /**
-     * 数据操作
+     * 数据操作类型
      */
-    private String action;
+    private Integer actionType;
+
+    /**
+     * 修改前
+     */
+    private String beforeAction;
+
+    /**
+     * 修改后
+     */
+    private String afterAction;
 
     /**
      * 标注时间

@@ -3,23 +3,20 @@ package com.dlabeling.labeling.service.impl;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
-import com.dlabeling.common.exception.file.FileExistsException;
 import com.dlabeling.common.exception.file.FileNotFileException;
 import com.dlabeling.common.utils.FileUtils;
 import com.dlabeling.common.utils.RequestUtils;
-import com.dlabeling.common.utils.StringUtils;
 import com.dlabeling.labeling.common.LabelConstant;
 import com.dlabeling.labeling.core.enums.InterfaceType;
 import com.dlabeling.labeling.domain.po.*;
-import com.dlabeling.labeling.domain.vo.DatasVO;
-import com.dlabeling.labeling.domain.vo.DoLabelVO;
-import com.dlabeling.labeling.domain.vo.InterfaceHistoryVO;
-import com.dlabeling.labeling.domain.vo.InterfaceVO;
+import com.dlabeling.labeling.domain.vo.*;
+import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 import com.dlabeling.labeling.enums.SplitType;
 import com.dlabeling.labeling.mapper.*;
 import com.dlabeling.labeling.service.InterfaceService;
 import com.dlabeling.labeling.utils.DatasetUtils;
 import com.dlabeling.labeling.utils.LabelWriteUtils;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,11 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +33,7 @@ import java.util.stream.Collectors;
  * @Email 3223905473@qq.com
  * @Since 2024/3/18
  */
-
+@Slf4j
 @Service
 public class InterfaceServiceImpl implements InterfaceService {
 
@@ -65,6 +58,7 @@ public class InterfaceServiceImpl implements InterfaceService {
 
     @Override
     public void addInterfaceHistory(InterfaceHistory interfaceHistory) {
+        interfaceHistory.setCreateTime(new Date());
         interfaceHistoryMapper.addInterfaceHistory(interfaceHistory);
     }
 
@@ -222,14 +216,19 @@ public class InterfaceServiceImpl implements InterfaceService {
 
 
     @Override
-    public List<InterfaceAddress> getInterfaceList(Integer datasetID, String type){
+    public List<InterfaceAddressVO> getInterfaceList(Integer datasetID, String type){
         InterfaceAddress interfaceAddressFilter = new InterfaceAddress();
         interfaceAddressFilter.setDatasetId(datasetID);
         InterfaceType interfaceType = InterfaceType.getInterfaceTypeByType(type);
         assert interfaceType != null;
         interfaceAddressFilter.setInterfaceType(interfaceType.getCode());
-        List<InterfaceAddress> interfaceAddressList = interfaceAddressMapper.selectInterfaceByObj(interfaceAddressFilter);
-
+//        log.debug(interfaceAddressFilter.toString());
+        List<InterfaceAddressVO> interfaceAddressList = interfaceAddressMapper.selectInterfaceByObj(interfaceAddressFilter);
+        interfaceAddressList.forEach(interfaceAddressVO -> {
+            interfaceAddressVO.setInterfaceType(
+                    InterfaceType.getInterfaceTypeByCode(Integer.parseInt(interfaceAddressVO.getInterfaceType()))
+                            .getDescription());
+        });
         return interfaceAddressList;
     }
 
@@ -244,5 +243,19 @@ public class InterfaceServiceImpl implements InterfaceService {
             });
         });
         return interfaceVOList;
+    }
+
+    @Override
+    public List<LabelHistoryItem> getAllLabelHistoryVO(String type) {
+        List<LabelHistoryItem> labelHistoryItemList = interfaceHistoryMapper.getAllLabelHistoryItem(InterfaceType.getInterfaceTypeByType(type).getCode());
+        labelHistoryItemList.forEach(labelHistoryItem -> labelHistoryItem.getInterfaceHistoryVOList()
+                .forEach(labelHistoryVO->{
+                    labelHistoryVO.setType(InterfaceType.getInterfaceTypeByCode(Integer.parseInt(labelHistoryVO.getType())).getDescription());
+                    labelHistoryVO.getInterfaceAddressVO().setInterfaceType(
+                            InterfaceType.getInterfaceTypeByCode(Integer.parseInt((labelHistoryVO.getInterfaceAddressVO().getInterfaceType()))).getDescription());
+                    labelHistoryVO.getSplitVO().setType(
+                            SplitType.getSplitTypeByCode(Integer.parseInt(labelHistoryVO.getSplitVO().getType())).getDescription());
+        }));
+        return labelHistoryItemList;
     }
 }

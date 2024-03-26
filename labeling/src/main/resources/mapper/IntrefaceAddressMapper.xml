@@ -61,28 +61,36 @@
             `dataset_id` = #{datasetId}
         </where>
     </select>
-    <select id="selectInterfaceByObj" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
+    <select id="selectInterfaceByObj" resultMap="interfaceAddressVOMap" parameterType="InterfaceAddress">
         SELECT
-        `id`,
-        `dataset_id`,
-        `interface_type`,
-        `interface_name`,
-        `interface_address`,
-        `create_time`,
-        `update_time`,
-        `destroy_time`
+        interface_address.`id` as `id`,
+        `dataset_id` as `datasetID`,
+        `datasets`.name as `datasetName`,
+        `interface_type` as `interfaceType`,
+        `interface_name` as `interfaceName`,
+        `interface_address` as `interfaceAddress`
         FROM
         `interface_address`
+        JOIN datasets ON datasets.id = interface_address.dataset_id
         <where>
             <trim suffixOverrides="AND">
                 <if test="id != null">`id` = #{id} AND</if>
                 <if test="datasetId != null">`dataset_id` = #{datasetId} AND</if>
-                <if test="interfaceType != null ">`interface_type` = #{interfaceType} AND</if>
+                <if test="interfaceType != null ">interface_address.`interface_type` = #{interfaceType} AND</if>
                 <if test="interfaceName != null and interfaceName !=''">`interface_name`= #{interfaceName} AND</if>
                 <if test="interfaceAddress != null and interfaceAddress !=''">`interface_address` = #{interfaceAddress} AND</if>
             </trim>
         </where>
     </select>
+    <resultMap id="interfaceAddressVOMap" type="InterfaceAddressVO">
+        <id property="id" column="id"/>
+        <result property="datasetId" column="datasetID"/>
+        <result property="datasetName" column="datasetName"/>
+        <result property="interfaceType" column="interfaceType"/>
+        <result property="interfaceName" column="interfaceName"/>
+        <result property="interfaceAddress" column="interfaceAddress"/>
+    </resultMap>
+
     <select id="selectInterfaceAddressByID" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
         SELECT
             `id`,

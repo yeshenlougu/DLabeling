@@ -22,4 +22,6 @@ public interface DataSplitMapper extends BaseMapper<DataSplit> {
     List<DataSplit> selectDataSplit(DataSplit dataSplit);
 
     void batchAddDataSplit(@Param("datasetID") Integer datasetID, @Param("splitID") Integer splitID, @Param("dataIdList") List<Integer> dataIdList);
+
+    void batchDeleteBySplitID(@Param("splitID") Integer splitID);
 }

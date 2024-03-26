@@ -174,49 +174,5 @@ public class DatasetController {
         return R.ok();
     }
 
-    /**
-     * 查询获取训练集、测试集列表
-     * @param data
-     * @return
-     */
-    @PostMapping("/splitList")
-    public R<List<SplitVO>> getSplitList(@RequestBody Map<String, Object> data){
-        Integer datasetId = (Integer) data.get("id");
-        String type = (String) data.get("type");
-
-        List<SplitVO> splitVOListByID = datasetsService.getSplitVOListByID(datasetId, type);
-
-        return R.ok(splitVOListByID);
-    }
-
-    @PostMapping("/splitData")
-    public R<List<DatasVO>> getSplitDatas(Integer datasetID, Integer splitID){
-        List<DatasVO> datasVOList = datasetsService.getSplitDatas(datasetID, splitID);
-        return R.ok(datasVOList);
-    }
-
-    @PostMapping("/split/addData")
-    public R<String> addDataToSplit(Integer datasetID, Integer splitID, @RequestParam("dataIdList") ArrayList<Integer> dataIdList){
-        try {
-            datasetsService.addDataToSplit(datasetID, splitID, dataIdList);
-            return R.ok();
-        }catch (BusinessException e){
-            log.error(e.getMsg());
-            return R.fail(e.getMsg());
-        }
-    }
-
-    @PostMapping("/split/create")
-    public R<String> createSplit(@RequestBody SplitVO splitVO){
-        datasetsService.addSplit(splitVO);
-        return R.ok();
-    }
-
-    @PostMapping("/getAllSet")
-    public R<List<SetItem>> getAllSet(String type){
-        List<SetItem> setItemList = datasetsService.getAllSetByType(type);
-        return R.ok(setItemList);
-    }
-
 
 }

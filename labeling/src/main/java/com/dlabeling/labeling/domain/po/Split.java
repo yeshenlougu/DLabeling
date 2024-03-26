@@ -2,6 +2,8 @@ package com.dlabeling.labeling.domain.po;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Description:
  * @Auther YYS
@@ -10,10 +12,12 @@ import lombok.Data;
  */
 @Data
 public class Split {
-    int id;
-    int datasetId;
+    private int id;
+    private int datasetId;
 
-    int type;
+    private int type;
 
-    String name;
+    private String name;
+
+    private Date createTime;
 }

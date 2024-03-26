@@ -60,5 +60,19 @@
             </trim>
         </where>
     </select>
+    <select id="getAllLabelHistoryVO" resultMap="labelHistoryVOMap">
+
+    </select>
+    <resultMap id="labelHistoryVOMap" type="LabelHistoryVO">
+        <id property="id" column="labelHistoryID"/>
+        <result property="userId" column="userID"/>
+        <result property="username" column="username"/>
+        <result property="datasetId" column="datasetID"/>
+        <result property="datasetName" column="datasetName"/>
+        <result property="dataId" column="dataID"/>
+        <association property="action" column="action">
+
+        </association>
+    </resultMap>
 
 </mapper>

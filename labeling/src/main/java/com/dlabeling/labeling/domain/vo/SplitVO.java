@@ -4,6 +4,8 @@ import com.dlabeling.labeling.domain.po.Split;
 import com.dlabeling.labeling.enums.SplitType;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Description:
  * @Auther YYS
@@ -19,6 +21,8 @@ public class SplitVO {
     private String type;
 
     private String name;
+
+    private Date createTime;
 
     private Integer dataCount;
 

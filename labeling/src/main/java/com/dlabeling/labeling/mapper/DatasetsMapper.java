@@ -42,5 +42,4 @@ public interface DatasetsMapper extends BaseMapper<Datasets> {
 
     List<Datasets> getDatasetHas(@Param("userId") Integer id);
 
-    List<SetItem> getSetItemList(@Param("type") Integer type);
 }

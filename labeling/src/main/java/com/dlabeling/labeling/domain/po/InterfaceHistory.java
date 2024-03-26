@@ -2,6 +2,8 @@ package com.dlabeling.labeling.domain.po;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Description:
  * @Auther YYS
@@ -23,4 +25,6 @@ public class InterfaceHistory {
     private Integer splitId;
 
     private Integer type;
+
+    private Date createTime;
 }

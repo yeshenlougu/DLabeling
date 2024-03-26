@@ -2,6 +2,7 @@ package com.dlabeling.labeling.domain.vo;
 
 import com.dlabeling.labeling.core.action.Action;
 import com.dlabeling.labeling.domain.po.LabelHistory;
+import lombok.Data;
 
 /**
  * @Description:
@@ -9,6 +10,7 @@ import com.dlabeling.labeling.domain.po.LabelHistory;
  * @Email 3223905473@qq.com
  * @Since 2024/1/23
  */
+@Data
 public class LabelHistoryVO {
 
     /**
@@ -22,9 +24,19 @@ public class LabelHistoryVO {
     private Integer userId;
 
     /**
+     * 用户名称
+     */
+    private String username;
+
+    /**
      * 数据集id
      */
     private Integer datasetId;
+
+    /**
+     * 数据集名称
+     */
+    private String datasetName;
 
     /**
      * 被标注数据id
