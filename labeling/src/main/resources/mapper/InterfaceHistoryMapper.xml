@@ -5,8 +5,8 @@
 <mapper namespace="com.dlabeling.labeling.mapper.InterfaceHistoryMapper">
 
     <insert id="addInterfaceHistory">
-        INSERT INTO `interface_history`(`id`, `name`, `interfaece_id`, `dataset_id`, `split_id`, `type`)
-        VALUES (#{id}, #{name}, #{interfaceId}, #{datasetId}, #{splitId}, #{type})
+        INSERT INTO `interface_history`(`id`, `name`, `interfaece_id`, `dataset_id`, `split_id`, `type`, `create_time`)
+        VALUES (#{id}, #{name}, #{interfaceId}, #{datasetId}, #{splitId}, #{type}, #{createTime})
     </insert>
 
     <select id="selectInterfaceHistoryVO" resultMap="interfaceHistoryVOMap">
@@ -16,6 +16,7 @@
             `interface_history`.`type` as interfaceHistoryType,
             `interface_history`.dataset_id as `datasetID`,
             `interface_history`.interfaece_id as `interfaceAddressID`,
+            `interface_history`.create_time as `createTime`,
             `datasets`.name as `datasetName`,
             `interface_address`.interface_name as `interfaceName`,
             `split`.id as splitID,
@@ -36,6 +37,7 @@
             `interface_history`.`type` as interfaceHistoryType,
             `interface_history`.dataset_id as `datasetID`,
             `interface_history`.interfaece_id as `interfaceAddressID`,
+            `interface_history`.create_time as `createTime`,
             `datasets`.name as `datasetName`,
             `interface_address`.interface_name as `interfaceName`,
             `split`.id as splitID,
@@ -54,8 +56,10 @@
             `interface_history`.`type` as interfaceHistoryType,
             `interface_history`.dataset_id as `datasetID`,
             `interface_history`.interfaece_id as `interfaceAddressID`,
+            `interface_history`.create_time as `createTime`,
             `datasets`.name as `datasetName`,
             `interface_address`.interface_name as `interfaceName`,
+            `interface_address`.destroy_time as `destroyTime`,
             `split`.id as splitID,
             `split`.name as splitName,
             `split`.type as splitType,
@@ -74,17 +78,19 @@
 
     </select>
 
-    <select id="getAllLabelHistoryItem" resultType="labelHistoryItem">
+    <select id="getAllLabelHistoryItem" resultMap="labelHistoryItemMap">
         SELECT
             `interface_history`.id as interfaceHistoryID,
             `interface_history`.name as interfaceHistoryName,
             `interface_history`.`type` as interfaceHistoryType,
+            `interface_history`.create_time as `createTime`,
             `interface_address`.id as interfaceAddressID,
             `datasets`.id as datasetID,
             `datasets`.name as datasetName,
             `interface_address`.interface_type as interfaceType,
             `interface_address`.interface_name as interfaceName,
             `interface_address`.interface_address as interfaceAddress,
+            `interface_address`.destroy_time as `destroyTime`,
             `split`.id as splitID,
             `split`.name as splitName,
             `split`.type as splitType,
@@ -95,13 +101,16 @@
         JOIN interface_address ON interface_history.interfaece_id = interface_address.id
         JOIN split ON split.id = interface_history.split_id
         LEFT JOIN data_split ON split.id = data_split.split_id
-        group by datasets.id, interface_history.split_id;
+        WHERE interface_history.type = ${type}
+        GROUP BY interface_history.dataset_id, interface_history.split_id, `interface_history`.id, createTime
+        ORDER BY createTime DESC ;
     </select>
 
     <resultMap id="interfaceHistoryVOMap" type="InterfaceHistoryVO">
         <id property="id" column="interfaceHistoryID"/>
         <result property="name" column="interfaceHistoryName"/>
         <result property="type" column="interfaceHistoryType"/>
+        <result property="createTime" column="createTime"/>
         <association property="interfaceAddressVO" javaType="InterfaceAddressVO">
             <id property="id" column="interfaceAddressID"/>
             <result property="datasetId" column="datasetID"/>
@@ -109,6 +118,7 @@
             <result property="interfaceType" column="interfaceType"/>
             <result property="interfaceName" column="interfaceName"/>
             <result property="interfaceAddress" column="interfaceAddress"/>
+            <result property="destroyTime" column="destroyTime"/>
         </association>
         <association property="splitVO" javaType="SplitVO">
             <id property="id" column="splitID"/>
@@ -123,26 +133,9 @@
         </association>
 
     </resultMap>
-<!--    <resultMap id="labelHistoryItem" type="LabelHistoryItem">-->
-<!--        <id property="datasetId" column="datasetID"/>-->
-<!--        <result property="datasetName" column="datasetName"-->
-<!--    </resultMap>-->
-
-<!--    <resultMap id="labelHistoryItem" type="LabelHistoryItem">-->
-<!--        <id property="datasetId" column="datasetID"/>-->
-<!--        <result property="datasetName" column="datasetName"/>-->
-<!--        <collection property="interfaceHistoryVOList" ofType="interfaceHistoryVO">-->
-<!--            <id property="id" column="interfaceHistoryID"/>-->
-<!--            <result property="name" column="interfaceHistoryName"/>-->
-<!--            <result property="datasetId" column="datasetID"/>-->
-<!--            <result property="datasetName" column="datasetName"/>-->
-<!--            <result property="interfaceId" column="interfaceID"/>-->
-<!--            <result property="interfaceName" column="interfaceName"/>-->
-<!--            <result property="interfaceType" column="interfaceType"/>-->
-<!--            <result property="splitId" column="splitID"/>-->
-<!--            <result property="splitName" column="splitName"/>-->
-<!--            <result property="typeCode" column="interfaceHistoryType"/>-->
-<!--            <result property="dataCount" column="splitDataCount"/>-->
-<!--        </collection>-->
-<!--    </resultMap>-->
+    <resultMap id="labelHistoryItemMap" type="LabelHistoryItem">
+        <id property="datasetId" column="datasetID"/>
+        <result property="datasetName" column="datasetName"/>
+        <association property="interfaceHistoryVOList" resultMap="interfaceHistoryVOMap"/>
+    </resultMap>
 </mapper>

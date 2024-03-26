@@ -1,6 +1,7 @@
 package com.dlabeling.labeling.controller;
 
 import com.dlabeling.common.core.domain.R;
+import com.dlabeling.labeling.domain.vo.LabelHistoryVO;
 import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 import com.dlabeling.labeling.service.LabelService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +27,10 @@ public class LabelController {
     @Autowired
     private LabelService labelService;
 
+
     @GetMapping("/getAllLabelHistory")
-    public R<List<LabelHistoryItem>> getAllLabelHistory(){
-        List<LabelHistoryItem> labelHistoryItemList = labelService.getAllLabelHistroyItem();
-        return R.ok(labelHistoryItemList);
+    public R<List<LabelHistoryVO>> getAllLabelHistory(){
+        List<LabelHistoryVO> labelHistoryVOList=labelService.getAllLabelHistoryVO();
+        return R.ok(labelHistoryVOList);
     }
 }

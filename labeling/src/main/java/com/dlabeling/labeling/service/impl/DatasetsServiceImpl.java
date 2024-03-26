@@ -538,17 +538,5 @@ public class DatasetsServiceImpl implements DatasetsService {
         }
     }
 
-    @Override
-    public List<SetItem> getAllSetByType(String type) {
-        List<SetItem> setItemList = new ArrayList<>();
-        SplitType splitTypeByType = SplitType.getSplitTypeByType(type);
-        setItemList = datasetsMapper.getSetItemList(splitTypeByType.getCode());
 
-        setItemList.forEach(setItem -> {
-            setItem.getSplitVOList().forEach(splitVO -> splitVO.setType(
-                    SplitType.getSplitTypeByCode(Integer.parseInt(splitVO.getType()))
-                    .getDescription()));
-        });
-        return setItemList;
-    }
 }

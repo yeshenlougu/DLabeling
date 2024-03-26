@@ -26,13 +26,14 @@
             </trim>
     </insert>
 
-    <update id="updateInterfaceAddress">
+    <update id="updateInterfaceAddress" parameterType="InterfaceAddress">
         UPDATE `interface_address`
         <set>
             <trim suffixOverrides=",">
-                <if test="interfaceType != null"> `interface_type` = #{interfaceType}</if>
-                <if test="interfaceAddress != null and interfaceAddress != ''"> `interface_address` = #{interfaceAddress}</if>
-                <if test="updateTime != null">`update_time` = #{updateTime}</if>
+                <if test="interfaceType != null"> `interface_type` = #{interfaceType},</if>
+                <if test="interfaceName != null">`interface_name`=#{interfaceName},</if>
+                <if test="interfaceAddress != null and interfaceAddress != ''"> `interface_address` = #{interfaceAddress},</if>
+                <if test="updateTime != null">`update_time` = #{updateTime},</if>
             </trim>
         </set>
         <where>
@@ -41,7 +42,8 @@
     </update>
 
     <delete id="deleteInterfaceAddressByID">
-        DELETE FROM `interface_address`
+        UPDATE `interface_address`
+        SET `destroy_time` = #{destroyTime}
         WHERE `id` = #{id}
     </delete>
 
@@ -59,30 +61,40 @@
             `interface_address`
         <where>
             `dataset_id` = #{datasetId}
+            AND `destroy_time` IS NULL
         </where>
     </select>
-    <select id="selectInterfaceByObj" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
+    <select id="selectInterfaceByObj" resultMap="interfaceAddressVOMap" parameterType="InterfaceAddress">
         SELECT
-        `id`,
-        `dataset_id`,
-        `interface_type`,
-        `interface_name`,
-        `interface_address`,
-        `create_time`,
-        `update_time`,
-        `destroy_time`
+        interface_address.`id` as `id`,
+        `dataset_id` as `datasetID`,
+        `datasets`.name as `datasetName`,
+        `interface_type` as `interfaceType`,
+        `interface_name` as `interfaceName`,
+        `interface_address` as `interfaceAddress`
         FROM
         `interface_address`
+        JOIN datasets ON datasets.id = interface_address.dataset_id
         <where>
             <trim suffixOverrides="AND">
                 <if test="id != null">`id` = #{id} AND</if>
                 <if test="datasetId != null">`dataset_id` = #{datasetId} AND</if>
-                <if test="interfaceType != null ">`interface_type` = #{interfaceType} AND</if>
+                <if test="interfaceType != null ">interface_address.`interface_type` = #{interfaceType} AND</if>
                 <if test="interfaceName != null and interfaceName !=''">`interface_name`= #{interfaceName} AND</if>
                 <if test="interfaceAddress != null and interfaceAddress !=''">`interface_address` = #{interfaceAddress} AND</if>
+                <if test="true">`interface_address`.`destroy_time` IS NULL AND</if>
             </trim>
         </where>
     </select>
+    <resultMap id="interfaceAddressVOMap" type="InterfaceAddressVO">
+        <id property="id" column="id"/>
+        <result property="datasetId" column="datasetID"/>
+        <result property="datasetName" column="datasetName"/>
+        <result property="interfaceType" column="interfaceType"/>
+        <result property="interfaceName" column="interfaceName"/>
+        <result property="interfaceAddress" column="interfaceAddress"/>
+    </resultMap>
+
     <select id="selectInterfaceAddressByID" resultType="com.dlabeling.labeling.domain.po.InterfaceAddress">
         SELECT
             `id`,
@@ -95,7 +107,7 @@
             `destroy_time`
         FROM
             `interface_address`
-        WHERE id = #{id}
+        WHERE id = #{id} AND `destroy_time` IS NULL
     </select>
     <select id="selectAllInterfaceVO" resultMap="interfaceVOMap">
         SELECT
@@ -107,7 +119,7 @@
             interface_address.interface_address as interfaceAddress
         FROM interface_address
         JOIN datasets on datasets.id = interface_address.dataset_id
-
+        WHERE interface_address.`destroy_time` IS NULL
     </select>
     <resultMap id="interfaceVOMap" type="InterfaceVO">
         <id property="datasetId" column="datasetID"/>

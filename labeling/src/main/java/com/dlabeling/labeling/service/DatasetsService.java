@@ -48,5 +48,4 @@ public interface DatasetsService {
 
     List<DatasetsVO> getDatasetDontHas();
 
-    List<SetItem> getAllSetByType(String type);
 }

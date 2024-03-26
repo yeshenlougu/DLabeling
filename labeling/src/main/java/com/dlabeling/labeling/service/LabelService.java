@@ -1,5 +1,6 @@
 package com.dlabeling.labeling.service;
 
+import com.dlabeling.labeling.domain.vo.LabelHistoryVO;
 import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 
 import java.util.List;
@@ -11,5 +12,6 @@ import java.util.List;
  * @Since 2024/3/24
  */
 public interface LabelService {
-    List<LabelHistoryItem> getAllLabelHistroyItem();
+
+    List<LabelHistoryVO> getAllLabelHistoryVO();
 }

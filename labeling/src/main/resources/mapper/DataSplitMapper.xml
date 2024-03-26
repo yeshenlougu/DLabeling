@@ -18,6 +18,9 @@
     <delete id="deleteDataSplit">
         DELETE FROM `data_split` WHERE `dataset_id`=#{datasetId} AND `data_id`=#{dataId} AND `split_id`=#{splitId}
     </delete>
+    <delete id="batchDeleteBySplitID">
+        DELETE FROM `data_split` WHERE split_id = #{splitID}
+    </delete>
 
     <select id="selectDataSplit" resultType="com.dlabeling.labeling.domain.po.DataSplit">
         SELECT

@@ -4,6 +4,8 @@ import com.dlabeling.labeling.core.enums.InterfaceType;
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Description:
  * @Auther YYS
@@ -42,6 +44,8 @@ public class InterfaceAddressVO {
      * 接口地址
      */
     private String interfaceAddress;
+
+    private Date destroyTime;
 
     public void setInterfaceType(Integer interfaceType) {
         this.interfaceType = InterfaceType.getInterfaceTypeByCode(interfaceType).getName();

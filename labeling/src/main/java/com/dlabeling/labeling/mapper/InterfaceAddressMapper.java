@@ -2,9 +2,12 @@ package com.dlabeling.labeling.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
+import com.dlabeling.labeling.domain.vo.InterfaceAddressVO;
 import com.dlabeling.labeling.domain.vo.InterfaceVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,9 +23,9 @@ public interface InterfaceAddressMapper extends BaseMapper<InterfaceAddress> {
 
     void updateInterfaceAddress(InterfaceAddress interfaceAddress);
 
-    void deleteInterfaceAddressByID(Integer id);
-    InterfaceAddress selectInterfaceAddressByID(Integer id);
-    List<InterfaceAddress> selectInterfaceByObj(InterfaceAddress interfaceAddress);
+    void deleteInterfaceAddressByID(@Param("id") Integer id, @Param("destroyTime") Date date);
+    InterfaceAddress selectInterfaceAddressByID(@Param("id") Integer id);
+    List<InterfaceAddressVO> selectInterfaceByObj(InterfaceAddress interfaceAddress);
 
     List<InterfaceVO> selectAllInterfaceVO();
 }

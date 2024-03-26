@@ -1,5 +1,6 @@
 package com.dlabeling.labeling.service.impl;
 
+import com.dlabeling.labeling.domain.vo.LabelHistoryVO;
 import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 import com.dlabeling.labeling.mapper.InterfaceHistoryMapper;
 import com.dlabeling.labeling.mapper.LabelHistoryMapper;
@@ -24,9 +25,10 @@ public class LabelServiceImpl implements LabelService {
     @Autowired
     private InterfaceHistoryMapper interfaceHistoryMapper;
 
+
     @Override
-    public List<LabelHistoryItem> getAllLabelHistroyItem() {
-        List<LabelHistoryItem> labelHistoryItemList = interfaceHistoryMapper.getAllLabelHistoryItem();
-        return labelHistoryItemList;
+    public List<LabelHistoryVO> getAllLabelHistoryVO() {
+        List<LabelHistoryVO> labelHistoryVOList = labelHistoryMapper.getAllLabelHistoryVO();
+        return labelHistoryVOList;
     }
 }

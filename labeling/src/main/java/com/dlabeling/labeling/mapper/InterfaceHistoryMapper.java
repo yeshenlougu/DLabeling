@@ -3,6 +3,7 @@ package com.dlabeling.labeling.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dlabeling.labeling.domain.po.InterfaceHistory;
 import com.dlabeling.labeling.domain.vo.InterfaceHistoryVO;
+import com.dlabeling.labeling.domain.vo.LabelHistoryVO;
 import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Mapper;
@@ -31,5 +32,5 @@ public interface InterfaceHistoryMapper extends BaseMapper<InterfaceHistory> {
     @MapKey("id")
     Map<String, Map<String, Object>> selectDatasOfInterfaceHistory(@Param("interfaceHistoryId") Integer interfaceHistoryId, @Param("table") String table);
 
-    List<LabelHistoryItem> getAllLabelHistoryItem();
+    List<LabelHistoryItem> getAllLabelHistoryItem(@Param("type") int type);
 }
