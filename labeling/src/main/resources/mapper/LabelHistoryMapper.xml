@@ -11,7 +11,9 @@
             <if test="true">`user_id`,</if>
             <if test="true">`dataset_id`,</if>
             <if test="true">`data_id`,</if>
-            <if test="true">`action`,</if>
+            <if test="true">`action_type`,</if>
+            <if test="true">`before_action`,</if>
+            <if test="true">`after_action`,</if>
             <if test="true">`create_time`,</if>
         </trim>
         VALUES
@@ -19,23 +21,13 @@
             <if test="true">#{userId},</if>
             <if test="true">#{datasetId},</if>
             <if test="true">#{dataId},</if>
-            <if test="true">#{action},</if>
+            <if test="true">#{actionType},</if>
+            <if test="true">#{beforeAction},</if>
+            <if test="true">#{afterAction},</if>
             <if test="true">#{createTime},</if>
         </trim>
     </insert>
 
-    <update id="updateLabelHistory">
-        UPDATE `label_history`
-        <set>
-            <trim suffixOverrides=",">
-                <if test="actoin != null"> `action` = #{action}</if>
-                <if test="destroy != null"> `destroy` = #{destroy}</if>
-            </trim>
-        </set>
-        <where>
-            `id` = #{id}
-        </where>
-    </update>
 
     <delete id="deleteLabelHistoryByID">
         DELETE FROM `interface_address`
@@ -48,7 +40,9 @@
             `user_id`,
             `dataset_id`,
             `data_id`,
-            `action`,
+            `action_type`,
+            `before_action`,
+            `after_action`,
             `create_time`,
             `destroy`
         FROM `label_history`
@@ -57,11 +51,42 @@
                 <if test="true">`user_id` = #{userId}</if>
                 <if test="true">`dataset_id` = #{datasetId}</if>
                 <if test="true">`data_id` = #{dataId}</if>
+
             </trim>
         </where>
     </select>
     <select id="getAllLabelHistoryVO" resultMap="labelHistoryVOMap">
-
+        SELECT
+            `label_history`.id as labelHistoryID,
+            `label_history`.user_id as userID,
+            `label_history`.data_id as dataID,
+            `user`.username as username,
+            `label_history`.dataset_id as datasetID,
+            `datasets`.name as datasetName,
+            `label_history`.action_type as actionType,
+            `label_history`.before_action as beforeAction,
+            `label_history`.after_action as afterAction,
+            `label_history`.create_time as createTime
+        FROM `label_history`
+        JOIN user ON label_history.user_id = user.id
+        JOIN datasets ON label_history.dataset_id = datasets.id
+    </select>
+    <select id="getLabelHistoryVO" resultMap="labelHistoryVOMap">
+        SELECT
+            `label_history`.id as labelHistoryID,
+            `label_history`.user_id as userID,
+            `label_history`.data_id as dataID,
+            `user`.username as username,
+            `label_history`.dataset_id as datasetID,
+            `datasets`.name as datasetName,
+            `label_history`.action_type as actionType,
+            `label_history`.before_action as beforeAction,
+            `label_history`.after_action as afterAction,
+            `label_history`.create_time as createTime
+        FROM `label_history`
+        JOIN user ON label_history.user_id = user.id
+        JOIN datasets ON label_history.dataset_id = datasets.id
+        where `label_history`.id = #{labelHistoryID}
     </select>
     <resultMap id="labelHistoryVOMap" type="LabelHistoryVO">
         <id property="id" column="labelHistoryID"/>
@@ -70,8 +95,11 @@
         <result property="datasetId" column="datasetID"/>
         <result property="datasetName" column="datasetName"/>
         <result property="dataId" column="dataID"/>
+        <result property="createTime" column="createTime"/>
         <association property="action" column="action">
-
+            <result property="actionType" column="actionType"/>
+            <result property="beforeAction" column="beforeAction"/>
+            <result property="afterAction" column="afterAction"/>
         </association>
     </resultMap>
 

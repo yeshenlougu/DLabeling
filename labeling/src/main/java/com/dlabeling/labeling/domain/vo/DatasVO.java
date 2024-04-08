@@ -76,4 +76,22 @@ public class DatasVO {
         datasVO.setLabelList(labelList);
         return datasVO;
     }
+
+    public static Datas convertDatasVOToDatas(DatasVO datasVO, Map<String, String> labelNameToId){
+        Datas datas = new Datas();
+        datas.setId(datasVO.getId());
+        datas.setDataPath(datasVO.getFilePath());
+        datas.setLabelPath(datasVO.getLabelPath());
+        Map<String, Object> labelList = new HashMap<>();
+
+        for (Map.Entry<String, String> entry : datasVO.getLabelList().entrySet()) {
+            String labelName = entry.getKey().split("_")[0];
+            String labelSuffix = entry.getKey().split("_")[1];
+            String filed = "label_"+labelNameToId.get(labelName)+"_"+labelSuffix;
+            labelList.put(filed, entry.getValue());
+        }
+        datas.setLabelMap(labelList);
+
+        return datas;
+    }
 }

@@ -3,8 +3,13 @@ package com.dlabeling.labeling.utils;
 import com.alibaba.fastjson2.JSON;
 import com.dlabeling.common.utils.FileUtils;
 import com.dlabeling.common.utils.StringUtils;
+import com.dlabeling.labeling.domain.json.LabelJson;
+import com.dlabeling.labeling.domain.json.Pos;
+import com.dlabeling.labeling.domain.json.Position;
 import com.dlabeling.labeling.domain.po.Datas;
 import com.dlabeling.labeling.domain.vo.DatasVO;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.awt.*;
 import java.io.File;
@@ -30,33 +35,22 @@ public class LabelWriteUtils {
                 file.delete();
         }
         File file = new File(filePath);
-
-        Map<String, Object> jsonString = new HashMap<>();
-        jsonString.put("id", String.valueOf(datasVO.getId()));
-        jsonString.put("dataPath", datasVO.getFilePath());
-        jsonString.put("labelList", JSON.toJSONString(labelList));
-        List<Map<String, Object>> labels = new ArrayList<>();
+        LabelJson labelJson = new LabelJson();
+        labelJson.setId(datasVO.getId());
+        labelJson.setDataPath(datasVO.getFilePath());
+        labelJson.setLabelList(labelList);
+        labelJson.setLabels(new ArrayList<>());
         for (String label : labelList) {
-            Map<String, Object> labelMap = new HashMap<>();
-            String value = datasVO.getLabelList().get(label + "_value");
-            if (value == null){
-                value = "";
-            }
-            String pos = datasVO.getLabelList().get(label + "_pos");
-//            String rectangle = JSON.parse(pos, String.class);
-
-            if (pos == null){
-                pos ="";
-            }
-            labelMap.put("value", value);
-            labelMap.put("name", label);
-            labelMap.put("position", pos);
-
-            labels.add(labelMap);
+            Pos pos = new Pos();
+            pos.setName(label);
+            pos.setValue(datasVO.getLabelList().get(label+"_value"));
+            Position position = JSON.parseObject(datasVO.getLabelList().get(label + "_pos"), Position.class);
+            pos.setPosition(position);
+            labelJson.getLabels().add(pos);
         }
-        jsonString.put("labels", labels);
+        String res = JSON.toJSONString(labelJson, String.valueOf(SerializationFeature.WRITE_NULL_MAP_VALUES));
+
         FileWriter fileWriter =new FileWriter(file);
-        String res = JSON.toJSONString(jsonString);
         fileWriter.write(res);
         fileWriter.flush();
         fileWriter.close();

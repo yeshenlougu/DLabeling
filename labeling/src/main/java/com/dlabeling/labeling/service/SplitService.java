@@ -27,4 +27,6 @@ public interface SplitService {
     void updateSplit(SplitVO splitVO);
 
     List<SetItem> getAllSplitByType(String type);
+
+    void deleteData(Integer datasetID, Integer splitID, Integer dataID);
 }

@@ -4,6 +4,8 @@ import com.dlabeling.labeling.core.action.Action;
 import com.dlabeling.labeling.domain.po.LabelHistory;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Description:
  * @Auther YYS
@@ -33,6 +35,10 @@ public class LabelHistoryVO {
      */
     private Integer datasetId;
 
+    private String file;
+
+    private String dataPath;
+
     /**
      * 数据集名称
      */
@@ -47,6 +53,8 @@ public class LabelHistoryVO {
      * 数据操作
      */
     private Action action;
+
+    private Date createTime;
 
     public static LabelHistory convertToLabelHistory(){
         return new LabelHistory();

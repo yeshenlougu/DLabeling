@@ -23,6 +23,8 @@ public interface InterfaceService {
 
     List<DatasVO> getLabelHistoryDatasList(InterfaceHistoryVO interfaceHistory);
 
+    DatasVO getLabelHistoryDatas(Integer interfaceHistoryID, Integer datasetID, String interfaceHistoryName, String type, Integer dataID);
+
     List<InterfaceAddressVO> getInterfaceList(Integer datasetID, String type);
 
     List<InterfaceVO> getAllInterface();

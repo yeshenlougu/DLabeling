@@ -10,7 +10,8 @@ import java.util.stream.Stream;
  */
 public enum ActionType {
     VALUE_CHANGE(0, "valueChange", "标注值修改"),
-    POS_CHANGE(1, "posChange", "标注坐标修改");
+    POS_CHANGE(1, "posChange", "标注坐标修改"),
+    ALL_CHANGE(2,"allChange", "全部修改");
 
     private final int code;
     private final String name;

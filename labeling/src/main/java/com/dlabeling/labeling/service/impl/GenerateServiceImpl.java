@@ -108,7 +108,7 @@ public class GenerateServiceImpl implements GenerateService {
             createDataBaseDir(dbRootDir);
             // 生成Label文件
             createLabelTxt(dbRootDir, datasetsVO.getLabelConfList());
-
+            // 添加标签信息入表
             List<LabelConf> labelConfList = datasetsVO.getLabelConfList().stream()
                     .map(LabelConfVO::convertToLabelConf)
                     .peek(labelConf -> labelConf.setDatasetId(selectDatasets.getId()))
@@ -116,6 +116,7 @@ public class GenerateServiceImpl implements GenerateService {
 
             labelConfMapper.batchAddLabelConf(labelConfList);
             List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(selectDatasets.getId());
+            //创建数据存储表
             createDBDataTable(selectDatasets, labelConfByDB);
 
         }catch (DirExistsException e){
@@ -150,12 +151,11 @@ public class GenerateServiceImpl implements GenerateService {
             createDir(FileUtils.resolvePath(rootPath, LabelConstant.LABEL_DIR_NAME));
             createDir(FileUtils.resolvePath(rootPath, LabelConstant.AUTO_DIR_NAME));
             createDir(FileUtils.resolvePath(rootPath, LabelConstant.TEST_DIR_NAME));
-            createDir(FileUtils.resolvePath(rootPath, LabelConstant.CHECK_DIR_NAME));
         }catch (FileException e){
             throw e;
         }
     }
-    
+//    createDir(FileUtils.resolvePath(rootPath, LabelConstant.CHECK_DIR_NAME));
     private void createDir(String path){
         try {
             FileUtils.makeDir(path);

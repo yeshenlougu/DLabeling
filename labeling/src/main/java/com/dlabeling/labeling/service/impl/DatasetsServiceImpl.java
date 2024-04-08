@@ -18,6 +18,7 @@ import com.dlabeling.labeling.enums.SplitType;
 import com.dlabeling.labeling.generate.DBManager;
 import com.dlabeling.labeling.mapper.*;
 import com.dlabeling.labeling.service.DatasetsService;
+import com.dlabeling.labeling.service.LabelService;
 import com.dlabeling.labeling.utils.DatasetUtils;
 import com.dlabeling.labeling.utils.LabelWriteUtils;
 import com.dlabeling.system.domain.po.user.UserInfo;
@@ -64,6 +65,9 @@ public class DatasetsServiceImpl implements DatasetsService {
 
     @Autowired
     private UserInfoMapper userInfoMapper;
+
+    @Autowired
+    private LabelService labelService;
 
     @Autowired
     private InterfaceAddressMapper interfaceAddressMapper;
@@ -259,11 +263,11 @@ public class DatasetsServiceImpl implements DatasetsService {
         if (editLabelList==null || editLabelList.isEmpty()){
             throw new BusinessException(ResponseCode.PARAMETER_ERROR, "待修改标签不能为空");
         }
-        if (editDatasList == null || editDatasList.isEmpty()){
+        else if (editDatasList == null || editDatasList.isEmpty()){
             throw new BusinessException(ResponseCode.PARAMETER_ERROR, "待修改数据不能为空");
         }
-        if (editForm.get("top")==0 && editForm.get("right")==0 && editForm.get("bottom")==0 && editForm.get("left")==0){
-            throw new BusinessException(ResponseCode.PARAMETER_ERROR, "坐标为改变");
+        else if (editForm.get("top")==0 && editForm.get("right")==0 && editForm.get("bottom")==0 && editForm.get("left")==0){
+            throw new BusinessException(ResponseCode.PARAMETER_ERROR, "坐标未改变");
         }
 
         List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasetID);
@@ -291,7 +295,9 @@ public class DatasetsServiceImpl implements DatasetsService {
             Map<String, Object> labelMap = new HashMap<>();
 
             for (String key : value.keySet()) {
-                if (StringUtils.contains(key, "pos")){
+
+                if (StringUtils.contains(key, "pos")
+                        && labelIDList.contains(Integer.parseInt(key.split("_")[1]))){
                     Map<String, Integer> pos = JSON.parseObject((String) value.get(key), new TypeReference<Map<String, Integer>>() {});
                     if (pos != null){
                         pos.put("x",pos.get("x") - editForm.get("top"));
@@ -380,6 +386,7 @@ public class DatasetsServiceImpl implements DatasetsService {
     @Override
     public void updateDatas(DatasVO datasVO) {
         try {
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
             Set<String> labelName = new HashSet<>();
             Map<String, Object> labelObject = new HashMap<>();
             List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasVO.getDatasetID());
@@ -398,18 +405,34 @@ public class DatasetsServiceImpl implements DatasetsService {
             }
 
             String table = DatasetUtils.getDataTable(datasVO.getDatasetID());
+            // 获取更新前数据
+            DatasVO beforeUpdate = null;
+            Map<String, Map<String, Object>> before = datasMapper.selectDatasByID(table, datasVO.getId());
+            for (Map<String, Object> value : before.values()) {
+                beforeUpdate = DatasVO.convertMapToDatasVO(value, fieldToLabel);
+            }
+
             Datas datas = new Datas();
             datas.setId(datasVO.getId());
             datas.setLabelMap(labelObject);
             datasMapper.updateDatas(datas, table);
-            Map<String, Map<String, Object>> stringMapMap = datasMapper.selectDatasByID(table, datas.getId());
-            for (Map<String, Object> value : stringMapMap.values()) {
-                datas.setDataPath((String) value.get("data_path"));
-                datas.setLabelPath((String) value.get("label_path"));
+
+            // 获取更新后数据
+            Map<String, Map<String, Object>> after = datasMapper.selectDatasByID(table, datas.getId());
+            DatasVO afterUpdate = null;
+
+            for (Map<String, Object> value : after.values()) {
+                afterUpdate = DatasVO.convertMapToDatasVO(value, fieldToLabel);
             }
 
-            DatasVO datasVO1 = DatasVO.convertDatasToDatasVO(datas, fieldToLabel);
-            LabelWriteUtils.writeLabelJSON(datasVO1.getLabelPath(), datasVO1, new ArrayList<>(labelName2ID.keySet()));
+            LabelHistory labelHistory = labelService.judgeDifference(beforeUpdate, afterUpdate);
+            labelHistory.setCreateTime(new Date());
+            labelHistory.setDatasetId(datasVO.getDatasetID());
+            labelHistory.setUserId(loginUser.getId());
+            labelHistory.setDataId(datasVO.getId());
+            labelService.addLabelHistory(labelHistory);
+
+            LabelWriteUtils.writeLabelJSON(afterUpdate.getLabelPath(), afterUpdate, new ArrayList<>(labelName2ID.keySet()));
         }catch (IOException e){
 
         }

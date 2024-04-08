@@ -1,13 +1,14 @@
 package com.dlabeling.labeling.service.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.dlabeling.common.exception.file.FileNotFileException;
 import com.dlabeling.common.utils.FileUtils;
 import com.dlabeling.common.utils.RequestUtils;
 import com.dlabeling.labeling.common.LabelConstant;
 import com.dlabeling.labeling.core.enums.InterfaceType;
+import com.dlabeling.labeling.domain.json.LabelJson;
+import com.dlabeling.labeling.domain.json.Pos;
 import com.dlabeling.labeling.domain.po.*;
 import com.dlabeling.labeling.domain.vo.*;
 import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -145,15 +147,30 @@ public class InterfaceServiceImpl implements InterfaceService {
                 // 更新数据库
                 Datas datas = Datas.convertMapToDatas(value);
 
-                JSONObject map = JSON.parseObject(jsonString);
-                JSONArray labelsArray = (JSONArray) map.get(LabelConstant.INTERFACE_LABEL_DATAS);
-                for (int i=0; i<labelsArray.size(); i++){
-                    JSONObject label = labelsArray.getJSONObject(i);
-                    String labelName = (String) label.get("name");
-                    String filedName = labelTofield.get(labelName) + "_" + doLabelVO.getLabelType();
-                    label.remove("name");
-                    datas.getLabelMap().put(filedName, label.toString());
+//                JSONObject map = JSON.parseObject(jsonString);
+                LabelJson labelJson = JSON.parseObject(jsonString, LabelJson.class);
+                for (Pos label : labelJson.getLabels()) {
+                    String filedName = labelTofield.get(label.getName()) + "_" + doLabelVO.getLabelType();
+                    datas.getLabelMap().put(filedName,JSON.toJSONString(label));
+                    if (doLabelVO.getLabelType().equals(InterfaceType.LABEL.getName())){
+                        datas.getLabelMap().put(labelTofield.get(label.getName())+"_value", label.getValue());
+                        datas.getLabelMap().put(labelTofield.get(label.getName())+"_pos", JSON.toJSONString(label.getPosition()));
+                    }
                 }
+//                JSONArray labelsArray = (JSONArray) map.get(LabelConstant.INTERFACE_LABEL_DATAS);
+//                for (int i=0; i<labelsArray.size(); i++){
+//                    JSONObject label = labelsArray.getJSONObject(i);
+//                    String labelName = (String) label.get("name");
+//                    String filedName = labelTofield.get(labelName) + "_" + doLabelVO.getLabelType();
+//                    // 如果是auto 把pos和value也更新了
+//                    if (doLabelVO.getLabelType().equals("auto")){
+//                        datas.getLabelMap().put(labelTofield.get(labelName)+"_value", label.get("value").toString());
+//                        datas.getLabelMap().put(labelTofield.get(labelName)+"_pos", label.get("pos").toString());
+//
+//                    }
+//                    label.remove("name");
+//                    datas.getLabelMap().put(filedName, label.toString());
+//                }
                 datasMapper.updateDatas(datas, table);
 
             }catch (IOException e){
@@ -170,52 +187,61 @@ public class InterfaceServiceImpl implements InterfaceService {
 
     @Override
     public List<DatasVO> getLabelHistoryDatasList(InterfaceHistoryVO interfaceHistory) {
-        Map<String, Map<String, Object>> datasMapMap = interfaceHistoryMapper.selectDatasOfInterfaceHistory(interfaceHistory.getId(), DatasetUtils.getDataTable(interfaceHistory.getDatasets().getId()));
-
         List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(interfaceHistory.getDatasets().getId());
         Map<String, String> fieldToLabel = new HashMap<>();
         labelConfByDB.forEach(labelConf -> {
             String field = LabelConstant.DATA_FILED_PREF + "_" + labelConf.getId();
             fieldToLabel.put(field, labelConf.getLabelName());
         });
+        Datasets datasets = datasetsMapper.selectByID(interfaceHistory.getDatasets().getId());
 
+        String basePath = DatasetUtils.labelRootPath(interfaceHistory.getName(), interfaceHistory.getType(),datasets.getDataRootDir());
         List<DatasVO> datasVOList = new ArrayList<>();
+
+
+        Map<String, Map<String, Object>> datasMapMap = interfaceHistoryMapper.selectDatasOfInterfaceHistory(interfaceHistory.getId(), DatasetUtils.getDataTable(interfaceHistory.getDatasets().getId()));
         for (Map<String, Object> value : datasMapMap.values()) {
             try {
-                String dataPath = (String) value.get("data_path");
-                String base64File = FileUtils.getBase64(dataPath);
-                DatasVO datasVO = new DatasVO();
-
-                datasVO.setId((Integer) value.get("id"));
-                datasVO.setFileName(FileUtils.removeFileExtension(FileUtils.getFileName(dataPath)));
-                datasVO.setFilePath(dataPath);
-                datasVO.setFile(base64File);
-                datasVO.setLabelPath((String) value.get("label_path"));
-                Map<String, String> labelList = new HashMap<>();
-
-                value.remove("id");
-                value.remove("data_path");
-                value.remove("label_path");
-
-                for (String key : value.keySet()) {
-                    String newKey = key;
-
-                    int i = key.lastIndexOf("_");
-                    String suffix = key.substring(i+1);
-                    String pref = key.substring(0, i);
-                    newKey = fieldToLabel.get(pref) + "_" + suffix;
-
-                    labelList.put(newKey, (String)value.get(key));
+                DatasVO datasVO = DatasVO.convertMapToDatasVO(value, fieldToLabel);
+                FileReader fileReader = new FileReader(FileUtils.resolvePath(basePath,FileUtils.getFileName(datasVO.getLabelPath())));
+                LabelJson labelJson = JSON.parseObject(fileReader, LabelJson.class);
+                for (Pos label : labelJson.getLabels()) {
+                    datasVO.getLabelList().put(label.getName()+"_"+interfaceHistory.getType(), JSONObject.toJSONString(label));
                 }
-
-                datasVO.setLabelList(labelList);
-
                 datasVOList.add(datasVO);
             }catch (IOException | FileNotFileException e){
-                continue;
+                throw new RuntimeException(e);
             }
         }
         return datasVOList;
+    }
+
+    @Override
+    public DatasVO getLabelHistoryDatas(Integer interfaceHistoryID, Integer datasetID, String interfaceHistoryName, String type, Integer dataID){
+        List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(datasetID);
+        Map<String, String> fieldToLabel = new HashMap<>();
+        labelConfByDB.forEach(labelConf -> {
+            String field = LabelConstant.DATA_FILED_PREF + "_" + labelConf.getId();
+            fieldToLabel.put(field, labelConf.getLabelName());
+        });
+        Datasets datasets = datasetsMapper.selectByID(datasetID);
+
+        String basePath = DatasetUtils.labelRootPath(interfaceHistoryName, type,datasets.getDataRootDir());
+        Map<String, Map<String, Object>> datasMap = datasMapper.selectDatasByID(DatasetUtils.getDataTable(datasetID), dataID);
+        DatasVO datasVO = null;
+        try {
+            for (Map<String, Object> value : datasMap.values()) {
+                datasVO = DatasVO.convertMapToDatasVO(value, fieldToLabel);
+                FileReader fileReader = new FileReader(FileUtils.resolvePath(basePath,FileUtils.getFileName(datasVO.getLabelPath())));
+                LabelJson labelJson = JSON.parseObject(fileReader, LabelJson.class);
+                for (Pos label : labelJson.getLabels()) {
+                    datasVO.getLabelList().put(label.getName()+"_"+type, JSONObject.toJSONString(label));
+                }
+            }
+        }catch (IOException e){
+            throw new RuntimeException(e);
+        }
+        return datasVO;
     }
 
 

@@ -106,6 +106,7 @@
         ORDER BY createTime DESC ;
     </select>
 
+
     <resultMap id="interfaceHistoryVOMap" type="InterfaceHistoryVO">
         <id property="id" column="interfaceHistoryID"/>
         <result property="name" column="interfaceHistoryName"/>

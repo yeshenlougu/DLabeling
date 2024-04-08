@@ -1,8 +1,9 @@
-package com.dlabeling.labeling.service;
+package com.dlabeling.labeling.service.impl;
 
 import com.dlabeling.common.enums.ResponseCode;
 import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.labeling.common.LabelConstant;
+import com.dlabeling.labeling.domain.po.DataSplit;
 import com.dlabeling.labeling.domain.po.LabelConf;
 import com.dlabeling.labeling.domain.po.Split;
 import com.dlabeling.labeling.domain.vo.DatasVO;
@@ -13,6 +14,7 @@ import com.dlabeling.labeling.mapper.DataSplitMapper;
 import com.dlabeling.labeling.mapper.DatasMapper;
 import com.dlabeling.labeling.mapper.LabelConfMapper;
 import com.dlabeling.labeling.mapper.SplitMapper;
+import com.dlabeling.labeling.service.SplitService;
 import com.dlabeling.labeling.utils.DatasetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
  * @Since 2024/3/25
  */
 @Service
-public class SplitServiceImpl implements SplitService{
+public class SplitServiceImpl implements SplitService {
 
     @Autowired
     SplitMapper splitMapper;
@@ -122,5 +124,14 @@ public class SplitServiceImpl implements SplitService{
                             .getDescription()));
         });
         return setItemList;
+    }
+
+    @Override
+    public void deleteData(Integer datasetID, Integer splitID, Integer dataID) {
+        DataSplit dataSplit = new DataSplit();
+        dataSplit.setDatasetId(datasetID);
+        dataSplit.setSplitId(splitID);
+        dataSplit.setDataId(dataID);
+        dataSplitMapper.deleteDataSplit(dataSplit);
     }
 }

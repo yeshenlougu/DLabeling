@@ -60,6 +60,11 @@ public class SplitController {
         }
     }
 
+    @PostMapping("/deleteData")
+    public R<String> deleteDataInSplit(Integer datasetID, Integer splitID, Integer dataID){
+        splitService.deleteData(datasetID, splitID, dataID);
+        return R.ok();
+    }
     @PostMapping("/create")
     public R<String> createSplit(@RequestBody SplitVO splitVO){
         splitService.addSplit(splitVO);

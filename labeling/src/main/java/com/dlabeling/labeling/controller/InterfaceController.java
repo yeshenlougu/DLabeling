@@ -59,6 +59,12 @@ public class InterfaceController {
         return R.ok(datasVOList);
     }
 
+    @PostMapping("/interfaceHistory/dataInfo")
+    public R<DatasVO> getLabelHistoryDatas(Integer interfaceHistoryID, Integer datasetID, String interfaceHistoryName, String type, Integer dataID){
+        DatasVO datasVO = interfaceService.getLabelHistoryDatas(interfaceHistoryID, datasetID, interfaceHistoryName, type, dataID);
+        return R.ok(datasVO);
+    }
+
     @PostMapping("/interface/link")
     public R<String> checkOrTestData(@RequestBody DoLabelVO doLabelVO){
 
