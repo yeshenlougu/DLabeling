@@ -13,7 +13,7 @@
 
  Date: 08/04/2024 11:24:50
 */
-
+DROP DATABASE IF EXISTS dlabeling;
 CREATE DATABASE dlabeling;
 USE dlabeling;
 SET NAMES utf8mb4;
