@@ -16,7 +16,7 @@ dlabeling:
   captchaType: math
 
   label:
-    defaultDataRootDir: C:/Users/YYS/Desktop/temp
+    defaultDataRootDir: C:/Users/YYS/Desktop/毕设演示/数据集存储目录
 
 spring:
   datasource:

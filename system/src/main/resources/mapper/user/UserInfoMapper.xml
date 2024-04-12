@@ -10,6 +10,7 @@
             <if test="email != null and email != ''">email,</if>
             <if test="phone != null and phone != ''">phone,</if>
             <if test="username != null and username != ''">username,</if>
+            <if test="privilege != null">privilege,</if>
             <if test="true">create_time,</if>
         </trim>
         VALUES
@@ -18,6 +19,7 @@
             <if test="email != null and email != ''">#{email},</if>
             <if test="phone != null and phone != ''"> #{email},</if>
             <if test="username != null and username != ''">#{username},</if>
+            <if test="privilege != null">#{privilege},</if>
             <if test="true">#{createTime},</if>
         </trim>
         
@@ -177,7 +179,7 @@
             user_info
         <where>
             `user_id` in
-            <foreach collection="list" item="item" separator="," open="(" close=")">
+            <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
                 #{item}
             </foreach>
         </where>

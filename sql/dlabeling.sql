@@ -29,7 +29,7 @@ CREATE TABLE `data_split`  (
   `split_id` int NOT NULL COMMENT '训练集、测试集id',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `ids`(`dataset_id` ASC, `data_id` ASC, `split_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for dataset_permission
@@ -40,7 +40,7 @@ CREATE TABLE `dataset_permission`  (
   `user_id` int NOT NULL COMMENT '用户编号',
   `dataset_id` int NOT NULL COMMENT '数据集编号',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for datasets
@@ -58,7 +58,7 @@ CREATE TABLE `datasets`  (
   `destroy_time` datetime NULL DEFAULT NULL COMMENT '数据集删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for interface_address
@@ -74,7 +74,7 @@ CREATE TABLE `interface_address`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '接口修改时间',
   `destroy_time` datetime NULL DEFAULT NULL COMMENT '接口删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for interface_history
@@ -90,7 +90,7 @@ CREATE TABLE `interface_history`  (
   `create_time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name_unique`(`name` ASC, `interfaece_id` ASC, `dataset_id` ASC, `split_id` ASC, `type` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for label_conf
@@ -102,7 +102,7 @@ CREATE TABLE `label_conf`  (
   `label_name` varchar(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `label_type` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for label_history
@@ -120,7 +120,7 @@ CREATE TABLE `label_history`  (
   `destroy` tinyint NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `idx_label_history`(`user_id` ASC, `dataset_id` ASC, `data_id` ASC, `create_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for level_apply
@@ -138,7 +138,7 @@ CREATE TABLE `level_apply`  (
   `destroy_time` datetime NULL DEFAULT NULL COMMENT '用户信息删除时间',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `idx_status`(`status` ASC, `applyer` ASC, `type` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for split
@@ -151,7 +151,7 @@ CREATE TABLE `split`  (
   `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '数据集分类名称',
   `create_time` datetime NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user
@@ -167,7 +167,7 @@ CREATE TABLE `user`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '密码修改时间',
   `destroy_time` datetime NULL DEFAULT NULL COMMENT '账号删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for user_info
@@ -186,6 +186,7 @@ CREATE TABLE `user_info`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '用户信息修改时间',
   `destroy_time` datetime NULL DEFAULT NULL COMMENT '用户信息删除时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
-
-SET FOREIGN_KEY_CHECKS = 1;
+) ENGINE = InnoDB CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = Dynamic;
+INSERT INTO user(username,password, create_time) VALUE ("admin", "$2a$10$jPoxQHGIpCLbC20/7WILa.Zqt10MlX5Em6L3ipITe.pVASOy1WZ/C", CURRENT_TIMESTAMP);
+INSERT INTO user_info(user_id, username, privilege, create_time) VALUE ((SELECT id FROM user WHERE user.username="admin"), "admin",0,CURRENT_TIMESTAMP);
+# SET FOREIGN_KEY_CHECKS = 1;

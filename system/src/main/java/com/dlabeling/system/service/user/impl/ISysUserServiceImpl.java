@@ -65,9 +65,10 @@ public class ISysUserServiceImpl implements ISysUserService {
             user.setEmail(user.getUsername());
         } else if (StringUtils.isPhone(user.getUsername())) {
             user.setPhone(user.getUsername());
-        }else {
-            throw new UserException("用户名格式错误");
         }
+//        else {
+//            throw new UserException("用户名格式错误");
+//        }
 
         // TODO 进行参数校验
         String pwd = bCryptPasswordEncoder.encode(user.getPassword());
@@ -85,6 +86,7 @@ public class ISysUserServiceImpl implements ISysUserService {
                 User insertedUser = userMapper.selectUser(user);
                 log.info(insertedUser.toString());
                 UserInfo userInfo = new UserInfo(insertedUser);
+                userInfo.setPrivilege(UserRole.LABELER.getCode());
                 log.info(userInfo.toString());
                 userInfoMapper.addUserInfo(userInfo);
             }catch (Exception e){
@@ -172,7 +174,7 @@ public class ISysUserServiceImpl implements ISysUserService {
             user.setEmail(user.getUsername());
         }else if (StringUtils.isPhone(user.getUsername())){
             user.setPhone(user.getUsername());
-        }else {
+        }else if (!StringUtils.equals(user.getUsername(), "admin")){
             throw new UserNameIllegalException();
         }
         User selectUser = userMapper.selectUser(user);
@@ -245,7 +247,7 @@ public class ISysUserServiceImpl implements ISysUserService {
         List<LevelApply> allLevelApply = levelApplyMapper.getAllLevelApply(typeNum);
 
         List<LevelApplyVO> levelApplyVOList = allLevelApply.stream().map(LevelApplyVO::converToLevelApplyVO).collect(Collectors.toList());
-
+        if (levelApplyVOList == null) return levelApplyVOList;
         Set<Integer> userIdList = new HashSet<>();
         allLevelApply.stream().map(levelApply->{
             userIdList.add(levelApply.getApplyer());

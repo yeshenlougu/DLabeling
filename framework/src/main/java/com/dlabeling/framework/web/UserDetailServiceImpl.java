@@ -45,9 +45,10 @@ public class UserDetailServiceImpl implements UserDetailsService {
             user.setEmail(username);
         }else if (StringUtils.isPhone(username)){
             user.setPhone(username);
-        }else {
-            throw new UserNameIllegalException();
         }
+//        else {
+//            throw new UserNameIllegalException();
+//        }
         User userByEmailOrPhone = iSysUserService.getUserByEmailOrPhone(user);
         if (StringUtils.isNull(userByEmailOrPhone)){
             throw new ServiceException("登录用户：" + username + " 不存在");

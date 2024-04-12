@@ -38,7 +38,7 @@ public class LevelApplyServiceImpl implements LevelApplyService{
         List<LevelApply> allLevelApply = levelApplyMapper.getAllLevelApply(typeNum);
 
         List<LevelApplyVO> levelApplyVOList = allLevelApply.stream().map(LevelApplyVO::converToLevelApplyVO).collect(Collectors.toList());
-
+        if (levelApplyVOList.isEmpty()) return levelApplyVOList;
         Set<Integer> userIdList = new HashSet<>();
         for (LevelApply levelApply : allLevelApply) {
             userIdList.add(levelApply.getApplyer());
