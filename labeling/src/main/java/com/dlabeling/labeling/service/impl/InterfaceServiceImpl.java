@@ -2,6 +2,8 @@ package com.dlabeling.labeling.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.dlabeling.common.enums.ResponseCode;
+import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.common.exception.file.FileNotFileException;
 import com.dlabeling.common.utils.FileUtils;
 import com.dlabeling.common.utils.RequestUtils;
@@ -19,6 +21,7 @@ import com.dlabeling.labeling.utils.DatasetUtils;
 import com.dlabeling.labeling.utils.LabelWriteUtils;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +60,12 @@ public class InterfaceServiceImpl implements InterfaceService {
     @Autowired
     LabelConfMapper labelConfMapper;
 
+    @Override
+    public void addInterfaceAddress(InterfaceAddressVO interfaceAddressVO){
+        InterfaceAddress interfaceAddress = InterfaceAddressVO.convertToInterfaceAddress(interfaceAddressVO);
+        interfaceAddress.setCreateTime(new Date());
+        interfaceAddressMapper.addInterfaceAddress(interfaceAddress);
+    }
 
     @Override
     public void addInterfaceHistory(InterfaceHistory interfaceHistory) {
@@ -90,6 +99,8 @@ public class InterfaceServiceImpl implements InterfaceService {
     @Override
     @Transactional
     public void doLabelInterface(DoLabelVO doLabelVO){
+        String doLabelDir = null;
+ 
         if (doLabelVO.getName()==null){
             doLabelVO.setName(doLabelVO.getLabelType()+"_temp");
         }
@@ -98,8 +109,6 @@ public class InterfaceServiceImpl implements InterfaceService {
             dataSplit.setSplitId(doLabelVO.getSplitId());
             List<DataSplit> dataSplitList = dataSplitMapper.selectDataSplit(dataSplit);
             doLabelVO.setDatasIdList(dataSplitList.stream().map(DataSplit::getDataId).collect(Collectors.toList()));
-
-
         }
         // 获取数据库信息
         String table = DatasetUtils.getDataTable(doLabelVO.getDatasetId());
@@ -107,14 +116,17 @@ public class InterfaceServiceImpl implements InterfaceService {
         String dataRootPath = datasets.getDataRootDir();
         InterfaceAddress interfaceAddress = interfaceAddressMapper.selectInterfaceAddressByID(doLabelVO.getInterfaceId());
         String interfaceUrl = interfaceAddress.getInterfaceAddress();
-
         // 获取 待接口 数据
         Map<String, Map<String, Object>> stringMapMap = datasMapper.selectDatasByIDList(table, doLabelVO.getDatasIdList());
-        String doLabelDir = FileUtils.resolvePath(dataRootPath, FileUtils.resolvePath(doLabelVO.getLabelType(), doLabelVO.getName()));
+        doLabelDir = FileUtils.resolvePath(dataRootPath, FileUtils.resolvePath(doLabelVO.getLabelType(), doLabelVO.getName()));
+        if (FileUtils.exists(doLabelDir)){
+            FileUtils.deleteDir(doLabelDir);
+        }
         FileUtils.makeDir(doLabelDir);
-
+        
         // 获取 labelList
         List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(doLabelVO.getDatasetId());
+        List<String> collectNameList = labelConfByDB.stream().map(labelConf -> labelConf.getLabelName()).collect(Collectors.toList());
         Map<String, String> fieldToLabel = new HashMap<>();
         Map<String, String> labelTofield = new HashMap<>();
         labelConfByDB.forEach(labelConf -> {
@@ -122,7 +134,6 @@ public class InterfaceServiceImpl implements InterfaceService {
             fieldToLabel.put(field, labelConf.getLabelName());
             labelTofield.put(labelConf.getLabelName(), field);
         });
-
         InterfaceHistory interfaceHistory = new InterfaceHistory();
         interfaceHistory.setInterfaceId(doLabelVO.getInterfaceId());
         interfaceHistory.setName(doLabelVO.getName());
@@ -130,8 +141,6 @@ public class InterfaceServiceImpl implements InterfaceService {
         interfaceHistory.setSplitId(doLabelVO.getSplitId());
         interfaceHistory.setType(InterfaceType.getInterfaceTypeByType(doLabelVO.getLabelType()).getCode());
         addInterfaceHistory(interfaceHistory);
-
-
         for (Map<String, Object> value : stringMapMap.values()) {
             Response response=null;
             try {
@@ -141,14 +150,25 @@ public class InterfaceServiceImpl implements InterfaceService {
                 // 写入文件
                 LabelWriteUtils.writeJSON(
                         FileUtils.resolvePath(doLabelDir,
-                                FileUtils.changeSuffix(FileUtils.getFileName(filePath), ".json"))
+                                FileUtils.changeSuffix(FileUtils.getFileName(filePath), "_response.json"))
                         , jsonString);
-
                 // 更新数据库
                 Datas datas = Datas.convertMapToDatas(value);
-
-//                JSONObject map = JSON.parseObject(jsonString);
-                LabelJson labelJson = JSON.parseObject(jsonString, LabelJson.class);
+                datas.setLabelMap(new HashMap<>());
+                JSONObject jsonObject = JSON.parseObject(jsonString);
+                if ((Integer) jsonObject.get("code")!= 200){
+                    throw new BusinessException(ResponseCode.MODEL_ERROR, (String) jsonObject.get("msg"));
+                }
+//               JSONObject map = JSON.parseObject(jsonString);
+                LabelJson labelJson = JSON.parseObject(JSON.toJSONString(jsonObject.get("data")), LabelJson.class);
+                if (!CollectionUtils.isEqualCollection(labelJson.getLabelList(), collectNameList)){
+                    throw new BusinessException(ResponseCode.BUSINESS_ERROR, "标签列表错误");
+                }
+                LabelWriteUtils.writeJSON(
+                        FileUtils.resolvePath(doLabelDir,
+                                FileUtils.changeSuffix(FileUtils.getFileName(filePath), ".json"))
+                        , JSON.toJSONString(labelJson));
+                
                 for (Pos label : labelJson.getLabels()) {
                     String filedName = labelTofield.get(label.getName()) + "_" + doLabelVO.getLabelType();
                     datas.getLabelMap().put(filedName,JSON.toJSONString(label));
@@ -157,31 +177,22 @@ public class InterfaceServiceImpl implements InterfaceService {
                         datas.getLabelMap().put(labelTofield.get(label.getName())+"_pos", JSON.toJSONString(label.getPosition()));
                     }
                 }
-//                JSONArray labelsArray = (JSONArray) map.get(LabelConstant.INTERFACE_LABEL_DATAS);
-//                for (int i=0; i<labelsArray.size(); i++){
-//                    JSONObject label = labelsArray.getJSONObject(i);
-//                    String labelName = (String) label.get("name");
-//                    String filedName = labelTofield.get(labelName) + "_" + doLabelVO.getLabelType();
-//                    // 如果是auto 把pos和value也更新了
-//                    if (doLabelVO.getLabelType().equals("auto")){
-//                        datas.getLabelMap().put(labelTofield.get(labelName)+"_value", label.get("value").toString());
-//                        datas.getLabelMap().put(labelTofield.get(labelName)+"_pos", label.get("pos").toString());
-//
-//                    }
-//                    label.remove("name");
-//                    datas.getLabelMap().put(filedName, label.toString());
-//                }
                 datasMapper.updateDatas(datas, table);
-
             }catch (IOException e){
-
+                FileUtils.deleteDir(doLabelDir);
+                throw new BusinessException(ResponseCode.BUSINESS_ERROR, "写入文件错误");
+            }catch (BusinessException e){
+                FileUtils.deleteDir(doLabelDir);
+                throw e;
             }finally {
                 if (response != null){
                     response.close();
                 }
+                if (!doLabelVO.getLabelType().equals("test")){
+                    FileUtils.deleteDir(doLabelDir);
+                }
             }
         }
-
     }
 
 
@@ -294,8 +305,11 @@ public class InterfaceServiceImpl implements InterfaceService {
 
 
     @Override
-    public void updateInterfaceAddress(InterfaceAddress interfaceAddress) {
+    public void updateInterfaceAddress(InterfaceAddressVO interfaceAddressVO) {
+        InterfaceAddress interfaceAddress = InterfaceAddressVO.convertToInterfaceAddress(interfaceAddressVO);
         interfaceAddress.setUpdateTime(new Date());
+        interfaceAddress.setId(interfaceAddressVO.getId());
+        
         interfaceAddressMapper.updateInterfaceAddress(interfaceAddress);
     }
 

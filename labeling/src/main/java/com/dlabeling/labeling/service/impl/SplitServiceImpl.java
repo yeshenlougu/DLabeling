@@ -20,10 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +93,7 @@ public class SplitServiceImpl implements SplitService {
     @Override
     public SplitVO addSplit(SplitVO splitVO) {
         Split split = SplitVO.convertToSplit(splitVO);
+        split.setCreateTime(new Date());
         splitMapper.addSplit(split);
         Split split1 = splitMapper.selectSplit(split);
         return SplitVO.convertToSplitVO(split1);

@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum InterfaceType {
-    LABEL(0, "auto", "自动标注接口"),
+    LABEL(0, "auto", "标注接口"),
     TEST(1, "test", "测试接口"),
     CHECK(2, "check", "查验接口");
 
@@ -33,6 +33,13 @@ public enum InterfaceType {
     public static InterfaceType getInterfaceTypeByCode(Integer code) {
         return Stream.of(InterfaceType.values())
                 .filter(interfaceType -> interfaceType.code==code)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    public static InterfaceType getInterfaceTypeByDescription(String description){
+        return Stream.of(InterfaceType.values())
+                .filter(interfaceType -> interfaceType.description.equals(description))
                 .findFirst()
                 .orElse(null);
     }

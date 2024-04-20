@@ -71,6 +71,7 @@
             `description`,
             `type`,
             `data_root_dir`,
+            `creator`,
             `create_time`,
             `update_time`,
             `destroy_time`
@@ -97,6 +98,7 @@
             `description`,
             `type`,
             `data_root_dir`,
+            `creator`,
             `create_time`,
             `update_time`,
             `destroy_time`

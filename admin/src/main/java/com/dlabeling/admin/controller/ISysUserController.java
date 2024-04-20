@@ -208,6 +208,8 @@ public class ISysUserController {
     @PostMapping("/privilegeApply/update")
     public R<String> updateApplyPrivilege(@RequestBody LevelApplyVO levelApplyVO){
         try {
+            LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
+            levelApplyVO.setJudger(loginUser.getId());
             iSysUserService.updateLevelApply(levelApplyVO);
             return R.ok(null, "完成审核");
         }catch (BusinessException e){

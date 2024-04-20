@@ -5,8 +5,8 @@
 <mapper namespace="com.dlabeling.labeling.mapper.InterfaceHistoryMapper">
 
     <insert id="addInterfaceHistory">
-        INSERT INTO `interface_history`(`id`, `name`, `interfaece_id`, `dataset_id`, `split_id`, `type`, `create_time`)
-        VALUES (#{id}, #{name}, #{interfaceId}, #{datasetId}, #{splitId}, #{type}, #{createTime})
+        INSERT INTO `interface_history`(`name`, `interfaece_id`, `dataset_id`, `split_id`, `type`, `create_time`)
+        VALUES (#{name}, #{interfaceId}, #{datasetId}, #{splitId}, #{type}, #{createTime})
     </insert>
 
     <select id="selectInterfaceHistoryVO" resultMap="interfaceHistoryVOMap">

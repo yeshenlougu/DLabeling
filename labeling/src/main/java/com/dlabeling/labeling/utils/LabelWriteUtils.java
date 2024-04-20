@@ -58,11 +58,14 @@ public class LabelWriteUtils {
     }
 
     public static void writeJSON(String filePath, String json){
+        FileOutputStream fileOutputStream = null;
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(new File(filePath));
+            fileOutputStream = new FileOutputStream(new File(filePath));
             fileOutputStream.write(json.getBytes());
+            fileOutputStream.close();
         }catch (IOException e){
-
+        
+        }finally {
         }
     }
 

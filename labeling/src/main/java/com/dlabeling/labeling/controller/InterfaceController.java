@@ -1,6 +1,7 @@
 package com.dlabeling.labeling.controller;
 
 import com.dlabeling.common.core.domain.R;
+import com.dlabeling.common.exception.BusinessException;
 import com.dlabeling.labeling.domain.po.InterfaceAddress;
 import com.dlabeling.labeling.domain.vo.*;
 import com.dlabeling.labeling.domain.vo.item.LabelHistoryItem;
@@ -25,6 +26,12 @@ public class InterfaceController {
 
     @Autowired
     private InterfaceService interfaceService;
+    
+    @PostMapping("/add")
+    public R<String> addInterfaceAddress(@RequestBody InterfaceAddressVO interfaceAddressVO){
+        interfaceService.addInterfaceAddress(interfaceAddressVO);
+        return R.ok("成功添加模型接口");
+    }
 
     /**
      * 获取某个数据集、某个类型的接口列表
@@ -67,9 +74,13 @@ public class InterfaceController {
 
     @PostMapping("/interface/link")
     public R<String> checkOrTestData(@RequestBody DoLabelVO doLabelVO){
-
-        interfaceService.doLabelInterface(doLabelVO);
-        return R.ok();
+        try {
+            interfaceService.doLabelInterface(doLabelVO);
+            return R.ok("接口调用成功");
+        }catch (BusinessException e){
+            return R.fail(e.getMsg());
+        }
+   
     }
 
     @GetMapping("/getAllInterfaceHistory")
@@ -79,8 +90,8 @@ public class InterfaceController {
     }
 
     @PostMapping("/updateInterfaceAddress")
-    public R<String> updateInterfaceAddress(@RequestBody InterfaceAddress interfaceAddress){
-        interfaceService.updateInterfaceAddress(interfaceAddress);
+    public R<String> updateInterfaceAddress(@RequestBody InterfaceAddressVO interfaceAddressVO){
+        interfaceService.updateInterfaceAddress(interfaceAddressVO);
         return R.ok("接口更新成功");
     }
 

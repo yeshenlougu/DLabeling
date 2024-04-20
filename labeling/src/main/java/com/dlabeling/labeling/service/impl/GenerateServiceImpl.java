@@ -22,7 +22,9 @@ import com.dlabeling.labeling.mapper.DatasetsMapper;
 import com.dlabeling.labeling.mapper.LabelConfMapper;
 import com.dlabeling.labeling.service.GenerateService;
 import com.dlabeling.labeling.utils.DatasetUtils;
+import com.dlabeling.system.domain.po.DatasetPermission;
 import com.dlabeling.system.domain.vo.LoginUser;
+import com.dlabeling.system.mapper.DatasetPermissionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -53,25 +55,28 @@ import java.util.stream.Collectors;
 public class GenerateServiceImpl implements GenerateService {
 
     @Autowired
-    DatasetsMapper datasetsMapper;
+    private DatasetsMapper datasetsMapper;
 
     @Autowired
-    LabelConfig labelConfig;
+    private LabelConfig labelConfig;
 
     @Autowired
-    LabelConfMapper labelConfMapper;
+    private LabelConfMapper labelConfMapper;
 
     @Autowired
-    DataSource dataSource;
+    private DataSource dataSource;
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    DBManager dbManager;
+    private DBManager dbManager;
 
     @Autowired
-    TokenService tokenService;
+    private TokenService tokenService;
+    
+    @Autowired
+    private DatasetPermissionMapper datasetPermissionMapper;
 
     @Override
     @Transactional
@@ -119,6 +124,10 @@ public class GenerateServiceImpl implements GenerateService {
             List<LabelConf> labelConfByDB = labelConfMapper.getLabelConfByDB(selectDatasets.getId());
             //创建数据存储表
             createDBDataTable(selectDatasets, labelConfByDB);
+            DatasetPermission datasetPermission = new DatasetPermission();
+            datasetPermission.setDatasetId(selectDatasets.getId());
+            datasetPermission.setUserId(selectDatasets.getCreator());
+            datasetPermissionMapper.addDatasetPermission(datasetPermission);
 
         }catch (DirExistsException e){
             throw new BusinessException(ResponseCode.DIR_EXISTS, ResponseCode.DIR_EXISTS.getMessage());

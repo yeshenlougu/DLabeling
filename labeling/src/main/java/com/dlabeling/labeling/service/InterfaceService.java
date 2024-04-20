@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface InterfaceService {
 
+    void addInterfaceAddress(InterfaceAddressVO interfaceAddress);
+
     void addInterfaceHistory(InterfaceHistory  interfaceHistory);
 
     List<InterfaceHistoryVO> getInterfaceHistoryList(Integer datasetID, String type);
@@ -31,7 +33,7 @@ public interface InterfaceService {
 
     List<LabelHistoryItem> getAllLabelHistoryVO(String type);
 
-    void updateInterfaceAddress(InterfaceAddress interfaceAddress);
+    void updateInterfaceAddress(InterfaceAddressVO interfaceAddressVO);
 
     void deleteInterfaceAddress(Integer id);
 }

@@ -54,7 +54,18 @@ public class InterfaceAddressVO {
         this.interfaceType = interfaceType;
     }
 
-    public static InterfaceAddress convertToInterfaceAddress(){
-        return new InterfaceAddress();
+    public static InterfaceAddress convertToInterfaceAddress(InterfaceAddressVO interfaceAddressVO){
+        InterfaceAddress interfaceAddress = new InterfaceAddress();
+        interfaceAddress.setInterfaceName(interfaceAddressVO.getInterfaceName());
+        interfaceAddress.setInterfaceAddress(interfaceAddressVO.getInterfaceAddress());
+        interfaceAddress.setDatasetId(interfaceAddressVO.getDatasetId());
+        InterfaceType interfaceType = null;
+        interfaceType = InterfaceType.getInterfaceTypeByType(interfaceAddressVO.getInterfaceType());
+        if (interfaceType==null){
+            interfaceType = InterfaceType.getInterfaceTypeByDescription(interfaceAddressVO.getInterfaceType());
+        }
+        interfaceAddress.setInterfaceType(interfaceType.getCode());
+        
+        return interfaceAddress;
     }
 }

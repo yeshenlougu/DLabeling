@@ -384,6 +384,7 @@ public class DatasetsServiceImpl implements DatasetsService {
     }
 
     @Override
+    @Transactional
     public void updateDatas(DatasVO datasVO) {
         try {
             LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getHttpServletRequest());
@@ -430,11 +431,14 @@ public class DatasetsServiceImpl implements DatasetsService {
             labelHistory.setDatasetId(datasVO.getDatasetID());
             labelHistory.setUserId(loginUser.getId());
             labelHistory.setDataId(datasVO.getId());
+            if (labelHistory.getBeforeAction().equals("{}") && labelHistory.getAfterAction().equals("{}")){
+                throw new BusinessException(ResponseCode.BUSINESS_ERROR, "未改动标注");
+            }
             labelService.addLabelHistory(labelHistory);
 
             LabelWriteUtils.writeLabelJSON(afterUpdate.getLabelPath(), afterUpdate, new ArrayList<>(labelName2ID.keySet()));
         }catch (IOException e){
-
+            throw new BusinessException(ResponseCode.BUSINESS_ERROR, "标注文件更新错误");
         }
 
 

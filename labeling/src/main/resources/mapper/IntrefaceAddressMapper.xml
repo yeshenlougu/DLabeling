@@ -7,15 +7,13 @@
 
     <insert id="addInterfaceAddress">
         INSERT INTO `interface_address`
-        <set>
-            <trim prefix="(" suffix=")" suffixOverrides=",">
-                <if test="true">`dataset_id`,</if>
-                <if test="true">`interface_type`,</if>
-                <if test="true">`interface_name`</if>
-                <if test="true">`interface_address`</if>
-                <if test="true">`create_time`</if>
-            </trim>
-        </set>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="true">`dataset_id`,</if>
+            <if test="true">`interface_type`,</if>
+            <if test="true">`interface_name`,</if>
+            <if test="true">`interface_address`,</if>
+            <if test="true">`create_time`</if>
+        </trim>
         VALUES
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="true">#{datasetId},</if>

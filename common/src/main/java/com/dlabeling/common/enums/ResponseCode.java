@@ -23,6 +23,8 @@ public enum ResponseCode {
     SQL_UPDATE_ERROR(2003, "数据库更新错误"),
     SQL_DELETE_ERROR(2004, "数据库更新错误"),
     BUSINESS_ERROR(9999, "服务器内部错误"),
+    
+    MODEL_ERROR(9998, "模型调用错误"),
 
     FILE_EXISTS(2100, "文件已存在"),
     FILE_NOT_EXISTS(2101, "文件不存在"),

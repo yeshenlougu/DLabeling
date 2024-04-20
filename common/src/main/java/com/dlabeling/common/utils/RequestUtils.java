@@ -19,10 +19,11 @@ public class RequestUtils {
 
     public static Response sendLabelFile(String url, File file){
         OkHttpClient okHttpClient = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("image/png");
+        RequestBody fileBody = RequestBody.create(mediaType, file);
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", file.getName(),
-                        RequestBody.create(MediaType.parse("application/octet-stream"), file))
+                .addFormDataPart("file", file.getName(), fileBody)
                 .build();
         Request request = new Request.Builder()
                 .url(url)

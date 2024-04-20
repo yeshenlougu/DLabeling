@@ -164,8 +164,12 @@ public class DatasetController {
 
     @PostMapping("/datas/update")
     public R<String> updateDatas(@RequestBody DatasVO datasVO){
-        datasetsService.updateDatas(datasVO);
-        return R.ok();
+        try {
+            datasetsService.updateDatas(datasVO);
+            return R.ok();
+        }catch (BusinessException e){
+            return R.fail(e.getMsg());
+        }
     }
 
     @PostMapping("/dataset/update")
